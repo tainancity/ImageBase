@@ -1,0 +1,39 @@
+doctype html
+html(lang=CurrentLang)
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, user-scalable=no, user-scalable=0')
+    title= title
+    //-
+      link(href=asset_path('css/official/layouts/master.css') rel='stylesheet')
+    //-
+      link(rel='alternate' hreflang='en' href='')
+    
+    //-
+      if showTests
+        link(href=asset_path('css/vendor/mocha/mocha.css') rel='stylesheet')
+    block head_end_tag
+  body
+    block body_start_tag
+    div#main
+      block content
+    block body_end_tag
+    
+    //-  
+      script(src=asset_path('js/vendor/v.js'))
+    block body_end_others
+    
+    //-
+      if showTests
+        div#mocha
+        script(src=asset_path('js/vendor/v-test-tool.js'))
+        script.
+          mocha.ui('tdd');
+          var assert = chai.assert;
+        //script(src='/build/js/qa/tests-global-c544ae7e39.js')
+        //script(src='/build/js/qa/tests-stress-272416e533.js')
+        if pageTestScript
+          script(src=pageTestScript)
+        script.
+          mocha.run();
