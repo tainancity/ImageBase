@@ -43,6 +43,9 @@ app.use(methodOverride(function (req, res) {
     return method;
   }
 }))
+
+require(CONFIG.path.routes + '/api-ajax')(app)
+
 app.use(csrf({ cookie: true }))
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
@@ -63,7 +66,7 @@ app.get('/', function (req, res) {
 
   soap.createClient(url, function(err, client) {
     console.log(client);
-    var args = {strToken: 'abcd', strApCode: 'picalpha', strAcct: 'logintest', strPwd: 'GINTE@tn'};
+    var args = {strToken: 'abcde', strApCode: 'picalpha', strAcct: 'logintest', strPwd: 'GINTE@tn'};
 
     //(string strToken, string strApCode, string strAcct, string strPwd)
 
@@ -99,7 +102,6 @@ app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))         
 
 // ========== Routes ========== //
 //require(CONFIG.path.routes + '/web')(app)
-require(CONFIG.path.routes + '/api-ajax')(app)
 
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
