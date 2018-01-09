@@ -3,14 +3,16 @@ var Auth = require(CONFIG.path.middlewares + '/auth.js')
 
 var Home = require(CONFIG.path.controllers + '/home.js')
 
-module.exports = function(app){
+module.exports = function(app, csrfProtection){
 
 
   var options = {}
 
-  app.group('/(:lang)?', (app) => {
+  app.group('/', (app) => {
     // Home
     app.get('/', Home.index(options))
+
+    app.post('/image-upload', Home.image_upload(options))
 
     /*
     // User
@@ -46,12 +48,12 @@ module.exports = function(app){
 
 
 
-  /*
+
   // ========== 404，因為不是錯誤，所以不會有 err 參數 ========== //
   app.use(function (req, res) {
     res.status(404).send("404 Not Found! Sorry can't find that!")
   })
-
+  /*
   // ========== 500 ========== //
   app.use(function (err, req, res, next) {
     console.error(err.stack)

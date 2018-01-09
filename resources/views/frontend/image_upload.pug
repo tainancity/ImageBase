@@ -1,11 +1,9 @@
 extends ./layouts/master
 
 block append content
-  h1 測試的網頁
+  h1 測試的網頁2
   img(src=config.appenv.storage.domain + config.appenv.storage.path + '/abc.png')
-  form(action='/image-upload?_csrf=' + csrfToken method='post' enctype='multipart/form-data')
-    input(type='text' name='this_image_text')
-    
+  form(action='/image-upload' method='post' enctype='multipart/form-data')
     input(type='file' name='this_image')
     br
     input(type='submit' value='送出')

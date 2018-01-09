@@ -1,3 +1,4 @@
 node_modules/
 app/config/appenv.js
 database.json
+storage/

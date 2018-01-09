@@ -24,7 +24,6 @@ app.set('views', CONFIG.path.views)
 app.set('port', process.env.PORT || CONFIG.appenv.port)
 
 app.locals.asset_path = static.asset_path
-app.locals.i18n = static.i18n
 app.locals.decrypt = static.decrypt
 
 app.locals.functions = functions
@@ -34,8 +33,8 @@ app.locals.config = CONFIG
 // ========== Global Middlewares ========== //
 app.use(express.static(CONFIG.path.public))
 app.use(helmet())
-app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     // look in urlencoded POST bodies and delete it
@@ -45,61 +44,64 @@ app.use(methodOverride(function (req, res) {
   }
 }))
 app.use(csrf({ cookie: true }))
-
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
   secret: CONFIG.appenv.cookieSessionSecret,
-  //store: new RedisStore({
-  //  host: CONFIG.appenv.redis.host,
-  //  port: CONFIG.appenv.redis.port,
-  //  pass: CONFIG.appenv.redis.password
-  //}),
+  store: new RedisStore({ host: CONFIG.appenv.redis.host, port: CONFIG.appenv.redis.port, pass: CONFIG.appenv.redis.password}),
   resave: false,
   saveUninitialized: false
 }))
 app.use(flash({ locals: 'flash' }))
 
-/*
+
 app.get('/', function (req, res) {
   res.send('Hello World!')
   var soap = require('soap');
-  var url = 'http://notes.carlos-studio.com/soap/demo.wsdl';
-  var args = {"ibm": ""};
+  //var url = 'http://notes.carlos-studio.com/soap/demo.wsdl';
+  var url = 'https://login.tainan.gov.tw/ws/WS_SSO.asmx?WSDL';
+  //var args = {"ibm": ""};
 
   soap.createClient(url, function(err, client) {
     console.log(client);
-    //console.log(client.getWeatherAsync('ibm'))
-    client.getWeather({name: 'ibm'}, function(err, result, raw, soapHeader) {
+    var args = {strToken: 'abcd', strApCode: 'picalpha', strAcct: 'logintest', strPwd: 'GINTE@tn'};
+
+    //(string strToken, string strApCode, string strAcct, string strPwd)
+
+    client.SSO_Auth_Validate(args, function(err, result, raw, soapHeader) {
+      // result is a javascript object
+      console.log(result)
+      // raw is the raw response
+      // soapHeader is the response soap header as a javascript object
+      //console.log(result.value.$value);
+      //res.end(result.value.$value)
+    })
+
+    /*
+    client.getWeather({namets: 'ibmd'}, function(err, result, raw, soapHeader) {
       // result is a javascript object
       // raw is the raw response
       // soapHeader is the response soap header as a javascript object
       console.log(result.value.$value);
+      //res.end(result.value.$value)
     })
-    //client.getWeather(args, function(err, result) {
-      console.log(err);
-      //console.log(result);
-      //res.send('Hello World!22')
-    //});
+    */
+
+
   })
 })
-*/
 
 
 // ========== Custom Middlewares ========== //
-// Disable trailing slash
-app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app))
-// language setting
-app.use(require(CONFIG.path.middlewares + '/lang').custom_lang(app))
-// view global functions and variables
-app.use(require(CONFIG.path.middlewares + '/global').global(app))
-// Auth
-app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))
+app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app)) // Disable trailing slash
+//app.use(require(CONFIG.path.middlewares + '/lang').custom_lang(app))                  // language setting
+app.use(require(CONFIG.path.middlewares + '/global').global(app))                       // view global functions and variables
+app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))                 // Auth
 
 // ========== Routes ========== //
-require(CONFIG.path.routes + '/web')(app)
+//require(CONFIG.path.routes + '/web')(app)
 require(CONFIG.path.routes + '/api-ajax')(app)
 
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
-  console.log(app.get('env') + ': http://localhost:' + app.get('port'));
+  console.log(app.get('env') + ': ' + CONFIG.appenv.domain);
 })
