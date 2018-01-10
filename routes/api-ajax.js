@@ -5,6 +5,7 @@ module.exports = function(app){
   var options = {}
 
   app.group('/api-ajax/v1.0', (app) => {
+    /*
     app.post('/account-token-auth', function(req, res){
       let token = req.body.token
       if(token == 'abcde'){
@@ -12,6 +13,13 @@ module.exports = function(app){
       }
       res.send("2")
     })
+    */
+    
+    app.get('/account-token-auth', function(req, res){
+      let token = req.body.token
+      res.send("1")
+    })
+
   })
 
 }

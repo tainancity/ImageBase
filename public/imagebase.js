@@ -1,5 +1,4 @@
 var express = require('express')
-var methodOverride = require('method-override')
 require('express-group-routes')
 var app = express()
 
@@ -11,17 +10,20 @@ var RedisStore = require('connect-redis')(session)
 var bodyParser = require('body-parser')
 var csrf = require('csurf')
 var helmet = require('helmet')
+var methodOverride = require('method-override')
 
 var CONFIG = require('../app/config/global.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 var static = require(CONFIG.path.helpers + '/static.js')
 var time = require(CONFIG.path.helpers + '/time.js')
+
 // ========== Settings ========== //
 
-process.env.NODE_ENV = CONFIG.appenv.env
 app.set('view engine', 'pug')
 app.set('views', CONFIG.path.views)
-app.set('port', process.env.PORT || CONFIG.appenv.port)
+app.set('port', CONFIG.appenv.port)
+
+// ========== View Variables ========== //
 
 app.locals.asset_path = static.asset_path
 app.locals.decrypt = static.decrypt
@@ -33,8 +35,8 @@ app.locals.config = CONFIG
 // ========== Global Middlewares ========== //
 app.use(express.static(CONFIG.path.public))
 app.use(helmet())
-app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     // look in urlencoded POST bodies and delete it
@@ -56,7 +58,7 @@ app.use(session({
 }))
 app.use(flash({ locals: 'flash' }))
 
-
+/*
 app.get('/', function (req, res) {
   res.send('Hello World!')
   var soap = require('soap');
@@ -79,19 +81,20 @@ app.get('/', function (req, res) {
       //res.end(result.value.$value)
     })
 
-    /*
-    client.getWeather({namets: 'ibmd'}, function(err, result, raw, soapHeader) {
+
+    //client.getWeather({namets: 'ibmd'}, function(err, result, raw, soapHeader) {
       // result is a javascript object
       // raw is the raw response
       // soapHeader is the response soap header as a javascript object
-      console.log(result.value.$value);
+      // console.log(result.value.$value);
       //res.end(result.value.$value)
-    })
-    */
+    //})
+
 
 
   })
 })
+*/
 
 
 // ========== Custom Middlewares ========== //
@@ -101,9 +104,9 @@ app.use(require(CONFIG.path.middlewares + '/global').global(app))               
 app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))                 // Auth
 
 // ========== Routes ========== //
-//require(CONFIG.path.routes + '/web')(app)
+require(CONFIG.path.routes + '/web')(app)
 
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
-  console.log(app.get('env') + ': ' + CONFIG.appenv.domain);
+  console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain);
 })
