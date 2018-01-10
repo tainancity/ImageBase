@@ -14,10 +14,14 @@ module.exports = function(app){
       res.send("2")
     })
     */
-    
+
     app.get('/account-token-auth', function(req, res){
-      let token = req.body.token
-      res.send("1")
+      let token = req.query.token
+      if(token == 'abcde'){
+        res.send("1")
+        return
+      }
+      res.send("2")
     })
 
   })
