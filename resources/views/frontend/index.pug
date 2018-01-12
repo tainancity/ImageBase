@@ -9,7 +9,8 @@ block append head_end_tag
 block append content
   h1 測試的網頁
   p= testVar
-  img(src=config.appenv.storage.domain + config.appenv.storage.path + '/abc.png')
+  //-
+    img(src=config.appenv.storage.domain + config.appenv.storage.path + '/abc.png')
   form(action='/image-upload?_csrf=' + csrfToken method='post' enctype='multipart/form-data')
     input(type='text' name='this_image_text')
     
