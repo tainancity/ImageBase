@@ -1,17 +1,15 @@
 var formidable = require('formidable')
 var util = require('util')
 
-var CONFIG = require('../config/global.js')
+//var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
-var functions = require(CONFIG.path.helpers + '/functions.js')
+//var functions = require(CONFIG.path.helpers + '/functions.js')
 
 exports.index = function(options) {
-  /*return function(req, res) {
-    res.send('Hello World!')
-  }*/
-
   return function(req, res) {
-    res.render('frontend/index', { csrfToken: req.csrfToken() })
+    // { csrfToken: req.csrfToken() }
+    var a = 'abctd'
+    res.render('frontend/index', {testVar: a})
   }
 }
 

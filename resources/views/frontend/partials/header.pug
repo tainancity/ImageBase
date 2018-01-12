@@ -1,0 +1,19 @@
+header.header
+  div.container
+    div.row
+      div.col
+        div.header_content
+          h1.main_title= config.app.sitename
+          a.logo(href='/')
+            img(src=asset_path('images/logo.svg') alt=config.app.sitename title=config.app.sitename)
+          div.action_block
+            nav.action_list_nav
+              ul.action_list
+                li
+                  a(href='#')
+                    i.fas.fa-user-circle
+                    |
+                    | 會員登入
+                li
+                  a(href='#')
+                    i.fas.fa-search

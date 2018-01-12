@@ -1,0 +1,54 @@
+@import "../colors";
+
+header.header{
+  padding: 11px 0;
+  h1.main_title{
+    display: none;
+  }
+  div.header_content{
+    position: relative;
+  }
+  a.logo{
+    display: inline-block;
+    vertical-align: middle;
+  }
+  div.action_block{
+    display: inline-block;
+    vertical-align: middle;
+    position: absolute;
+    right:0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    nav.action_list_nav{
+      ul.action_list{
+        list-style: none;
+        margin:0;
+        padding:0;
+        > li{
+          margin:0 50px 0 0;
+          padding:0;
+          display: inline-block;
+          &:last-child{
+            margin:0;
+          }
+          > a{
+            color: $black;
+            font-size: 1.125rem;
+            text-decoration: none;
+            &:hover{
+              svg{
+                color: $black_level_3;
+              }
+            }
+            svg{
+              color: $gray_level_1;
+              position: relative;
+              top:1px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

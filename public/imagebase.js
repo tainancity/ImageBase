@@ -45,9 +45,6 @@ app.use(methodOverride(function (req, res) {
     return method;
   }
 }))
-
-require(CONFIG.path.routes + '/api-ajax')(app)
-
 app.use(csrf({ cookie: true }))
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
@@ -58,13 +55,12 @@ app.use(session({
 }))
 app.use(flash({ locals: 'flash' }))
 
+
 /*
 app.get('/', function (req, res) {
   res.send('Hello World!')
   var soap = require('soap');
-  //var url = 'http://notes.carlos-studio.com/soap/demo.wsdl';
   var url = 'https://login.tainan.gov.tw/ws/WS_SSO.asmx?WSDL';
-  //var args = {"ibm": ""};
 
   soap.createClient(url, function(err, client) {
     console.log(client);
@@ -81,29 +77,20 @@ app.get('/', function (req, res) {
       //res.end(result.value.$value)
     })
 
-
-    //client.getWeather({namets: 'ibmd'}, function(err, result, raw, soapHeader) {
-      // result is a javascript object
-      // raw is the raw response
-      // soapHeader is the response soap header as a javascript object
-      // console.log(result.value.$value);
-      //res.end(result.value.$value)
-    //})
-
-
-
   })
 })
 */
 
 
+
 // ========== Custom Middlewares ========== //
 app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app)) // Disable trailing slash
 //app.use(require(CONFIG.path.middlewares + '/lang').custom_lang(app))                  // language setting
-app.use(require(CONFIG.path.middlewares + '/global').global(app))                       // view global functions and variables
+//app.use(require(CONFIG.path.middlewares + '/global').global(app))                     // view global functions and variables
 app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))                 // Auth
 
 // ========== Routes ========== //
+require(CONFIG.path.routes + '/api-ajax')(app)
 require(CONFIG.path.routes + '/web')(app)
 
 // ========== Listen ========== //

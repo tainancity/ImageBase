@@ -17,15 +17,11 @@ module.exports = function(app){
 
     app.get('/account-token-auth', function(req, res){
       let token = req.query.token
-      res.send("1")
-      return
-      /*
       if(token == 'abcde'){
         res.send("1")
         return
       }
       res.send("2")
-      */
     })
 
   })
