@@ -18,3 +18,12 @@ html(lang='zh-hant')
     block body_end_tag
     script(src=asset_path('vendors/common/v.js'))
     block body_end_others
+    script.
+      $(function(){
+        $('button.toggle_nav').on('click', function(){
+          $(this).closest('header.header').find('div.mobile_nav').slideToggle();
+        });
+      });
+      $(window).on('resize', function(){
+        $('div.mobile_nav').slideUp();
+      });

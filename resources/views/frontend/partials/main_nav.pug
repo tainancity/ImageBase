@@ -1,0 +1,32 @@
+nav.action_list_nav
+  ul.action_list
+    li.mobile
+      a(href='#')
+        span.icon_span
+          i.fas.fa-search.fa-lg
+        span.pic_search_txt 圖片搜尋
+    if auth.is_auth
+      li
+        button(type='button' class='btn_upload_files')
+          span.icon_span
+            i.fas.fa-cloud-upload-alt.fa-lg
+          | 圖片上傳
+      li
+        a(href='#')
+          span.icon_span
+            i.fas.fa-user-circle.fa-lg
+          | Carlos
+      li
+        a(href='#' class='logout') 登出
+    else
+      li
+        a(href='#')
+          i.fas.fa-user-circle.fa-lg
+          |
+          | 會員登入
+    li.desktop
+      a(href='#')
+        i.fas.fa-search.fa-lg
+        |
+        |
+        span.pic_search_txt 圖片搜尋

@@ -6,14 +6,10 @@ header.header
           h1.main_title= config.app.sitename
           a.logo(href='/')
             img(src=asset_path('images/logo.svg') alt=config.app.sitename title=config.app.sitename)
-          div.action_block
-            nav.action_list_nav
-              ul.action_list
-                li
-                  a(href='#')
-                    i.fas.fa-user-circle
-                    |
-                    | 會員登入
-                li
-                  a(href='#')
-                    i.fas.fa-search
+          div.right_block
+            button(type='button' class='toggle_nav')
+              i.fas.fa-bars.fa-lg
+            div.action_block
+              include ./main_nav.pug
+  div.mobile_nav
+    include ./main_nav.pug
