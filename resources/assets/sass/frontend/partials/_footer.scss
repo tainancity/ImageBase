@@ -1,0 +1,35 @@
+@import "../colors";
+
+footer.footer{
+  background-color: $black_level_4;
+  padding: 38px 0;
+  box-shadow: 0 -1px 8px 0 rgba(255, 255, 255, 0.2);
+  div.footer_content{
+    &::before, &::after{
+      content: '';
+      display: block;
+    }
+    &::after{
+      clear: both;
+    }
+    a{
+      color: $white;
+      @media screen and (max-width: 360px){
+        font-size: .875rem;
+      }
+    }
+    p.copyright{
+      display: inline-block;
+      margin:0;
+      float:right;
+      color: $white;
+      font-weight: normal;
+      font-size: 1rem;
+      @media screen and (max-width: 360px){
+        font-size: .875rem;
+        position: relative;
+        top:2px;
+      }
+    }
+  }
+}
