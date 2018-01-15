@@ -7,17 +7,37 @@ block append head_end_tag
   link(href=asset_path('css/frontend/index.css') rel='stylesheet')
 
 block append content
-  h1 測試的網頁
-  p= testVar
+  section.announcement_sec
+    div.container
+      div.row
+        div.col
+          div.announcement_block
+            div.announcement_left
+              span(class='span_icon'): i.fas.fa-bullhorn
+            div.announcement_middle
+              marquee(direction='up' scrollamount='1' height='20' onMouseOver='this.stop()' onMouseOut='this.start()')
+                ul.announcement_list
+                  li: a(href='#') 這是這是這是這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表
+                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
+                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
+                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
+                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
+            div.announcement_right
+              a(href='#'): i.fas.fa-list-alt
+  
+  //-
+    p= testVar
+  
   //-
     img(src=config.appenv.storage.domain + config.appenv.storage.path + '/abc.png')
-  form(action='/image-upload?_csrf=' + csrfToken method='post' enctype='multipart/form-data')
-    input(type='text' name='this_image_text')
-    
-    input(type='file' name='this_image')
-    br
-    i.far.fa-address-book
-    input(type='submit' value='送出')
+  //-
+    form(action='/image-upload?_csrf=' + csrfToken method='post' enctype='multipart/form-data')
+      input(type='text' name='this_image_text')
+      
+      input(type='file' name='this_image')
+      br
+      i.far.fa-address-book
+      input(type='submit' value='送出')
 
 block append body_end_others
   script.
