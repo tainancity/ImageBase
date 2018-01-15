@@ -25,5 +25,7 @@ html(lang='zh-hant')
         });
       });
       $(window).on('resize', function(){
-        $('div.mobile_nav').slideUp();
+        if($(window).width() >= 768){
+          $('div.mobile_nav').slideUp();
+        }
       });
