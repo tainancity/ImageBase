@@ -25,6 +25,23 @@ block append content
             div.announcement_right
               a(href='#'): i.fas.fa-list-alt
   
+  section.slick_slider_sec
+    div.container
+      div.row
+        div.col
+          div.slick_slider_container
+            div.slick_slider
+              div.slick_content
+                div.inner_content
+                  a(href='#' class='content_link'): img(src='//via.placeholder.com/600x300' class='content_img')
+              div.slick_content
+                div.inner_content
+                  a(href='#' class='content_link'): img(src='//via.placeholder.com/1200x400' class='content_img')
+              div.slick_content
+                div.inner_content
+                  a(href='#' class='content_link'): img(src='//via.placeholder.com/1200x400' class='content_img')
+    
+  
   //-
     p= testVar
   
@@ -40,6 +57,23 @@ block append content
       input(type='submit' value='送出')
 
 block append body_end_others
+  script(src=asset_path('vendors/plugins/slick/slick.min.js'))
   script.
     $(function(){
+      $('.slick_slider').slick({
+        arrows: true,
+        dots: true,
+        infinite: true,
+        speed: 300,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        responsive: [
+          {
+            breakpoint: 768,
+            settings: {
+              arrows:false
+            }
+          }
+        ]
+      });
     });

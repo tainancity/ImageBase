@@ -1,4 +1,6 @@
 @import "./colors";
+@import "../../vendors/plugins/slick/slick";
+@import "../../vendors/plugins/slick/slick-theme";
 
 section.announcement_sec{
   background-color: $brown_level_1;
@@ -52,6 +54,98 @@ section.announcement_sec{
         &:hover{
           color: $white;
         }
+      }
+    }
+  }
+}
+
+section.slick_slider_sec{
+  > div.container{
+    @media screen and (max-width: 575px){
+      padding:0;
+    }
+    > div.row{
+      @media screen and (max-width: 575px){
+        margin:0;
+      }
+      > div.col{
+        @media screen and (max-width: 575px){
+          padding:0;
+        }
+      }
+    }
+  }
+  div.slick_slider_container{
+    position: relative;
+    height: 400px;
+  }
+  div.slick_slider{
+    margin-bottom: 0;
+    position: absolute;
+    top:0;
+    left:50%;
+    width:100%;
+    transform: translateX(-50%);
+    div.slick_content{
+      text-align: center;
+      position: relative;
+      /*background-color: #1a242e;*/
+      background-image: linear-gradient(to bottom, #273543, #111820);
+      height:400px;
+      overflow: hidden;
+      div.inner_content{
+        height:100%;
+        width:1110px;
+        position: absolute;
+        left:50%;
+        transform: translateX(-50%);
+      }
+      a.content_link{
+        display: inline-block;
+        height:100%;
+        img.content_img{
+          height: 100%;
+        }
+      }
+    }
+    ul.slick-dots{
+      bottom:10px;
+      line-height: 1;
+      > li{
+        width:12px;
+        height: 12px;
+        margin: 0 6px;
+        &.slick-active{
+          > button{
+            background-color: $white;
+          }
+        }
+        > button{
+          border:1px solid $white;
+          border-radius: 50%;
+          width:10px;
+          height: 10px;
+          &::before{
+            content:'';
+            width:12px;
+            height: 12px;
+            line-height: 12px;
+          }
+        }
+      }
+    }
+    button.slick-arrow{
+      z-index: 1;
+      width: auto;
+      height:auto;
+      &::before{
+        font-size: 40px;
+      }
+      &.slick-prev{
+        left:16px;
+      }
+      &.slick-next{
+        right:16px;
       }
     }
   }

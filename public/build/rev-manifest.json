@@ -1,7 +1,15 @@
 {
-  "css/frontend/index.css": "css/frontend/index-cc3da9f32d.css",
-  "css/frontend/layouts/master.css": "css/frontend/layouts/master-33730d51f3.css",
+  "css/frontend/index.css": "css/frontend/index-e80253856f.css",
+  "css/frontend/layouts/master.css": "css/frontend/layouts/master-f3517ff3f3.css",
   "images/favicon.ico": "images/favicon-e718b5b7ce.ico",
   "images/logo.svg": "images/logo-fa0fa553aa.svg",
-  "vendors/common/v.js": "vendors/common/v-9ea0d795b3.js"
+  "vendors/common/v.js": "vendors/common/v-9ea0d795b3.js",
+  "vendors/plugins/slick/ajax-loader.gif": "vendors/plugins/slick/ajax-loader-c5cd7f5300.gif",
+  "vendors/plugins/slick/fonts/slick.eot": "vendors/plugins/slick/fonts/slick-ced611daf7.eot",
+  "vendors/plugins/slick/fonts/slick.svg": "vendors/plugins/slick/fonts/slick-f97e3bbf73.svg",
+  "vendors/plugins/slick/fonts/slick.ttf": "vendors/plugins/slick/fonts/slick-d41f55a78e.ttf",
+  "vendors/plugins/slick/fonts/slick.woff": "vendors/plugins/slick/fonts/slick-b7c9e1e479.woff",
+  "vendors/plugins/slick/slick-theme.css": "vendors/plugins/slick/slick-theme-1cf41c2e73.css",
+  "vendors/plugins/slick/slick.css": "vendors/plugins/slick/slick-f38b2db10e.css",
+  "vendors/plugins/slick/slick.min.js": "vendors/plugins/slick/slick.min-d5a61c749e.js"
 }

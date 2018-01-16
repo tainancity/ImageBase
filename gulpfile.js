@@ -23,7 +23,7 @@ gulp.task('watch', function(){
   gulp.watch('resources/assets/sass/**/*.{scss,css}', ['version']);
   gulp.watch('resources/assets/js/**/*.js', ['version']);
   gulp.watch('resources/assets/images/**/*.{png,jpg,jpeg,gif,svg,ico}', ['version']);
-  gulp.watch('resources/assets/vendors/common/**/*.{js,css}', ['version']);
+  gulp.watch('resources/assets/vendors/plugins/**/*.{png,jpg,jpeg,gif,svg,ico,js,css,scss,eot,svg,ttf,woff}', ['version']);
 });
 
 // compile scss by gulp-sass
@@ -45,6 +45,12 @@ gulp.task('copy_images', function() {
     .pipe(gulp.dest('./public/images/'));
 });
 
+// copy vendors/plugins to public/vendors/plugins
+gulp.task('copy_vendors_plugins', function() {
+  return gulp.src('resources/assets/vendors/plugins/**/*.{png,jpg,jpeg,gif,svg,ico,js,css,scss,eot,svg,ttf,woff}')
+    .pipe(gulp.dest('./public/vendors/plugins/'));
+});
+
 // vendors
 gulp.task('common_vendors', function() {
   return gulp.src([
@@ -59,13 +65,13 @@ gulp.task('common_vendors', function() {
 });
 
 // version
-gulp.task('version', ['styles', 'js_build', 'copy_images', 'common_vendors'], function(){ // 表示執行 version 之前，會先執行 styles、js_build、copy_images、common_vendors
+gulp.task('version', ['styles', 'js_build', 'copy_images', 'copy_vendors_plugins', 'common_vendors'], function(){ // 表示執行 version 之前，會先執行 styles、js_build、copy_images、common_vendors
   return gulp.src(
     [
       './public/css/**/*.css',
       './public/images/**/*.{png,jpg,jpeg,gif,svg,ico}',
       './public/js/**/*.js',
-      './public/vendors/**/*.js'
+      './public/vendors/**/*.{png,jpg,jpeg,gif,svg,ico,js,css,scss,eot,svg,ttf,woff}'
     ], {base: './public'}
   ).pipe(rev())
    .pipe(override())

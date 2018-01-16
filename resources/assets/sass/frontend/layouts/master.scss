@@ -5,6 +5,7 @@
 
 div#main{
   min-height: calc(100vh - #{$footer_height} - #{$header_height_on_desktop});
+  background-image: linear-gradient(to bottom, #273543, #111820);
   @media screen and (max-width: 767px){
     min-height: calc(100vh - #{$footer_height} - #{$header_height_on_mobile});
   }
