@@ -6,8 +6,11 @@ block append page_title
 block append head_end_tag
   link(href=asset_path('css/frontend/index.css') rel='stylesheet')
 
+include ./partials/btn_like_box.pug
+
 block append content
   section.announcement_sec
+    h2.display_none 公告
     div.container
       div.row
         div.col
@@ -26,6 +29,7 @@ block append content
               a(href='#'): i.fas.fa-list-alt
   
   section.slick_slider_sec
+    h2.display_none 主題輪播
     div.container
       div.row
         div.col
@@ -40,8 +44,51 @@ block append content
               div.slick_content
                 div.inner_content
                   a(href='#' class='content_link'): img(src='//via.placeholder.com/1200x400' class='content_img')
-    
   
+  section.common_sec
+    div.container
+      div.row
+        div.col
+          div.title_block
+            a.more_items(href='#')
+              i.fas.fa-plus
+              |
+              | 看更多熱門圖片
+            h2.title2
+              i.fas.fa-fire
+              span.title_text 熱門圖片
+          div.pic_block
+            div.row
+              div.col-12.col-sm-6.col-md-3
+                div.each_block
+                  div.top_block
+                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
+                  div.bottom_block
+                    +btn_like_box(true, false, 111)
+                    a(href='#' class='title_link') 圖片標題
+              div.col-12.col-sm-6.col-md-3
+                div.each_block
+                  div.top_block
+                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
+                  div.bottom_block
+                    +btn_like_box(false, false, 0)
+                    a(href='#' class='title_link') 圖片標題圖片標題圖片標題圖片標題圖片標題圖片標題片標題片標題
+              div.col-12.col-sm-6.col-md-3
+                div.each_block
+                  div.top_block
+                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
+                  div.bottom_block
+                    +btn_like_box(false, true, '999+')
+                    a(href='#' class='title_link') 圖片標題
+              div.col-12.col-sm-6.col-md-3
+                div.each_block
+                  div.top_block
+                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
+                  div.bottom_block
+                    +btn_like_box(true, true, '999+')
+                    a(href='#' class='title_link') 圖片標題
+            
+            
   //-
     p= testVar
   

@@ -3,10 +3,57 @@
 @import "../partials/footer";
 @import "../vars";
 
+.display_none{
+  display: none;
+}
+
 div#main{
   min-height: calc(100vh - #{$footer_height} - #{$header_height_on_desktop});
   background-image: linear-gradient(to bottom, #273543, #111820);
   @media screen and (max-width: 767px){
     min-height: calc(100vh - #{$footer_height} - #{$header_height_on_mobile});
+  }
+}
+
+/* like */
+button.btn_like_box{
+  float:right;
+  display: inline-block;
+  line-height: 1.2;
+  background: none;
+  cursor: pointer;
+  border:0;
+  padding:0 3px 1px 0;
+  border:1px solid $white_level_1;
+  border-radius: 4px;
+  box-sizing: border-box;
+  outline: none;
+  &:hover{
+    span.span_like{
+      color: $orange_level_1;
+    }
+  }
+  &.-have_like{
+    border:1px solid $orange;
+    span.span_like, span.like_num{
+      color: $orange;
+    }
+  }
+  &.-small{
+    span.span_like, span.like_num{
+      font-size: .7rem;
+    }
+  }
+  span.span_like{
+    padding:0 3px;
+    display: inline-block;
+    color: $white;
+    font-size: .7rem;
+  }
+  span.like_num{
+    color: $white;
+    font-size: .875rem;
+    display: inline-block;
+    width: calc(100% - 20px);
   }
 }
