@@ -15,6 +15,51 @@ html(lang='zh-hant')
     div#main
       block content
     include ../partials/footer.pug
+    
+    if auth.is_auth
+      article.upload_pics.display_none
+        div.upload_block
+          button.close_upload: i.fas.fa-times.fa-lg
+          div.file_zone
+            span.hint 將檔案拖曳進來即可上傳
+            ul.pic_list
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+              li
+                i.fas.fa-file-image
+                span.file_text 檔案
+                
+          div.or_select_file
+            p.or_para 或
+            button.choose_file(type='button') 選擇檔案
+            input.select_file.display_none(type='file')
+      
+    
     block body_end_tag
     script(src=asset_path('vendors/common/v.js'))
     block body_end_others
@@ -22,6 +67,12 @@ html(lang='zh-hant')
       $(function(){
         $('button.toggle_nav').on('click', function(){
           $(this).closest('header.header').find('div.mobile_nav').slideToggle();
+        });
+        $('button.btn_upload_files').on('click', function(){
+          $('article.upload_pics').removeClass('display_none');
+        });
+        $('button.close_upload').on('click', function(){
+          $(this).closest('article.upload_pics').addClass('display_none');
         });
       });
       $(window).on('resize', function(){

@@ -17,7 +17,7 @@ exports.is_auth = function(app){
 exports.setting_locals = function(app){
   return function(req, res, next) {
     app.locals.auth = {}
-    app.locals.auth.is_auth = req.session.u_id ? true : false
+    app.locals.auth.is_auth = req.session.u_id ? false : true
     if(req.session.u_id){
       app.locals.auth.u_id = req.session.u_id
       userModel.getOne('u_id', req.session.u_id, function(results){
