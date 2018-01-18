@@ -1,6 +1,7 @@
 {
   "css/frontend/index.css": "css/frontend/index-024bb08efb.css",
   "css/frontend/layouts/master.css": "css/frontend/layouts/master-ba1cc8c2ae.css",
+  "css/frontend/user/login.css": "css/frontend/user/login-958db778a1.css",
   "images/favicon.ico": "images/favicon-e718b5b7ce.ico",
   "images/logo.svg": "images/logo-fa0fa553aa.svg",
   "vendors/common/v.js": "vendors/common/v-9ea0d795b3.js",

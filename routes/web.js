@@ -2,6 +2,7 @@ var CONFIG = require('../app/config/global.js')
 var Auth = require(CONFIG.path.middlewares + '/auth.js')
 
 var Home = require(CONFIG.path.controllers + '/home.js')
+var User = require(CONFIG.path.controllers + '/user.js')
 
 module.exports = function(app){
 
@@ -11,6 +12,9 @@ module.exports = function(app){
   app.group('/', (app) => {
     // Home
     app.get('/', Home.index(options))
+
+    app.get('/user/login', User.login(options))
+
     // 測試
     app.post('/image-upload', Home.image_upload(options))
 
