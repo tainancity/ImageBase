@@ -4,6 +4,7 @@ var Auth = require(CONFIG.path.middlewares + '/auth.js')
 var Home = require(CONFIG.path.controllers + '/home.js')
 var User = require(CONFIG.path.controllers + '/user.js')
 var Announcement = require(CONFIG.path.controllers + '/announcement.js')
+var Page = require(CONFIG.path.controllers + '/page.js')
 
 module.exports = function(app){
 
@@ -32,8 +33,16 @@ module.exports = function(app){
   })
 
   app.group('/announcement', (app) => {
-    // Home
+    // 公告列表
     app.get('/list', Announcement.list(options))
+  })
+
+  app.group('/pages', (app) => {
+    // 平台服務說明
+    app.get('/service', Page.service(options))
+
+    // 維護中
+    app.get('/maintain', Page.maintain(options))
   })
 
 

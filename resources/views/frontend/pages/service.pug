@@ -1,0 +1,30 @@
+extends ../layouts/master
+
+block append page_title
+  title=  '平台服務說明' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/pages/service.css') rel='stylesheet')
+
+block append content
+  section.service_sec
+    div.container
+      div.row
+        div.col.col-md-8.offset-md-2
+          div.content_block
+            h1.title1 平台服務說明
+            div.contents
+              p 這裡是平台服務說明的內容，可於後台更新
+              p
+                img(src='http://via.placeholder.com/500x200')
+              p 這裡是平台服務說明的內容，可於後台更新
+              p 這裡是平台服務說明的內容，可於後台更新這裡是平台服務說明的內容，可於後台更新這裡是平台服務說明的內容，可於後台更新這裡是平台服務說明的內容，可於後台更新
+              
+    
+
+
+block append body_end_others
+  script.
+    $(function(){
+      
+    });
