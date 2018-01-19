@@ -49,7 +49,8 @@ module.exports = function(app){
 
   // ========== 404，因為不是錯誤，所以不會有 err 參數 ========== //
   app.use(function (req, res) {
-    res.status(404).send("404 Not Found! Sorry can't find that!")
+    //res.status(404).send("404 Not Found! Sorry can't find that!")
+    res.status(404).render('frontend/errors/404.pug')
   })
 
   /*

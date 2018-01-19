@@ -1,0 +1,45 @@
+@import "../colors";
+section.page_404{
+  div.block_404_img{
+    width: 90%;
+    margin: 0 auto;
+    background-image: url('/build/images/img-404.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: calc(100vh - 180px);
+    min-height: 500px;
+    position: relative;
+    @media screen and (max-width: 767px){
+      width: 100%;
+    }
+    div.desc_block{
+      color: $white;
+
+      margin:0;
+      position: absolute;
+      bottom:20px;
+      text-align: center;
+      width:100%;
+      p.para{
+        margin:0;
+        font-size: 2.25rem;
+        @media screen and (max-width: 575px){
+          font-size: 1.25rem;
+        }
+      }
+      a.back_home{
+        display: inline-block;
+        background-color: $orange_level_1;
+        color: $white;
+        text-decoration: none;
+        font-size: 1.25rem;
+        padding: 5px 20px;
+        margin-top:10px;
+      }
+    }
+  }
+  img{
+    max-width: 100%;
+  }
+}
