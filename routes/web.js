@@ -3,6 +3,7 @@ var Auth = require(CONFIG.path.middlewares + '/auth.js')
 
 var Home = require(CONFIG.path.controllers + '/home.js')
 var User = require(CONFIG.path.controllers + '/user.js')
+var Announcement = require(CONFIG.path.controllers + '/announcement.js')
 
 module.exports = function(app){
 
@@ -28,6 +29,11 @@ module.exports = function(app){
       app.get('/logout', User.logout(options))
     })
     */
+  })
+
+  app.group('/announcement', (app) => {
+    // Home
+    app.get('/list', Announcement.list(options))
   })
 
 

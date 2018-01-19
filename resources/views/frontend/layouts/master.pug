@@ -17,42 +17,26 @@ html(lang='zh-hant')
     include ../partials/footer.pug
     
     if auth.is_auth
-      article.upload_pics.display_none
-        div.upload_block
+      div.upload_pics_modal.display_none
+        article.upload_block
           button.close_upload: i.fas.fa-times.fa-lg
           div.file_zone
             span.hint 將檔案拖曳進來即可上傳
             ul.pic_list
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
-              li
-                i.fas.fa-file-image
-                span.file_text 檔案
+              each val in [0, 1, 2]
+                li
+                  div.progress_block
+                  div.info_block  
+                    span.icon_type: i.fas.fa-file-image
+                    span.file_text 檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案
+                    a.info_success(href='#' target='_blank'): i.fas.fa-link
+              each val in [0, 1, 2, 3, 4, 5, 6]
+                li
+                  div.progress_block
+                  div.info_block  
+                    span.icon_type: i.fas.fa-file-image
+                    span.file_text 檔案
+                    a.info_success(href='#' target='_blank'): i.fas.fa-link
                 
           div.or_select_file
             p.or_para 或
@@ -69,10 +53,10 @@ html(lang='zh-hant')
           $(this).closest('header.header').find('div.mobile_nav').slideToggle();
         });
         $('button.btn_upload_files').on('click', function(){
-          $('article.upload_pics').removeClass('display_none');
+          $('div.upload_pics_modal').removeClass('display_none');
         });
         $('button.close_upload').on('click', function(){
-          $(this).closest('article.upload_pics').addClass('display_none');
+          $(this).closest('div.upload_pics_modal').addClass('display_none');
         });
       });
       $(window).on('resize', function(){

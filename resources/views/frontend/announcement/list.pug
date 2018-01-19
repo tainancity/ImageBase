@@ -1,0 +1,32 @@
+extends ../layouts/master
+
+block append page_title
+  title=  '公告列表' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/announcement/list.css') rel='stylesheet')
+
+block append content
+  section.announcement_sec
+    div.container
+      div.row
+        div.col
+          h1.title1
+            span.icon_span: i.fas.fa-bullhorn
+            | 全部公告
+          
+          div.announcement_block
+            ul.announcement_list
+              each val in [1, 2, 3, 4, 5]
+                li
+                  a.item_link(href='#')
+                    span.icon_span: i.fas.fa-bullhorn
+                    span.title_text 標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題標題
+    
+
+
+block append body_end_others
+  script.
+    $(function(){
+      
+    });

@@ -58,7 +58,7 @@ button.btn_like_box{
   }
 }
 
-article.upload_pics{
+div.upload_pics_modal{
   position: fixed;
   top:0;
   left:0;
@@ -66,7 +66,7 @@ article.upload_pics{
   width: 100%;
   height: 100%;
   z-index: 2;
-  div.upload_block{
+  article.upload_block{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -116,10 +116,45 @@ article.upload_pics{
           margin:0;
           padding:3px 0 3px 10px;
           color: $white;
-          border:1px solid red;
-          span.file_text{
-            display: inline-block;
-            margin-left:5px;
+          position: relative;
+          border-bottom:1px solid $white_level_1;
+          div.info_block{
+            position: relative;
+            z-index: 2;
+            span.icon_type{
+              display: inline-block;
+              vertical-align: top;
+            }
+            span.file_text{
+              display: inline-block;
+              margin-left:5px;
+              width: calc(100% - 50px);
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+              vertical-align: top;
+            }
+            a.info_success{
+              display: inline-block;
+              vertical-align: top;
+              color: $white;
+              float:right;
+              margin-right: 10px;
+              text-decoration: none;
+            }
+          }
+          div.progress_block{
+            position: absolute;
+            top:0;
+            left:0;
+            width: 100%;
+            height: 100%;
+            &.-uploading{
+              background-color: hsl(135, 80%, 41%);
+            }
+            &.-failing{
+              background-color: hsl(0, 98%, 73%);
+            }
           }
         }
       }
