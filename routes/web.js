@@ -5,20 +5,22 @@ var Home = require(CONFIG.path.controllers + '/home.js')
 var User = require(CONFIG.path.controllers + '/user.js')
 var Announcement = require(CONFIG.path.controllers + '/announcement.js')
 var Page = require(CONFIG.path.controllers + '/page.js')
+var File = require(CONFIG.path.controllers + '/file.js')
 
 module.exports = function(app){
 
 
   var options = {}
 
-  app.group('/', (app) => {
-    // Home
-    app.get('/', Home.index(options))
+  // Home
+  app.get('/', Home.index(options))
 
-    app.get('/user/login', User.login(options))
+  app.group('/user', (app) => {
 
-    // 測試
-    app.post('/image-upload', Home.image_upload(options))
+
+    app.get('/login', User.login(options))
+
+
 
     /*
     // User
@@ -30,6 +32,15 @@ module.exports = function(app){
       app.get('/logout', User.logout(options))
     })
     */
+  })
+
+  // 測試
+  app.post('/image-upload', Home.image_upload(options))
+
+
+  app.group('/f', (app) => {
+    // 獨立檔案
+    app.get('/abc', File.item(options))
   })
 
   app.group('/announcement', (app) => {

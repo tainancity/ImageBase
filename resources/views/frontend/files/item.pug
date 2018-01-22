@@ -1,0 +1,98 @@
+extends ../layouts/master
+
+block append page_title
+  title=  '圖片標題' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/files/item.css') rel='stylesheet')
+
+block append body_start_tag
+  //- 分享的 library
+  include ../partials/share.pug
+
+block append content
+  section.pic_sec
+    div.container
+      div.row
+        div.col
+          div.title_block_parent
+            div.title_block
+              h1.title1 圖片標題
+      div.row
+        div.col.col-md-8
+          figure: img(src='//via.placeholder.com/1650x1100')
+          div.meta_list_block
+            ul.meta_list
+              li
+                span.icon_span: i.fas.fa-th-large
+                span.meta_item 分類：
+              li
+                span.icon_span: i.fas.fa-eye
+                span.meta_item 瀏覽人次：
+              li
+                span.icon_span: i.fas.fa-sitemap
+                span.meta_item 局處：
+              li
+                span.icon_span: i.fas.fa-clock
+                span.meta_item 上傳時間：
+              li
+                span.icon_span: i.fas.fa-crosshairs
+                span.meta_item 圖片尺吋：
+              li
+                span.icon_span: i.fas.fa-file-alt
+                span.meta_item 圖片格式：
+            ul.meta_list
+              li
+                span.icon_span: i.fas.fa-th-large
+                span.meta_item 分類：
+              li
+                span.icon_span: i.fas.fa-th-large
+                span.meta_item 分類：
+          div.tab_block
+            ul.tag_list
+              li
+                a.tagl_link(href='#')
+                  span.icon_span: i.fas.fa-tag
+                  span.tag_text 標籤A
+              li
+                a.tagl_link(href='#')
+                  span.icon_span: i.fas.fa-tag
+                  span.tag_text 標籤A
+        div.col.col-md-4
+          div.right_block
+            div.share_block
+              ul.share_list
+                li
+                  div.fb-like(data-href=current_url data-action='like' data-layout='button_count')
+                li
+                  div.g-plus(data-href=current_url data-action='share' data-annotation='vertical-bubble')
+            div.link_block
+              h2.title2
+                span.icon_span: i.fas.fa-link
+                span.title_text 圖片短網址
+              div.short_link_block
+                div.with_copy
+                  input.short_link(type='text' value=current_url disabled)
+                  button.btn_copy(type='button')
+                    i.fas.fa-copy
+              h2.title2
+                span.icon_span: i.fas.fa-code
+                span.title_text 圖片內嵌與預覽
+              div.iframe_block
+                div.with_copy
+                  textarea.iframe_text(rows='2' disabled)
+                    = '<iframe src="' + current_url + '"></iframe>'
+                  button.btn_copy(type='button')
+                    i.fas.fa-copy
+              
+            
+        
+              
+    
+
+
+block append body_end_others
+  script.
+    $(function(){
+      
+    });
