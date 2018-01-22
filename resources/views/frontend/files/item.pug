@@ -88,27 +88,41 @@ block append content
                 span.title_text 圖片短網址
               div.short_link_block
                 div.with_copy
-                  input.short_link(type='text' value=current_url disabled)
-                  button.btn_copy(type='button')
+                  input.short_link(type='text' value=current_url readonly='readonly')
+                  button.btn_copy(type='button' id='btn_copy_short_link' data-copytarget='copyTargetForShortLink')
                     i.fas.fa-copy
+                    span.copy_hint 已複製
               h2.title2
                 span.icon_span: i.fas.fa-code
                 span.title_text 圖片內嵌與預覽
               div.iframe_block
                 div.with_copy
-                  textarea.iframe_text(rows='2' disabled)
+                  textarea.iframe_text(rows='2' readonly='readonly')
                     = '<iframe src="' + current_url + '"></iframe>'
-                  button.btn_copy(type='button')
+                  button.btn_copy(type='button' id='btn_copy_iframe' data-copytarget='copyTargetForIframe')
                     i.fas.fa-copy
-              
-            
-        
-              
-    
-
+                    span.copy_hint 已複製
+  
+  textarea#copyTargetForShortLink(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+    = current_url
+  textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+    = '<iframe src="' + current_url + '"></iframe>'
 
 block append body_end_others
   script.
     $(function(){
+      $('input.short_link, textarea.iframe_text').on('click', function(){
+        $(this).select();
+      });
+      
+      $("button#btn_copy_short_link, button#btn_copy_iframe").on("click", function(){
+        $(this).addClass("add_bg");
+        var that = $(this);
+        setTimeout(function(){
+          $(that).removeClass("add_bg");
+        }, 1000);
+        allJS.copyToClipboard( $("#" + $(this).attr("data-copytarget"))[0] );
+        $("textarea#" + $(this).attr("data-copytarget")).blur();
+      });
       
     });

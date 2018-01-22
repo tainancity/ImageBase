@@ -172,16 +172,6 @@ section.pic_sec{
             font-size: .875rem;
             background-color: $white_level_2;
           }
-          button.btn_copy{
-            border:0;
-            background: none;
-            position: absolute;
-            right:0;
-            top:2px;
-            color: $black_level_6;
-            cursor: pointer;
-            outline: none;
-          }
         }
 
       }
@@ -196,18 +186,39 @@ section.pic_sec{
             font-size: .875rem;
             background-color: $white_level_2;
           }
-          button.btn_copy{
-            border:0;
-            background: none;
-            position: absolute;
-            right:0;
-            top:2px;
-            color: $black_level_6;
-            cursor: pointer;
-            outline: none;
-          }
+
         }
       }
+    }
+    button.btn_copy{
+      border:0;
+      background: none;
+      position: absolute;
+      right:0;
+      top:2px;
+      color: $black_level_6;
+      cursor: pointer;
+      outline: none;
+      &.add_bg{
+        span.copy_hint{
+          opacity: 1;
+        }
+      }
+      span.copy_hint{
+        opacity: 0;
+        position: absolute;
+        top:-24px;
+        left: -5px;
+        background-color: $white;
+        color: $black;
+        font-size: .75rem;
+        white-space: nowrap;
+        border-radius: 3px;
+        padding: 1px 2px;
+        transition: opacity 1s;
+      }
+
+
     }
   }
 }
