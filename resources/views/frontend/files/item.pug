@@ -17,9 +17,25 @@ block append content
         div.col
           div.title_block_parent
             div.title_block
+              div.hint_block
+                //-
+                  p.f_type
+                    span.icon_span: i.fas.fa-eye
+                    span.icon_text 公開
+                //-
+                  p.f_type
+                    span.icon_span: i.fas.fa-share-alt
+                    span.icon_text 共用
+                p.f_type
+                  span.icon_span: i.fas.fa-eye-slash
+                  span.icon_text 隱藏
+                a.edit_link(href='#')
+                  i.fas.fa-pencil-alt
+                  span.icon_text 後台編輯
+              
               h1.title1 圖片標題
       div.row
-        div.col.col-md-8
+        div.col-sm-12.col-md-8
           figure: img(src='//via.placeholder.com/1650x1100')
           div.meta_list_block
             ul.meta_list
@@ -58,7 +74,7 @@ block append content
                 a.tagl_link(href='#')
                   span.icon_span: i.fas.fa-tag
                   span.tag_text 標籤A
-        div.col.col-md-4
+        div.col-sm-12.col-md-4
           div.right_block
             div.share_block
               ul.share_list

@@ -10,12 +10,55 @@ section.pic_sec{
     border-bottom: 1px solid $white;
     margin-bottom: 20px;
     div.title_block{
+      position: relative;
       h1.title1{
         color: $white;
         font-weight: normal;
         margin:0 0 5px 0;
         font-size: 1.125rem;
         padding: 0;
+      }
+      div.hint_block{
+        display: inline-block;
+        position: absolute;
+        right:0;
+        top:-3px;
+        z-index: 2;
+        p.f_type{
+          color: $orange;
+          display: inline-block;
+          margin:0;
+          vertical-align: middle;
+          font-size: .875rem;
+          span.icon_span{
+            display: inline-block;
+            margin-right: 5px;
+          }
+          span.icon_text{
+            display: inline-block;
+          }
+        }
+        a.edit_link{
+          display: inline-block;
+          vertical-align: middle;
+          color: $blue_level_1;
+          margin-left: 10px;
+          padding-left: 5px;
+          padding-right: 5px;
+          position: relative;
+          border:1px solid $blue_level_1;
+          border-radius: 3px;
+          font-size: .875rem;
+          &:hover{
+            background-color: $blue_level_2;
+            border:1px solid $blue_level_2;
+            color: $white;
+          }
+          span.icon_text{
+            display: inline-block;
+            margin-left:5px;
+          }
+        }
       }
     }
   }
@@ -76,6 +119,11 @@ section.pic_sec{
   }
 
   div.right_block{
+    @media screen and (max-width: 767px){
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid $white_level_2;
+    }
     div.share_block{
       ul.share_list{
         margin:0;
