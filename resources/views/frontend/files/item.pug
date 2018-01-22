@@ -92,6 +92,8 @@ block append content
                   button.btn_copy(type='button' id='btn_copy_short_link' data-copytarget='copyTargetForShortLink')
                     i.fas.fa-copy
                     span.copy_hint 已複製
+                  textarea#copyTargetForShortLink(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+                    = current_url
               h2.title2
                 span.icon_span: i.fas.fa-code
                 span.title_text 圖片內嵌與預覽
@@ -102,11 +104,9 @@ block append content
                   button.btn_copy(type='button' id='btn_copy_iframe' data-copytarget='copyTargetForIframe')
                     i.fas.fa-copy
                     span.copy_hint 已複製
+                  textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+                    = '<iframe src="' + current_url + '"></iframe>'
   
-  textarea#copyTargetForShortLink(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
-    = current_url
-  textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
-    = '<iframe src="' + current_url + '"></iframe>'
 
 block append body_end_others
   script.
