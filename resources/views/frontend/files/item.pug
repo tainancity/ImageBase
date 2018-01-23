@@ -107,7 +107,7 @@ block append content
                   textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
                     = '<iframe src="' + current_url + '" width="100%" frameborder="0" height="300"></iframe>'
             div.iframe_preview
-              iframe(src='http://localhost:3001/if/abc' width='100%' frameborder='0' height='300')
+              iframe(src=config.appenv.domain + '/if/abc' width='100%' frameborder='0' height='300')
   
 
 block append body_end_others
