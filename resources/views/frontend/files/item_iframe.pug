@@ -1,0 +1,22 @@
+extends ../layouts/empty
+
+block append page_title
+  title=  '圖片標題' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/files/item_iframe.css') rel='stylesheet')
+
+block append content
+  article.pic_article
+    header.pic_h
+      h1.title1 圖片標題
+    section.pic_s
+      figure: img(src='//via.placeholder.com/1650x1100')
+    footer.pic_f
+      a.link(href=config.appenv.domain target='_blank')= config.app.sitename
+    
+  
+
+block append body_end_others
+  script.
+    $(function(){});

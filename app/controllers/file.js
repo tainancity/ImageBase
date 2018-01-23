@@ -7,3 +7,9 @@ exports.item = function(options) {
     res.render('frontend/files/item')
   }
 }
+
+exports.item_iframe = function(options){
+  return function(req, res) {
+    res.render('frontend/files/item_iframe')
+  }
+}

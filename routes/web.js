@@ -43,6 +43,11 @@ module.exports = function(app){
     app.get('/abc', File.item(options))
   })
 
+  app.group('/if', (app) => {
+    // iframe
+    app.get('/abc', File.item_iframe(options))
+  })
+
   app.group('/announcement', (app) => {
     // 公告列表
     app.get('/list', Announcement.list(options))

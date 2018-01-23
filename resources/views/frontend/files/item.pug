@@ -100,12 +100,14 @@ block append content
               div.iframe_block
                 div.with_copy
                   textarea.iframe_text(rows='2' readonly='readonly')
-                    = '<iframe src="' + current_url + '"></iframe>'
+                    = '<iframe src="' + current_url + '" width="100%" frameborder="0" height="300"></iframe>'
                   button.btn_copy(type='button' id='btn_copy_iframe' data-copytarget='copyTargetForIframe')
                     i.fas.fa-copy
                     span.copy_hint 已複製
                   textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
-                    = '<iframe src="' + current_url + '"></iframe>'
+                    = '<iframe src="' + current_url + '" width="100%" frameborder="0" height="300"></iframe>'
+            div.iframe_preview
+              iframe(src='http://localhost:3001/if/abc' width='100%' frameborder='0' height='300')
   
 
 block append body_end_others
