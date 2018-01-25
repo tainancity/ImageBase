@@ -6,6 +6,7 @@ var User = require(CONFIG.path.controllers + '/user.js')
 var Announcement = require(CONFIG.path.controllers + '/announcement.js')
 var Page = require(CONFIG.path.controllers + '/page.js')
 var File = require(CONFIG.path.controllers + '/file.js')
+var Search = require(CONFIG.path.controllers + '/search.js')
 
 module.exports = function(app){
 
@@ -51,6 +52,11 @@ module.exports = function(app){
   app.group('/announcement', (app) => {
     // 公告列表
     app.get('/list', Announcement.list(options))
+  })
+
+  app.group('/search', (app) => {
+    // 搜尋
+    app.get('/', Search.index(options))
   })
 
   app.group('/pages', (app) => {
