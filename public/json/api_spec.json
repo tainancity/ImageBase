@@ -2,13 +2,24 @@
   "swagger": "2.0",
   "info": {
     "title": "圖片API - 臺南市政府圖片資料庫平台",
-    "description": "提供圖片 API，包含：取得、新增、更新、刪除。",
+    "description": "提供圖片 API，包含：取得、新增、更新、刪除。\n取得 API Key 才能使用。",
     "version": "1.0.0"
   },
   "schemes": ["https"],
   "basePath": "/api",
   "produces": ["application/json"],
-
+  "securityDefinitions": {
+    "APIKeyAuth": {
+      "type": "apiKey",
+      "in": "query",
+      "name": "api_key"
+    }
+  },
+  "security": [
+    {
+      "APIKeyAuth": []
+    }
+  ],
   "paths": {
     "/products": {
       "get": {
