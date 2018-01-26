@@ -22,6 +22,7 @@ section.announcement_sec{
       display: inline-block;
       vertical-align: top;
       width: calc(100% - 28px - 22px);
+      overflow: hidden;
       ul.announcement_list{
         list-style: none;
         margin:0;

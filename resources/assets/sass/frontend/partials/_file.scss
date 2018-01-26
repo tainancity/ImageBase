@@ -16,13 +16,15 @@ div.each_file{
     a.title_link{
       color: $white;
       width: calc(100% - 52px);
-      /*display: inline-block;*/
 
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
       max-height:50px;
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        display: block;
+      }
       &:hover{
         text-decoration: none;
       }
