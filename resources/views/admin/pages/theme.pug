@@ -1,0 +1,18 @@
+extends ../layouts/web-cloud
+
+block append head_end_tag_sl
+  link(href=asset_path('css/web-cloud/pages/theme.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-sm-4
+          label.theme_b
+            span.pic
+              img(src=asset_path('images/themes/photo/index.png'))
+            input.check_radio(type='radio' checked)
+          
+
+  
+block append body_end_others_sl

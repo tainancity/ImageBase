@@ -1,0 +1,37 @@
+//-
+  sidebar
+aside.sidebar-container
+  .brand-header
+    .float-left.pt-4.text-muted.sidebar-close
+      em.ion-arrow-left-c.icon-lg
+    a.brand-header-logo(href=url(''))
+      span.brand-header-logo-text 後台-臺南市政府圖片資料庫平台
+  .sidebar-content
+    .sidebar-toolbar
+      .sidebar-toolbar-background
+      .sidebar-toolbar-content.text-center
+        a(href=url(''))
+          img.rounded-circle.thumb64(src='//via.placeholder.com/64x64')
+        .mt-3
+          .lead nickname
+    nav.sidebar-nav
+      ul
+        li
+          .sidebar-nav-heading 網站管理
+        li
+          a(href='#')
+            span.float-right.nav-caret
+              i.far.fa-chevron-right
+            span.float-right.nav-label
+            span.nav-icon
+              i.far.fa-file-alt
+            span 頁面管理
+          ul#user.sidebar-subnav
+            li
+              a(href='#')
+                span.float-right.nav-label
+                span 子頁1
+            li
+              a(href='#')
+                span.float-right.nav-label
+                span 子頁2

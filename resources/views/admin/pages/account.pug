@@ -1,0 +1,45 @@
+extends ../layouts/admin
+
+block append page_title
+  title 帳戶資訊
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/pages/account.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 帳戶資訊
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='#')
+                input(type='hidden' name='_method' value='put')
+                //-
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 暱稱
+                    .col-lg-10
+                      input.form-control(type='text' name='nickname' required value='暱稱')
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label Email
+                    .col-lg-10
+                      input.form-control(type='text' name='email' required value='email')
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      button.btn.btn-outline-primary(type='submit') 更新
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl

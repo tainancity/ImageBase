@@ -8,6 +8,8 @@ var Page = require(CONFIG.path.controllers + '/page.js')
 var File = require(CONFIG.path.controllers + '/file.js')
 var Search = require(CONFIG.path.controllers + '/search.js')
 
+var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
+
 module.exports = function(app){
 
 
@@ -65,6 +67,24 @@ module.exports = function(app){
 
     // 維護中
     app.get('/maintain', Page.maintain(options))
+  })
+
+
+  // admin
+  app.group('/admin', (app) => {
+    //app.use(Auth.is_auth(app))
+    app.get('/', AdminAccount.index(options))
+
+    /*
+    app.get('/account', Admin.account(options))
+    app.put('/account_info', Admin.account_info(options))
+    app.put('/account_company', Admin.account_company(options))
+    app.put('/account_password_modify', Admin.account_password_modify(options))
+
+    app.get('/pricing', Admin.pricing(options))
+
+    app.get('/theme', Admin.theme(options))
+    */
   })
 
 

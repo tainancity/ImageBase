@@ -1,0 +1,20 @@
+extends ../layouts/web-cloud
+
+block append head_end_tag_sl
+  link(href=asset_path('css/web-cloud/pages/dashboard.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          .welcome
+            .jumbotron.bg-gradient-primary.text-white
+              .container
+                h1= i18n('webcloud_dashboard.hi_auth_user_name', {"nickname": decrypt(auth.user.nickname)})
+                p.para !{i18n('webcloud_dashboard.hi_desc')}
+                //-
+                  p
+                    a.btn.btn-primary.btn-lg(href='#', role='button') Learn more
+  
+block append body_end_others_sl

@@ -1,0 +1,35 @@
+header.header-container
+  nav
+    ul.hidden-lg-up
+      li
+        a.sidebar-toggler.menu-link.menu-link-close(href='#')
+          span
+            em
+    ul.hidden-xs-down
+      li
+        a.covermode-toggler.menu-link.menu-link-close(href='#')
+          span
+            em
+    h2.header-title 後台
+    //-
+      ul.float-right
+        li.dropdown
+          a.dropdown-toggle.has-badge(href='#', data-toggle='dropdown')
+            img.header-user-image(src='//via.placeholder.com/60x60', alt='測試')
+            //-
+              sup.badge.bg-danger 3
+          .dropdown-menu.dropdown-menu-right.dropdown-scale
+            h6.dropdown-header 使用者選單
+            //-
+              a.dropdown-item(href='#')
+                span.float-right.badge.badge-primary 4
+                em.ion-ios-email-outline.icon-lg.text-primary
+                | Messages
+              a.dropdown-item(href='#')
+                em.ion-ios-gear-outline.icon-lg.text-primary
+                | Settings
+            .dropdown-divider(role='presentation')
+            a.dropdown-item(href=url('/user/logout'))
+              em.text-primary
+                i.far.fa-sign-out
+              | 登出

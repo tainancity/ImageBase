@@ -1,0 +1,18 @@
+label.theme_b{
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  border:1px solid black;
+  border-radius: 5px;
+  span.pic{
+    display: block;
+    border-bottom:1px solid black;
+    > img{
+      width: 100%;
+    }
+  }
+  input.check_radio{
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}

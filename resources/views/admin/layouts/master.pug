@@ -1,0 +1,20 @@
+doctype html
+html(lang=CurrentLang)
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, user-scalable=no, user-scalable=0')
+    block page_title
+    //-
+      link(rel='alternate' hreflang='en' href='')
+    
+    block head_end_tag
+  body(class='theme-default')
+    block body_start_tag
+    div#main
+      block content
+    block body_end_tag
+      
+    //-
+      script(src=asset_path('js/vendor/v.js'))
+    block body_end_others
