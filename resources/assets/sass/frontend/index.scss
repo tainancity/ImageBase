@@ -61,6 +61,9 @@ section.announcement_sec{
 }
 
 section.slick_slider_sec{
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    display: block;
+  }
   > div.container{
     @media screen and (max-width: 575px){
       padding:0;
