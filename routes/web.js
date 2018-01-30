@@ -12,6 +12,17 @@ var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
 
 module.exports = function(app){
 
+  // Custom Basic Auth
+  if(CONFIG.appenv.env != 'production'){
+    app.use(function(req, res, next){
+      if(req.cookies.basic_auth == '1'){
+        next()
+      }else{
+        //res.cookie('basic_auth', '1')
+        res.render('frontend/auth/basic_auth_custom')
+      }
+    })
+  }
 
   var options = {}
 
