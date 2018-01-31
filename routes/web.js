@@ -1,5 +1,6 @@
 var CONFIG = require('../app/config/global.js')
 var Auth = require(CONFIG.path.middlewares + '/auth.js')
+var Basic_Auth = require(CONFIG.path.middlewares + '/basic_auth.js')
 
 var Home = require(CONFIG.path.controllers + '/home.js')
 var User = require(CONFIG.path.controllers + '/user.js')
@@ -14,14 +15,8 @@ module.exports = function(app){
 
   // Custom Basic Auth
   if(CONFIG.appenv.env != 'production'){
-    app.use(function(req, res, next){
-      if(req.cookies.basic_auth == '1'){
-        next()
-      }else{
-        //res.cookie('basic_auth', '1')
-        res.render('frontend/auth/basic_auth_custom')
-      }
-    })
+    app.post('/basic_auth', Basic_Auth.basic_auth_post())
+    app.use(Basic_Auth.basic_auth())
   }
 
   var options = {}

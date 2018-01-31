@@ -12,10 +12,11 @@ block append head_end_tag
     link(href=asset_path('css/frontend/auth/basic_auth_custom.css') rel='stylesheet')
 
 block append content
-  form(method='post' action='')
+  form(method='post' action='/basic_auth')
+    input(type='hidden' name='_csrf' value=csrfToken)
     input(type='text' name='basic_username' placeholder='帳號')
     br
-    input(type='text' name='basic_password' placeholder='密碼')
+    input(type='password' name='basic_password' placeholder='密碼')
     br
     button(type='submit') 驗證
     
