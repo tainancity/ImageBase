@@ -58,30 +58,20 @@ app.use(flash({ locals: 'flash' }))
 
 /*
 app.get('/', function (req, res) {
-  res.send('Hello World!')
-  var soap = require('soap');
-  var url = 'https://login.tainan.gov.tw/ws/WS_SSO.asmx?WSDL';
-
+  var soap = require('soap')
+  var url = 'https://login.tainan.gov.tw/ws/WS_SSO.asmx?WSDL'
   soap.createClient(url, function(err, client) {
-    console.log(client);
-    var args = {strToken: 'abcde', strApCode: 'picalpha', strAcct: 'logintest', strPwd: 'GINTE@tn'};
-
-    //(string strToken, string strApCode, string strAcct, string strPwd)
-
+    var args = {strToken: 'abcde', strApCode: 'picalpha', strAcct: 'logintest', strPwd: 'GINTE@tn'}
     client.SSO_Auth_Validate(args, function(err, result, raw, soapHeader) {
       // result is a javascript object
-      console.log(result)
       // raw is the raw response
       // soapHeader is the response soap header as a javascript object
-      //console.log(result.value.$value);
-      //res.end(result.value.$value)
+      console.log(result.SSO_Auth_ValidateResult)
+      res.end()
     })
-
   })
 })
 */
-
-
 
 // ========== Custom Middlewares ========== //
 app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app)) // Disable trailing slash
