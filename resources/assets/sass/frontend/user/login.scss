@@ -18,6 +18,38 @@ section.login_sec{
     @media screen and (max-width: 575px){
       width: calc(100% - 30px);
     }
+    div.login_result_hint{
+      position: absolute;
+      top:0;
+      left:0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      background-color: hsla(0, 0%, 0%, .5);
+      display: none;
+      &.-show{
+        display: block;
+      }
+      div.result_info{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+        color: $orange;
+        width:100%;
+        text-align: center;
+        span.loading_icon{
+
+        }
+        p.verified_message{
+          margin:5px 0 0 0;
+          text-align: center;
+          font-size: 1.25rem;
+        }
+      }
+
+    }
     h1.title1{
       font-size: 1.125rem;
       font-weight: normal;

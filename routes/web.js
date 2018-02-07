@@ -25,22 +25,9 @@ module.exports = function(app){
   app.get('/', Home.index(options))
 
   app.group('/user', (app) => {
-
-
-    app.get('/login', User.login(options))
-
-
-
-    /*
-    // User
-    app.group('/user', (app) => {
-      app.get('/register', User.register(options))
-      app.post('/register_h', User.register_h(options))
-      app.get('/login', User.login(options))
-      app.post('/login_h', User.login_h(options))
-      app.get('/logout', User.logout(options))
-    })
-    */
+    app.get('/login', Auth.is_not_auth(options), User.login(options))
+    app.post('/login', User.login_post(options))
+    app.get('/logout', User.logout(options))
   })
 
   // 測試

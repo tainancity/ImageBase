@@ -1,7 +1,7 @@
 extends ../layouts/master
 
 block append page_title
-  title= config.app.sitename
+  title= '登入 - ' + config.app.sitename
 
 block append head_end_tag
   link(href=asset_path('css/frontend/user/login.css') rel='stylesheet')
@@ -10,22 +10,55 @@ block append content
   section.login_sec
     div.login_block
       h1.title1 帳號登入
-      form.login_form(action='#' method='post')
+      form.login_form(action='/user/login' method='post')
         input(type='hidden' name='_csrf' value=csrfToken)
         div.input_group_block
           div.input_group
             span.icon_span: i.fas.fa-user
-            input.text_input(type='text' placeholder='使用者帳號')
+            input.text_input(type='text' placeholder='使用者帳號' name='pid')
         div.input_group_block
           div.input_group
             span.icon_span: i.fas.fa-lock
-            input.text_input(type='password' placeholder='密碼')
+            input.text_input(type='password' placeholder='密碼' name='password')
         div.action_block
           button.btn_submit(type='submit') 登入
+      div.login_result_hint
+        div.result_info
+          span.loading_icon: i.fas.fa-spinner.fa-5x.fa-spin
+          p.verified_message
 
 
 block append body_end_others
   script.
     $(function(){
-      
+      $('button.btn_submit').on('click', function(e){
+        e.preventDefault();
+        var login_result_hint = $(this).closest('div.login_block').find('div.login_result_hint');
+        var verified_message = $(this).closest('div.login_block').find('p.verified_message');
+        $(login_result_hint).addClass('-show');
+        
+        var post_data = $(this).closest('form').serialize();
+        $.ajax({
+          url: $(this).closest('form').attr('action'),
+          type: 'POST',
+          data: post_data,
+          dataType: 'json',
+          success: function(data){
+            //console.log(data)
+            $(verified_message).html(data.VerifiedMessage);
+            if(data.VerifiedResult){
+              setTimeout(function(){
+                window.location = "/";
+              }, 1000);
+            }else{
+              setTimeout(function(){
+                $(login_result_hint).removeClass('-show');
+                $(verified_message).html('');
+              }, 1500);
+            }
+            
+          }
+        });
+        
+      });
     });

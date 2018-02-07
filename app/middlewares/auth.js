@@ -8,7 +8,16 @@ exports.is_auth = function(app){
     if(req.session.u_id){ // Login
       next()
     }else{ // Not Login
-      res.send('目前尚未登入！')
+      res.redirect('/')
+    }
+  }
+}
+exports.is_not_auth = function(app){
+  return function(req, res, next) {
+    if(req.session.u_id){ // Login
+      res.redirect('/')
+    }else{ // Not Login
+      next()
     }
   }
 }
@@ -17,13 +26,14 @@ exports.is_auth = function(app){
 exports.setting_locals = function(app){
   return function(req, res, next) {
     app.locals.auth = {}
-    app.locals.auth.is_auth = req.session.u_id ? false : true
+    app.locals.auth.is_auth = req.session.u_id ? true : false
     if(req.session.u_id){
       app.locals.auth.u_id = req.session.u_id
       userModel.getOne('u_id', req.session.u_id, function(results){
         app.locals.auth.user = results[0]
         next()
       })
+      //next()
     }else{
       next()
     }

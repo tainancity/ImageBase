@@ -14,10 +14,12 @@ nav.action_list_nav
       li
         a(href='#')
           span.icon_span
-            i.fas.fa-user-circle.fa-lg
+            //-
+              i.fas.fa-user-circle.fa-lg
+            img.portrait_pic(src=auth.user.portrait_url)
           | Carlos
       li
-        a(href='#' class='logout') 登出
+        a(href='/user/logout' class='logout') 登出
     else
       li
         a(href='/user/login')
