@@ -9,6 +9,7 @@ var functions = require(CONFIG.path.helpers + '/functions.js')
 var u_id_duplicate = false
 var unique_id = functions.generate_u_id()
 var insert_obj = {}
+var update_obj = {}
 
 var have_the_same_u_id = function(u_id, cb){
   userModel.getOne('u_id', u_id, function(results_check){
@@ -79,7 +80,7 @@ exports.login_post = function(options) {
   UserTelPersonal: '',
   UserEmail: 'logintest@mail.tainan.gov.tw' }
         */
-        
+
         // console.log(result.SSO_Auth_ValidateResult)
         if(result.SSO_Auth_ValidateResult.VerifiedResult){
           insert_obj = {
@@ -94,9 +95,19 @@ exports.login_post = function(options) {
             "tel_office": result.SSO_Auth_ValidateResult.UserTelOffice,
             "tel_personal": result.SSO_Auth_ValidateResult.UserTelPersonal
           }
+          update_obj = {
+            "organ_id": 1, // result.SSO_Auth_ValidateResult.UserOrganId
+            "name": result.SSO_Auth_ValidateResult.UserName,
+            "email": result.SSO_Auth_ValidateResult.UserEmail,
+            "job_title": result.SSO_Auth_ValidateResult.UserJobTitle,
+            "portrait_url": result.SSO_Auth_ValidateResult.UserPortraitUrl,
+            "tel_office": result.SSO_Auth_ValidateResult.UserTelOffice,
+            "tel_personal": result.SSO_Auth_ValidateResult.UserTelPersonal
+          }
 
           userModel.getOne('pid', result.SSO_Auth_ValidateResult.VerifiedAccount, function(results){
             if(results.length == 1){ // 帳號已存在於 db
+              userModel.update(update_obj, {"pid": result.SSO_Auth_ValidateResult.VerifiedAccount}, function(){})
               req.session.u_id = results[0].u_id
               res.json(result.SSO_Auth_ValidateResult)
             }else{
