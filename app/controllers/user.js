@@ -86,7 +86,7 @@ exports.login_post = function(options) {
           insert_obj = {
             "u_id": "",
             "role_id": 2,
-            "organ_id": 1, // result.SSO_Auth_ValidateResult.UserOrganId
+            "organ_id": result.SSO_Auth_ValidateResult.UserOrganId,
             "pid": result.SSO_Auth_ValidateResult.VerifiedAccount,
             "name": result.SSO_Auth_ValidateResult.UserName,
             "email": result.SSO_Auth_ValidateResult.UserEmail,

@@ -1,0 +1,40 @@
+extends ../layouts/admin
+
+block append page_title
+  title 組織部門匯入
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/organization/import_data.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 組織部門匯入
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='/admin/organization/import_data_post?_csrf=' + csrfToken enctype='multipart/form-data')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label CSV 檔匯入
+                    .col-lg-10
+                      input.form-control(type='file' name='organization_csv' required value='暱稱')
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      button.btn.btn-outline-primary(type='submit') 匯入
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl

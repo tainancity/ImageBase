@@ -10,6 +10,7 @@ var File = require(CONFIG.path.controllers + '/file.js')
 var Search = require(CONFIG.path.controllers + '/search.js')
 
 var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
+var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 
 module.exports = function(app){
 
@@ -67,6 +68,8 @@ module.exports = function(app){
   app.group('/admin', (app) => {
     //app.use(Auth.is_auth(app))
     app.get('/', AdminAccount.index(options))
+    app.get('/organization/import_data', AdminOrganization.import_data(options))
+    app.post('/organization/import_data_post', AdminOrganization.import_data_post(options))
 
     /*
     app.get('/account', Admin.account(options))

@@ -27,15 +27,7 @@ exports.up = function(db) {
       },
       mapping: 'id'
     }},
-    organ_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
-      name: 'fk_organ_id_in_users',
-      table: 'organizations',
-      rules: {
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT'
-      },
-      mapping: 'id'
-    }}, // 使用者單位代碼
+    organ_id: { type: 'string', notNull: false}, // 使用者單位代碼
     pid: { type: 'string', unique: true, length: 191 },   // 使用者帳號
     name: { type: 'string' },                             // 使用者姓名
     email: { type: 'string', unique: true, length: 191 }, // 使用者email
