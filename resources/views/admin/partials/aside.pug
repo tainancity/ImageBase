@@ -13,7 +13,7 @@ aside.sidebar-container
         a(href=url(''))
           img.rounded-circle.thumb64(src=auth.user.portrait_url)
         .mt-3
-          .lead= auth.user.name
+          .lead= decrypt(auth.user.name)
     nav.sidebar-nav
       ul
         li
@@ -23,7 +23,7 @@ aside.sidebar-container
             span.float-right.nav-label
             span.nav-icon
               em.ion-clipboard
-            span 會員(曾經登入過)
+            span 公務帳號(曾經登入過)
         li
           a(href='/admin/organization/import_data')
             span.float-right.nav-label

@@ -1,7 +1,7 @@
 extends ../layouts/admin
 
 block append page_title
-  title 會員
+  title 公務帳號
 
 block append head_end_tag_sl
   link(href=asset_path('css/admin/management/all_members.css') rel='stylesheet')
@@ -11,19 +11,19 @@ block append content_sl
     .container-fluid
       .row
         .col-xl-12
-          h5.mt-0 會員(曾經登入過)
+          h5.mt-0 公務帳號(曾經登入過，才會記錄於此)
           //-
             p.mb-4 text
           div.cardbox
             div.cardbox-body
               div.table-responsive
-                table.table
+                table.table.custom_table
                   thead
                     tr
                       th #
                       th 帳號
                       th 姓名
-                      th 所屬組織
+                      th 所屬組織(代號)
                       th email
                       th 職稱
                       th 辦公電話
@@ -33,12 +33,14 @@ block append content_sl
                       tr
                         td= index+1
                         td= item.pid
-                        td= item.name
-                        td= item.organ_id
-                        td= item.email
+                        td
+                          img(src=item.portrait_url class='portrait_url')
+                          span.name= decrypt(item.name)
+                        td= item.organ_name + '(' + item.organ_id + ')'
+                        td= decrypt(item.email)
                         td= item.job_title
-                        td= item.tel_office
-                        td= item.tel_personal
+                        td= decrypt(item.tel_office)
+                        td= decrypt(item.tel_personal)
 
               
           

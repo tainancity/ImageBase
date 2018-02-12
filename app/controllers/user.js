@@ -88,21 +88,21 @@ exports.login_post = function(options) {
             "role_id": 2,
             "organ_id": result.SSO_Auth_ValidateResult.UserOrganId,
             "pid": result.SSO_Auth_ValidateResult.VerifiedAccount,
-            "name": result.SSO_Auth_ValidateResult.UserName,
-            "email": result.SSO_Auth_ValidateResult.UserEmail,
+            "name": functions.encrypt(result.SSO_Auth_ValidateResult.UserName),
+            "email": functions.encrypt(result.SSO_Auth_ValidateResult.UserEmail),
             "job_title": result.SSO_Auth_ValidateResult.UserJobTitle,
             "portrait_url": result.SSO_Auth_ValidateResult.UserPortraitUrl,
-            "tel_office": result.SSO_Auth_ValidateResult.UserTelOffice,
-            "tel_personal": result.SSO_Auth_ValidateResult.UserTelPersonal
+            "tel_office": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelOffice),
+            "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal)
           }
-          update_obj = {
-            "organ_id": 1, // result.SSO_Auth_ValidateResult.UserOrganId
-            "name": result.SSO_Auth_ValidateResult.UserName,
-            "email": result.SSO_Auth_ValidateResult.UserEmail,
+          update_obj = { // encrypt
+            "organ_id": result.SSO_Auth_ValidateResult.UserOrganId,
+            "name": functions.encrypt(result.SSO_Auth_ValidateResult.UserName),
+            "email": functions.encrypt(result.SSO_Auth_ValidateResult.UserEmail),
             "job_title": result.SSO_Auth_ValidateResult.UserJobTitle,
             "portrait_url": result.SSO_Auth_ValidateResult.UserPortraitUrl,
-            "tel_office": result.SSO_Auth_ValidateResult.UserTelOffice,
-            "tel_personal": result.SSO_Auth_ValidateResult.UserTelPersonal
+            "tel_office": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelOffice),
+            "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal)
           }
 
           userModel.getOne('pid', result.SSO_Auth_ValidateResult.VerifiedAccount, function(results){
