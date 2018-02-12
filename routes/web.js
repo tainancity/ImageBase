@@ -66,8 +66,15 @@ module.exports = function(app){
 
   // admin
   app.group('/admin', (app) => {
-    //app.use(Auth.is_auth(app))
+    app.use(Auth.is_auth(app))
+
     app.get('/', AdminAccount.index(options))
+
+    // 會員(曾登入過)
+    app.get('/management/all_members', AdminAccount.all_members(options))
+
+
+    // 組織部門匯入
     app.get('/organization/import_data', AdminOrganization.import_data(options))
     app.post('/organization/import_data_post', AdminOrganization.import_data_post(options))
 

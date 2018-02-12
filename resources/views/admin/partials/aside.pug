@@ -19,8 +19,20 @@ aside.sidebar-container
         li
           .sidebar-nav-heading 網站管理
         li
+          a(href='/admin/management/all_members')
+            span.float-right.nav-label
+            span.nav-icon
+              em.ion-clipboard
+            span 會員(曾經登入過)
+        li
           a(href='/admin/organization/import_data')
             span.float-right.nav-label
             span.nav-icon
               em.ion-clipboard
             span 組織部門匯入
+        li
+          a(href='/user/logout')
+            span.float-right.nav-label
+            span.nav-icon
+              em.ion-clipboard
+            span 登出

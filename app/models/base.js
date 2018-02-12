@@ -39,3 +39,11 @@ exports.getOne = function(table_name, u_id_col, u_id, cb) {
   })
   //console.log(query.sql)
 }
+
+exports.getAll = function(table_name, sort_obj, cb) {
+  var query = conn.query('SELECT * FROM `' + table_name + '` ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  console.log(query.sql)
+}
