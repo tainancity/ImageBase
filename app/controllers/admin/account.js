@@ -11,20 +11,23 @@ exports.index = function(options) {
 
 exports.all_members = function(options){
   return function(req, res){
-    var sort_obj = {
-      "column": "created_at",
-      "sort_type": "DESC"
-    }
+    var sort_obj = { "column": "created_at", "sort_type": "DESC" }
     userModel.getAll(sort_obj, function(results){
-      results.forEach(function(element, index, arr) {
-        // arr 是原來的 results 陣列
-        organizationModel.getOne('organ_id', element.organ_id, function(result_organ){
-          results[index].organ_name = result_organ[0].organ_name
-          if((index+1) == arr.length){ // 當 index 執行到最後一筆時，即等於 arr.length，才回傳
-            res.render('admin/management/all_members', {members: results})
-          }
+
+      // 取得 organ_id 對應的 organ_name
+      var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
+      organizationModel.getAll(sort_obj_for_organ, function(results_organ){
+        results.forEach(function(element, index, arr) {
+          // arr 是原來的 results 陣列
+          results_organ.forEach(function(organ, i, arra_organ){
+            if(element.organ_id == organ.organ_id){
+              results[index].organ_name = organ.organ_name
+            }
+          })
         })
-      });
+        //console.log(results)
+        res.render('admin/management/all_members', {members: results})
+      })
 
     })
   }

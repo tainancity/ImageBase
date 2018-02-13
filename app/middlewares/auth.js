@@ -21,6 +21,17 @@ exports.is_not_auth = function(app){
     }
   }
 }
+exports.is_admin = function(app){
+  return function(req, res, next) {
+    userModel.getOne('u_id', req.session.u_id, function(results){
+      if(results[0].role_id == 1){ // 是 Admin
+        next()
+      }else{ // Not Admin
+        res.redirect('/')
+      }
+    })
+  }
+}
 
 // setting front-end variables
 exports.setting_locals = function(app){

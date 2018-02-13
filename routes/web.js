@@ -64,30 +64,21 @@ module.exports = function(app){
   })
 
 
-  // admin
+  // 公務帳號管理
   app.group('/admin', (app) => {
     app.use(Auth.is_auth(app))
 
     app.get('/', AdminAccount.index(options))
+  })
+  // 平台 Admin
+  app.group('/admin/management', (app) => {
+    app.use(Auth.is_admin(app))
 
-    // 會員(曾登入過)
-    app.get('/management/all_members', AdminAccount.all_members(options))
-
+    app.get('/all_members', AdminAccount.all_members(options))
 
     // 組織部門匯入
     app.get('/organization/import_data', AdminOrganization.import_data(options))
     app.post('/organization/import_data_post', AdminOrganization.import_data_post(options))
-
-    /*
-    app.get('/account', Admin.account(options))
-    app.put('/account_info', Admin.account_info(options))
-    app.put('/account_company', Admin.account_company(options))
-    app.put('/account_password_modify', Admin.account_password_modify(options))
-
-    app.get('/pricing', Admin.pricing(options))
-
-    app.get('/theme', Admin.theme(options))
-    */
   })
 
 

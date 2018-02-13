@@ -17,22 +17,28 @@ aside.sidebar-container
     nav.sidebar-nav
       ul
         li
-          .sidebar-nav-heading 網站管理
-        li
-          a(href='/admin/management/all_members')
-            span.float-right.nav-label
-            span.nav-icon
-              em.ion-clipboard
-            span 公務帳號(曾經登入過)
-        li
-          a(href='/admin/organization/import_data')
-            span.float-right.nav-label
-            span.nav-icon
-              em.ion-clipboard
-            span 組織部門匯入
+          div.sidebar-nav-heading 其它
         li
           a(href='/user/logout')
             span.float-right.nav-label
             span.nav-icon
               em.ion-clipboard
             span 登出
+        
+        //-
+         以下為管理者才看得到
+        if auth.user.role_id == 1
+          li
+            div.sidebar-nav-heading 網站管理
+          li
+            a(href='/admin/management/all_members')
+              span.float-right.nav-label
+              span.nav-icon
+                em.ion-clipboard
+              span 公務帳號(曾經登入過)
+          li
+            a(href='/admin/management/organization/import_data')
+              span.float-right.nav-label
+              span.nav-icon
+                em.ion-clipboard
+              span 組織部門匯入

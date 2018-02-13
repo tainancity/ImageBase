@@ -16,7 +16,7 @@ block append content_sl
             p.mb-4 text
           div.cardbox
             div.cardbox-body
-              form(method='post' action='/admin/organization/import_data_post?_csrf=' + csrfToken enctype='multipart/form-data')
+              form(method='post' action='/admin/management/organization/import_data_post?_csrf=' + csrfToken enctype='multipart/form-data')
                 //-
                   input(type='hidden' name='_method' value='put')
                   input(type='hidden' name='_csrf' value=csrfToken)
