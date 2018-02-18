@@ -74,7 +74,7 @@ exports.login_post = function(options) {
       "ip": req.ip
     }
 
-    logLoginModel.save(insert_log_obj, function(){
+    logLoginModel.save(insert_log_obj, function(log_login_result){
       // 測試帳： logintest
       // 測試密： GINTE@tn
       soap.createClient(url, function(err, client) {
@@ -104,7 +104,7 @@ exports.login_post = function(options) {
     UserEmail: 'logintest@mail.tainan.gov.tw' }
           */
 
-          // console.log(result.SSO_Auth_ValidateResult)
+          //console.log(result.SSO_Auth_ValidateResult)
           if(result.SSO_Auth_ValidateResult.VerifiedResult){
             insert_obj = {
               "u_id": "",
@@ -150,6 +150,18 @@ exports.login_post = function(options) {
               }
             })
           }else{
+            userModel.getOne('pid', pid, function(results){
+              if(results.length == 1){ // 帳號已存在於 db
+                insert_log_obj.verified_result = result.SSO_Auth_ValidateResult.VerifiedResult
+                insert_log_obj.verified_message = result.SSO_Auth_ValidateResult.VerifiedMessage
+                //console.log(insert_log_obj)
+                //console.log(log_login_result.insertId)
+
+                // log_login
+                insert_log_obj.user_id = results[0].id
+                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, function(){})
+              }
+            })
             res.json(result.SSO_Auth_ValidateResult)
           }
 
