@@ -47,3 +47,11 @@ exports.getAll = function(table_name, sort_obj, cb) {
   })
   //console.log(query.sql)
 }
+
+exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
+  conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}

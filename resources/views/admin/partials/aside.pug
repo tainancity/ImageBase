@@ -19,6 +19,12 @@ aside.sidebar-container
         li
           div.sidebar-nav-heading 其它
         li
+          a(href='/admin/log_login')
+            span.float-right.nav-label
+            span.nav-icon
+              em.ion-clipboard
+            span 登入歷程
+        li
           a(href='/user/logout')
             span.float-right.nav-label
             span.nav-icon
@@ -35,7 +41,13 @@ aside.sidebar-container
               span.float-right.nav-label
               span.nav-icon
                 em.ion-clipboard
-              span 公務帳號(曾經登入過)
+              span 公務帳號
+          li
+            a(href='/admin/management/log_login')
+              span.float-right.nav-label
+              span.nav-icon
+                em.ion-clipboard
+              span 所有帳號登入歷程
           li
             a(href='/admin/management/organization/import_data')
               span.float-right.nav-label

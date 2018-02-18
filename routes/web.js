@@ -11,6 +11,7 @@ var Search = require(CONFIG.path.controllers + '/search.js')
 
 var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
+var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
 
 module.exports = function(app){
 
@@ -74,7 +75,11 @@ module.exports = function(app){
   app.group('/admin/management', (app) => {
     app.use(Auth.is_admin(app))
 
+    // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))
+
+    // 登入歷程
+    app.get('/log_login', AdminLogLogin.log_login(options))
 
     // 組織部門匯入
     app.get('/organization/import_data', AdminOrganization.import_data(options))

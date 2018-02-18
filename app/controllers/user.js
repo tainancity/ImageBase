@@ -38,7 +38,7 @@ var duplicate_func = function(req, res, result){
 
       // log_login
       insert_log_obj.user_id = result.insertId
-      logLoginModel.update(insert_log_obj, {"token": insert_log_obj.token}, function(){})
+      logLoginModel.update(insert_log_obj, {"id": insert_log_obj.id}, function(){})
     })
     req.session.u_id = unique_id
     res.json(result.SSO_Auth_ValidateResult)
@@ -75,6 +75,9 @@ exports.login_post = function(options) {
     }
 
     logLoginModel.save(insert_log_obj, function(log_login_result){
+
+      insert_log_obj.id = log_login_result.insertId
+
       // 測試帳： logintest
       // 測試密： GINTE@tn
       soap.createClient(url, function(err, client) {
@@ -140,7 +143,7 @@ exports.login_post = function(options) {
 
                 // log_login
                 insert_log_obj.user_id = results[0].id
-                logLoginModel.update(insert_log_obj, {"token": generated_token}, function(){})
+                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, function(){})
 
                 res.json(result.SSO_Auth_ValidateResult)
               }else{
