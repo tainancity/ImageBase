@@ -8,16 +8,16 @@ module.exports = function(app){
 
   app.group('/api-ajax/v1.0', (app) => {
     app.get('/account-token-auth', function(req, res){
-      if(CONFIG.appenv.env == 'local'){
-        let token = req.query.token
-        if(token == 'abcde123'){
+      if(req.query.token == 'local_token'){ // 這裡的意思，表示是本機端開發所傳送的固定 'local_token'
+        //let token = req.query.token
+        if(req.query.token == 'local_token'){
           res.send("1")
           return
         }
         res.send("2")
       }else{
         logLoginModel.getOne('token', req.query.token, function(results_check){
-          if(results_check.length == 1){
+          if(results_check.length >= 1){
             res.send("1")
           }else{
             res.send("2")

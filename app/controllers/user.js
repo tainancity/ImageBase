@@ -58,8 +58,8 @@ exports.login_post = function(options) {
     var url = 'https://login.tainan.gov.tw/ws/WS_SSO.asmx?WSDL'
     var pid = req.body.pid
     var password = req.body.password
-    if(CONFIG.appenv.env == 'local'){ // 因為如果是 local 端的話，驗證回傳網址是線上的網址，所以這裡固定是寫靜態的 'abcde'
-      var generated_token = 'abcde'
+    if(CONFIG.appenv.env == 'local'){ // 因為如果是 local 端的話，驗證回傳網址是線上的網址，所以這裡固定是寫靜態的 'local_token'
+      var generated_token = 'local_token'
     }else{
       var generated_token = functions.generate_token()
     }

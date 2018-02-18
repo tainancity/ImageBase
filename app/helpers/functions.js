@@ -44,7 +44,7 @@ module.exports = {
   generate_token: function(){
     var temp_token = ""
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    for (var i = 0; i < 10; i++){
+    for (var i = 0; i < 20; i++){
       temp_token += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return temp_token
