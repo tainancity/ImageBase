@@ -40,6 +40,16 @@ module.exports = {
     return temp_id
   },
 
+  // generate token:
+  generate_token: function(){
+    var temp_token = ""
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    for (var i = 0; i < 10; i++){
+      temp_token += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return temp_token
+  },
+
   // get url language
   get_url_lang: function(original_url){
     var req_url_array = original_url.split('/')

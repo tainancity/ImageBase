@@ -17,7 +17,8 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('log_login', {
     id: { type: 'int', primaryKey: true, autoIncrement: true, unsigned: true, length: 11 },
-    user_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
+    user_id: { type: 'int', unsigned: true },
+    /*user_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
       name: 'fk_user_id_in_log_login',
       table: 'users',
       rules: {
@@ -25,7 +26,7 @@ exports.up = function(db) {
         onUpdate: 'RESTRICT'
       },
       mapping: 'id'
-    }},
+    }},*/
 
     token: { type: 'string' },                            // token
     verified_result: { type: 'boolean' },                 // 提取結果，成功為 true，失敗為false
