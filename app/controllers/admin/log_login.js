@@ -30,3 +30,32 @@ exports.log_login = function(options){
 
   }
 }
+
+exports.log_login_own = function(options){
+  return function(req, res){
+    userModel.getOne('u_id', req.session.u_id, function(result_user){
+      var sort_obj = { "column": "created_at", "sort_type": "ASC" }
+      var where_obj = { "column_name": "user_id", "operator": "=", "column_value": result_user[0].id }
+
+      logLoginModel.getAllWhere(sort_obj, where_obj, function(results){
+
+        // 取得 user 資料
+        var sort_obj_for_user = { "column": "created_at", "sort_type": "DESC" }
+        userModel.getAll(sort_obj_for_user, function(results_user){
+          results.forEach(function(element, index, arr) {
+            // arr 是原來的 results 陣列
+            results_user.forEach(function(user, i, array_users){
+              if(element.user_id == user.id){
+                results[index].pid = user.pid
+              }
+            })
+          })
+          //console.log(results)
+          res.render('admin/logs/log_login', {logs: results})
+        })
+
+      })
+    })
+
+  }
+}
