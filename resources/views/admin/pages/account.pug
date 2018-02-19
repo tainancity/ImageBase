@@ -1,7 +1,7 @@
 extends ../layouts/admin
 
 block append page_title
-  title 帳戶資訊
+  title 帳號資訊
 
 block append head_end_tag_sl
   link(href=asset_path('css/admin/pages/account.css') rel='stylesheet')
@@ -11,7 +11,7 @@ block append content_sl
     .container-fluid
       .row
         .col-xl-12
-          h5.mt-0 帳戶資訊
+          h5.mt-0 帳號資訊
           //-
             p.mb-4 text
           div.cardbox
@@ -22,19 +22,47 @@ block append content_sl
                   input(type='hidden' name='_csrf' value=csrfToken)
                 fieldset
                   .form-group.row
-                    label.col-lg-2.col-form-label 暱稱
+                    label.col-lg-2.col-form-label 是否為平台管理者
                     .col-lg-10
-                      input.form-control(type='text' name='nickname' required value='暱稱')
+                      if account.role_id == 1
+                        p.account_info 是
+                      else
+                        p.account_info 否
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 所屬組織(代號)
+                    .col-lg-10
+                      p.account_info= account.organ_name + '(' + account.organ_id + ')'
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 帳號
+                    .col-lg-10
+                      p.account_info= account.pid
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 名稱
+                    .col-lg-10
+                      p.account_info= decrypt(account.name)
                 fieldset
                   .form-group.row
                     label.col-lg-2.col-form-label Email
                     .col-lg-10
-                      input.form-control(type='text' name='email' required value='email')
+                      p.account_info= decrypt(account.email)
                 fieldset
                   .form-group.row
-                    label.col-lg-2.col-form-label
+                    label.col-lg-2.col-form-label 職稱
                     .col-lg-10
-                      button.btn.btn-outline-primary(type='submit') 更新
+                      p.account_info= account.job_title
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 辦公電話
+                    .col-lg-10
+                      p.account_info= decrypt(account.tel_office)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 個人電話
+                    .col-lg-10
+                      p.account_info= decrypt(account.tel_personal)
           
           
           //-
