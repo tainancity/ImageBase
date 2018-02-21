@@ -41,7 +41,7 @@ aside.sidebar-container
          以下為管理者才看得到
         if auth.user.role_id == 1
           li
-            div.sidebar-nav-heading 網站管理
+            div.sidebar-nav-heading 網站管理(只有平台管理者才看得到)
           li
             a(href='/admin/management/all_members')
               span.float-right.nav-label
