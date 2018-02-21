@@ -10,5 +10,17 @@ table.custom_table{
       td:nth-child(1){
       }
     }
+    td{
+      input.admin_check{
+        cursor: pointer;
+        &.-disabled{
+          cursor: not-allowed;
+        }
+      }
+      span.disabled_text{
+        font-size: .8rem;
+        color: #999999;
+      }
+    }
   }
 }
