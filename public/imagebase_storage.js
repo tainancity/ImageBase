@@ -12,6 +12,6 @@ app.get('storage_uploads', function (req, res) {
 })
 */
 
-app.listen(CONFIG.appenv.storage.port, function(){
-  console.log(app.get('env') + ': ' + CONFIG.appenv.storage.domain);
+app.listen(CONFIG.appenv.port, function(){
+  console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.storage.domain);
 })
