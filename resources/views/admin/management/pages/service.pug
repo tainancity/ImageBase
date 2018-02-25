@@ -35,6 +35,6 @@ block append body_end_others_sl
   script.
   
     CKEDITOR.replace('platform_desc', {
-      'uploadUrl': 'http://localhost:3001/image-upload?_csrf=#{csrfToken}&d=g',
+      'uploadUrl': '#{config.appenv.domain}/image-upload?_csrf=#{csrfToken}&d=g',
       'height': 360
     });
