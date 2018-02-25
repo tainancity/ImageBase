@@ -10,6 +10,7 @@ var File = require(CONFIG.path.controllers + '/file.js')
 var Search = require(CONFIG.path.controllers + '/search.js')
 
 var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
+var AdminPage = require(CONFIG.path.controllers + '/admin/page.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
 
@@ -80,6 +81,10 @@ module.exports = function(app){
 
     // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))
+
+    // 平台服務說明及儲存
+    app.get('/service', AdminPage.service(options))
+    app.post('/service_post', AdminPage.service_post(options))
 
     // 登入歷程
     app.get('/log_login', AdminLogLogin.log_login(options))

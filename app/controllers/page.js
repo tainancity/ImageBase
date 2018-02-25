@@ -1,10 +1,13 @@
-//var CONFIG = require('../config/global.js')
-//var userModel = require(CONFIG.path.models + '/user.js')
+var CONFIG = require('../config/global.js')
+var settingModel = require(CONFIG.path.models + '/setting.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 
 exports.service = function(options) {
   return function(req, res) {
-    res.render('frontend/pages/service')
+
+    settingModel.getOne('option_name', 'platform_desc', function(result){
+      res.render('frontend/pages/service', {setting: result[0]})
+    })
   }
 }
 

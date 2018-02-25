@@ -1,8 +1,9 @@
 {
   "css/admin/css/app.css": "css/admin/css/app-bd41f8c6be.css",
   "css/admin/logs/log_login.css": "css/admin/logs/log_login-e8940773ac.css",
-  "css/admin/management/all_members.css": "css/admin/management/all_members-c7b0df9107.css",
+  "css/admin/management/all_members.css": "css/admin/management/all_members-f7475055a8.css",
   "css/admin/management/log_login.css": "css/admin/management/log_login-e8940773ac.css",
+  "css/admin/management/platform_desc.css": "css/admin/management/platform_desc-60a3b42280.css",
   "css/admin/organization/import_data.css": "css/admin/organization/import_data-d41d8cd98f.css",
   "css/admin/pages/account.css": "css/admin/pages/account-46affa88cc.css",
   "css/admin/pages/dashboard.css": "css/admin/pages/dashboard-033c7fda94.css",
