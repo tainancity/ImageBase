@@ -44,7 +44,10 @@ exports.image_upload = function(options){
           })
         }else{
           //client_scp2.mkdir('/root/web/imagebase/storage/uploads/g/')
-          client_scp2.scp(form.uploadDir + '/' + file_new_name, 'root:ZJ8EHx6vRG@10.7.101.14:/root/web/imagebase/storage/uploads/g/', function(err) {
+          // 1. 建遠端資料夾
+          // 2. 遠端的設定存於 appenv.js
+          // 3. 將原圖刪除
+          client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {
             //console.log(err)
             // 移除本機的原檔
             res.json({
