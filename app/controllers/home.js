@@ -59,7 +59,7 @@ exports.image_upload = function(options){
             client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
 
               // 將原圖刪除
-              fs.rmdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(){
+              fs.rmdir(form.uploadDir, function(){
 
                 // 回傳圖片路徑
                 res.json({
@@ -67,7 +67,7 @@ exports.image_upload = function(options){
                   //"fileName": files.upload.name,
                   'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
                 })
-                
+
               })
 
             })
