@@ -5,6 +5,7 @@ var util = require('util')
 var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
+var exec = require('child_process').exec;
 
 var Client = require('scp2').Client;
 var client_scp2 = new Client({
@@ -58,7 +59,16 @@ exports.image_upload = function(options){
             // 傳圖至 Storage
             client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
 
-              // 將原圖刪除
+              // 將資料夾刪除
+              var child = exec('yes | rm -r ' + form.uploadDir, function(error, stdout, stderr){
+                // 回傳圖片路徑
+                res.json({
+                  'uploaded': 1,
+                  //"fileName": files.upload.name,
+                  'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+                })
+              })
+              /*
               fs.rmdir(form.uploadDir, function(){
 
                 // 回傳圖片路徑
@@ -68,7 +78,7 @@ exports.image_upload = function(options){
                   'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
                 })
 
-              })
+              })*/
 
             })
 
