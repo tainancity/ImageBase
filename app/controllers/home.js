@@ -56,11 +56,14 @@ exports.image_upload = function(options){
           client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(err){
             // 1. 建遠端資料夾
             // 2. 將原圖刪除
-            res.json({
-              'uploaded': 1,
-              //"fileName": files.upload.name,
-              'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+            client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
+              res.json({
+                'uploaded': 1,
+                //"fileName": files.upload.name,
+                'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+              })
             })
+
             /*
             client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {
               //console.log(err)
