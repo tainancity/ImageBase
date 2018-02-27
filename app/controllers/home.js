@@ -5,7 +5,7 @@ var util = require('util')
 var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
-//var client_scp2 = require('scp2')
+
 var Client = require('scp2').Client;
 var client_scp2 = new Client({
   port: 22,
@@ -53,28 +53,26 @@ exports.image_upload = function(options){
           })
         }else{
 
+          // 建遠端資料夾
           client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(err){
-            // 1. 建遠端資料夾
-            // 2. 將原圖刪除
+            // 傳圖至 Storage
             client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
-              res.json({
-                'uploaded': 1,
-                //"fileName": files.upload.name,
-                'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+
+              // 將原圖刪除
+              fs.rmdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(){
+
+                // 回傳圖片路徑
+                res.json({
+                  'uploaded': 1,
+                  //"fileName": files.upload.name,
+                  'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+                })
+                
               })
+
             })
 
-            /*
-            client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {
-              //console.log(err)
-              // 移除本機的原檔
-              res.json({
-                'uploaded': 1,
-                //"fileName": files.upload.name,
-                'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
-              })
-            })
-            */
+            // client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {})
           })
 
         }
