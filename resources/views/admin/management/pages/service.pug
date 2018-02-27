@@ -19,6 +19,7 @@ block append content_sl
             p.mb-4 text
           div.cardbox
             div.cardbox-body
+              p 如欲傳圖，請直接使用拖曳方式即可。
               form.send_form(action='/admin/management/service_post' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 textarea#platform_desc.custom_ckeditor(name='platform_desc')

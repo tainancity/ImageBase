@@ -3,6 +3,7 @@ var Auth = require(CONFIG.path.middlewares + '/auth.js')
 var Basic_Auth = require(CONFIG.path.middlewares + '/basic_auth.js')
 
 var Home = require(CONFIG.path.controllers + '/home.js')
+var Image = require(CONFIG.path.controllers + '/image.js')
 var User = require(CONFIG.path.controllers + '/user.js')
 var Announcement = require(CONFIG.path.controllers + '/announcement.js')
 var Page = require(CONFIG.path.controllers + '/page.js')
@@ -33,8 +34,8 @@ module.exports = function(app){
     app.get('/logout', User.logout(options))
   })
 
-  // 測試
-  app.post('/image-upload', Home.image_upload(options))
+  // 基本圖片上傳
+  app.post('/image-upload', Image.image_upload(options))
 
 
   app.group('/f', (app) => {
