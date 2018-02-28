@@ -5,15 +5,15 @@ var util = require('util')
 var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
-var exec = require('child_process').exec;
+var exec = require('child_process').exec
 
-var Client = require('scp2').Client;
+var Client = require('scp2').Client
 var client_scp2 = new Client({
   port: 22,
   host: CONFIG.appenv.storage.scp.ip,
   username: CONFIG.appenv.storage.scp.user,
   password: CONFIG.appenv.storage.scp.password
-});
+})
 
 // CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip
 
@@ -22,14 +22,14 @@ exports.image_upload = function(options){
     //console.log(req.query.d) // 欲建立的資料夾名稱
 
     // parse a file upload
-    var form = new formidable.IncomingForm();
-    form.encoding = 'utf-8';
-    form.uploadDir = CONFIG.path.storage_uploads + '/' + req.query.d;
-    form.keepExtensions = true;
-    form.maxFieldsSize = 10 * 1024 * 1024; // 10MB
+    var form = new formidable.IncomingForm()
+    form.encoding = 'utf-8'
+    form.uploadDir = CONFIG.path.storage_uploads + '/' + req.query.d
+    form.keepExtensions = true
+    form.maxFieldsSize = 10 * 1024 * 1024 // 10MB
 
     if (!fs.existsSync(form.uploadDir)) {
-      fs.mkdirSync(form.uploadDir, 0777);
+      fs.mkdirSync(form.uploadDir, 0777)
     }
 
 
@@ -51,15 +51,20 @@ exports.image_upload = function(options){
             // 傳圖至 Storage
             client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
 
-              // 將原本機端的資料夾強制刪除
-              var child = exec('yes | rm -r ' + form.uploadDir, function(error, stdout, stderr){
+              // 將原本機端的檔案刪除
+              fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                if (err) throw err
                 // 回傳圖片路徑
                 res.json({
                   'uploaded': 1,
-                  //"fileName": files.upload.name,
+                  // "fileName": files.upload.name,
                   'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
                 })
               })
+
+              /*var child = exec('yes | rm -r ' + form.uploadDir, function(error, stdout, stderr){
+
+              })*/
 
             })
 
@@ -68,17 +73,16 @@ exports.image_upload = function(options){
 
         }
 
-      });
+      })
 
 
       //console.log(files)
       //res.json(files)
-      //res.writeHead(200, {'content-type': 'text/plain'});
-      //res.write('received upload:\n\n');
-      //res.write('this image text:' + fields.this_image_text);
-      //res.end(util.inspect({fields: fields, files: files}));
-    });
-
+      //res.writeHead(200, {'content-type': 'text/plain'})
+      //res.write('received upload:\n\n')
+      //res.write('this image text:' + fields.this_image_text)
+      //res.end(util.inspect({fields: fields, files: files}))
+    })
 
   }
 }
