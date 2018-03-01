@@ -4,6 +4,7 @@ var util = require('util')
 
 var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
+var settingModel = require(CONFIG.path.models + '/setting.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 var exec = require('child_process').exec
 
@@ -19,7 +20,6 @@ var client_scp2 = new Client({
 
 exports.image_upload = function(options){
   return function(req, res){
-    console.log(res)
     //console.log(req.query.d) // 欲建立的資料夾名稱
 
     // parse a file upload
@@ -39,52 +39,56 @@ exports.image_upload = function(options){
       var file_new_name = 'f_' + Date.now() + '.' + file_ext  // 完整檔案名稱(含副檔名)
       fs.rename(files.upload.path, form.uploadDir + "/" + file_new_name, function(){
 
-        if(files.upload.size > 10485760){ // files.upload.size: 873241byte，後台可設定最大上傳多少K，這裡佔定 10M = 10 * 1024 * 1024
-          // 將原本機端的檔案刪除
-          fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-            if (err) throw err
-            // 回傳圖片路徑
-            res.json({
-              'uploaded': 0,
-              "error": {
-                "message": "檔案過大，無法上傳！"
-              }
-            })
-          })
-        }else{
-          if(CONFIG.appenv.env == 'local'){ // 如果是 local 端，直接回傳
+        settingModel.getOne('option_name', 'upload_filesize_limit', function(result){
 
-            res.json({
-              'uploaded': 1,
-              //"fileName": files.upload.name,
-              'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+          // result[0].option_value就是後台設定的最大 KB 數，乘上1024轉成多少個 bytes
+          if(files.upload.size > (parseInt(result[0].option_value) * 1024)){ // files.upload.size: 873241byte，後台可設定最大上傳多少K，這裡佔定 10M = 10 * 1024 * 1024
+            // 將原本機端的檔案刪除
+            fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+              if (err) throw err
+              // 回傳圖片路徑
+              res.json({
+                'uploaded': 0,
+                "error": {
+                  "message": "檔案過大，無法上傳！"
+                }
+              })
             })
-
           }else{
+            if(CONFIG.appenv.env == 'local'){ // 如果是 local 端，直接回傳
 
-            // 建遠端資料夾
-            client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(err){
-              // 傳圖至 Storage
-              client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
-
-                // 將原本機端的檔案刪除
-                fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-                  if (err) throw err
-                  // 回傳圖片路徑
-                  res.json({
-                    'uploaded': 1,
-                    // "fileName": files.upload.name,
-                    'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
-                  })
-                })
-
+              res.json({
+                'uploaded': 1,
+                //"fileName": files.upload.name,
+                'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
               })
 
-              // client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {})
-            })
+            }else{
 
+              // 建遠端資料夾
+              client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(err){
+                // 傳圖至 Storage
+                client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
+
+                  // 將原本機端的檔案刪除
+                  fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                    if (err) throw err
+                    // 回傳圖片路徑
+                    res.json({
+                      'uploaded': 1,
+                      // "fileName": files.upload.name,
+                      'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+                    })
+                  })
+
+                })
+
+                // client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {})
+              })
+
+            }
           }
-        }
+        })
 
       })
 

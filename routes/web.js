@@ -14,6 +14,7 @@ var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
 var AdminPage = require(CONFIG.path.controllers + '/admin/page.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
+var Settings = require(CONFIG.path.controllers + '/admin/settings.js')
 
 module.exports = function(app){
 
@@ -93,6 +94,10 @@ module.exports = function(app){
     // 組織部門匯入
     app.get('/organization/import_data', AdminOrganization.import_data(options))
     app.post('/organization/import_data_post', AdminOrganization.import_data_post(options))
+
+    // 其他設定
+    app.get('/settings', Settings.index(options))
+    app.post('/settings-post', Settings.index_post(options))
   })
 
 

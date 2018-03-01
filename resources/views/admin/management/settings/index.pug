@@ -1,0 +1,82 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 其他設定
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/settings.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 其他設定
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='/admin/management/settings-post')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                
+                each val, index in settings
+                  if val.option_name == 'upload_filesize_limit'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 上傳檔案的大小上限
+                        .col-lg-10
+                          input.form-control.upload_filesize_limit(type='text' name='upload_filesize_limit' value=val.option_value)
+                          span.custom_text KB (1MB = 1024KB)。(可輸入之最大值：<strong>10240</strong>，代表10MB。)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_input(type='submit' value='更新')
+                
+                //-
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 所屬組織(代號)
+                      .col-lg-10
+                        p.account_info= account.organ_name + '(' + account.organ_id + ')'
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 帳號
+                      .col-lg-10
+                        p.account_info= account.pid
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 名稱
+                      .col-lg-10
+                        p.account_info= decrypt(account.name)
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label Email
+                      .col-lg-10
+                        p.account_info= decrypt(account.email)
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 職稱
+                      .col-lg-10
+                        p.account_info= account.job_title
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 辦公電話
+                      .col-lg-10
+                        p.account_info= decrypt(account.tel_office)
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label 個人電話
+                      .col-lg-10
+                        p.account_info= decrypt(account.tel_personal)
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
