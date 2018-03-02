@@ -5,7 +5,7 @@ var app = express()
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var session = require('express-session')
-var flash = require('req-flash');
+var flash = require('req-flash')
 var RedisStore = require('connect-redis')(session)
 var bodyParser = require('body-parser')
 var csrf = require('csurf')
@@ -40,9 +40,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     // look in urlencoded POST bodies and delete it
-    var method = req.body._method;
-    delete req.body._method;
-    return method;
+    var method = req.body._method
+    delete req.body._method
+    return method
   }
 }))
 app.use(csrf({ cookie: true }))
@@ -59,7 +59,8 @@ app.use(flash({ locals: 'flash' }))
 app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app)) // Disable trailing slash
 //app.use(require(CONFIG.path.middlewares + '/lang').custom_lang(app))                  // language setting
 app.use(require(CONFIG.path.middlewares + '/global').global(app))                     // view global functions and variables
-app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))                 // Auth
+app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))
+app.use(require(CONFIG.path.middlewares + '/ga').get_ga_code(app))
 
 // ========== Routes ========== //
 require(CONFIG.path.routes + '/api-ajax')(app)
@@ -67,5 +68,5 @@ require(CONFIG.path.routes + '/web')(app)
 
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
-  console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain);
+  console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain)
 })

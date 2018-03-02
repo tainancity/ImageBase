@@ -9,6 +9,10 @@ html(lang='zh-hant')
     link(href=asset_path('css/frontend/layouts/master.css') rel='stylesheet')
       
     block head_end_tag
+    
+    //- ga code：本機端的話就跳過
+    if config.appenv.env != 'local'
+      !=ga_code
   body
     block body_start_tag
     include ../partials/header.pug

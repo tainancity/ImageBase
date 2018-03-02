@@ -5,7 +5,7 @@ var settingModel = require(CONFIG.path.models + '/setting.js')
 // 顯示設定頁面
 exports.index = function(options) {
   return function(req, res) {
-    sort_obj = { "column": "updated_at", "sort_type": "DESC" }
+    sort_obj = { "column": "id", "sort_type": "DESC" }
     settingModel.getAll(sort_obj, function(results){
       /*
       var upload_filesize_limit_item
@@ -30,7 +30,11 @@ exports.index_post = function(options) {
     var update_obj = {"option_value": req.body.upload_filesize_limit}
     var where_obj = {"option_name": "upload_filesize_limit"}
     settingModel.update(update_obj, where_obj, function(){
-      res.redirect('/admin/management/settings')
+      var update_ga_code_obj = {"option_value": req.body.ga_code}
+      var where_ga_code_obj = {"option_name": "ga_code"}
+      settingModel.update(update_ga_code_obj, where_ga_code_obj, function(){
+        res.redirect('/admin/management/settings')
+      })
     })
 
   }

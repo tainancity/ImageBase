@@ -6,7 +6,6 @@ var CONFIG = require('../config/global.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 var settingModel = require(CONFIG.path.models + '/setting.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
-var exec = require('child_process').exec
 
 var Client = require('scp2').Client
 var client_scp2 = new Client({
