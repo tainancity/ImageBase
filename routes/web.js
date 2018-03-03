@@ -98,6 +98,10 @@ module.exports = function(app){
     // 其他設定
     app.get('/settings', Settings.index(options))
     app.post('/settings-post', Settings.index_post(options))
+
+    // 維護模式頁面內容
+    app.get('/maintenance', AdminPage.maintenance(options))
+    app.post('/maintenance_post', AdminPage.maintenance_post(options))
   })
 
 

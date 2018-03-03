@@ -13,6 +13,9 @@ exports.service = function(options) {
 
 exports.maintain = function(options) {
   return function(req, res) {
-    res.render('frontend/pages/maintain')
+    settingModel.getOne('option_name', 'maintenance_desc', function(result){
+      res.render('frontend/pages/maintain', {setting: result[0]})
+    })
+    //res.render('frontend/pages/maintain')
   }
 }

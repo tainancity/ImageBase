@@ -13,12 +13,6 @@ block append content
         div.col.col-md-8.offset-md-2
           div.content_block
             div.contents
-              p(style='text-align:center;')
-                img(src=asset_path('images/img-maintain-d@2x.png') style='width: 600px;' alt=config.app.sitename title=config.app.sitename)
-              p(style='font-size: 36px;color:white;text-align:center;') 網站維護中...
-              p(style='font-size: 36px;color:white;text-align:center;') 請稍後再回訪
-              
-    
-
+              != setting.option_value
 
 block append body_end_others

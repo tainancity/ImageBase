@@ -22,10 +22,22 @@ exports.service_post = function(options) {
   }
 }
 
-/*
-exports.maintain = function(options) {
+// 維護模式頁面內容
+exports.maintenance = function(options) {
   return function(req, res) {
-    res.render('admin/pages/maintain')
+    settingModel.getOne('option_name', 'maintenance_desc', function(result){
+      res.render('admin/management/pages/maintenance', { csrfToken: req.csrfToken(), setting: result[0] })
+    })
   }
 }
-*/
+
+// 儲存維護模式頁面內容
+exports.maintenance_post = function(options) {
+  return function(req, res) {
+    var update_obj = {'option_value': req.body.maintenance_desc}
+    var where_obj = {'option_name': 'maintenance_desc'}
+    settingModel.update(update_obj, where_obj, function(){
+      res.redirect('/admin/management/maintenance')
+    })
+  }
+}

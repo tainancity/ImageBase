@@ -38,7 +38,7 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removeDialogTabs = 'image:advanced;link:advanced';
 
 	// 自訂
-	config.extraPlugins = 'colordialog,floatpanel,panelbutton,colorbutton,font,uploadfile,uploadwidget,clipboard,filetools';
+	config.extraPlugins = 'colordialog,floatpanel,panelbutton,colorbutton,font,uploadfile,uploadwidget,clipboard,filetools,justify';
 
 	config.language = 'zh';
 };
