@@ -10,6 +10,10 @@ html(lang=CurrentLang)
       link(rel='alternate' hreflang='en' href='')
     
     block head_end_tag
+    
+    //- ga code：本機端的話就跳過
+    if config.appenv.env != 'local'
+      !=ga_code
   body(class='theme-default')
     block body_start_tag
     div#main

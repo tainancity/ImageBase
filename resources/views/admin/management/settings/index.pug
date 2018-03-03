@@ -35,6 +35,27 @@ block append content_sl
                         label.col-lg-2.col-form-label Google Analytics<br>全域網站代碼 (gtag.js)
                         .col-lg-10
                           textarea.form-control.ga_code(type='text' name='ga_code' rows='8')= val.option_value
+                          span.other_text 註：此 GA Code 在前台、後台皆會載入。
+                  if val.option_name == 'is_maintenance'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 開啟「網站維護中」模式？
+                        .col-lg-10
+                          if val.option_value == '1'
+                            label.maintenance_label.first_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1' checked)
+                              | 開啟
+                            label.maintenance_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0')
+                              | 關閉
+                          else
+                            label.maintenance_label.first_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1')
+                              | 開啟
+                            label.maintenance_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0' checked)
+                              | 關閉
+                          span.other_text_mode 註：若開啟，除了圖片的絕對路徑可用之外，其餘功能皆無法使用。並進入維護頁面。
                 
                 fieldset
                   .form-group.row

@@ -33,7 +33,11 @@ exports.index_post = function(options) {
       var update_ga_code_obj = {"option_value": req.body.ga_code}
       var where_ga_code_obj = {"option_name": "ga_code"}
       settingModel.update(update_ga_code_obj, where_ga_code_obj, function(){
-        res.redirect('/admin/management/settings')
+        var update_is_maintenance_obj = {"option_value": req.body.is_maintenance}
+        var where_is_maintenance_obj = {"option_name": "is_maintenance"}
+        settingModel.update(update_is_maintenance_obj, where_is_maintenance_obj, function(){
+          res.redirect('/admin/management/settings')
+        })
       })
     })
 

@@ -8,3 +8,25 @@ span.custom_text{
   vertical-align: middle;
   margin-left: 5px;
 }
+span.other_text{
+  color: gray;
+  font-size: 12px;
+}
+span.other_text_mode{
+  display: block;
+  color: gray;
+  font-size: 12px;
+  margin-top:5px;
+}
+input.is_maintenance_mode{
+  display: inline-block;
+  width: 20px;
+}
+label.maintenance_label{
+  margin-bottom:0;
+  padding-top:5px;
+  cursor: pointer;
+  &.first_label{
+    margin-right: 10px;
+  }
+}
