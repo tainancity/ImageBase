@@ -16,20 +16,21 @@ aside.sidebar-container
           .lead= decrypt(auth.user.name)
     nav.sidebar-nav
       ul
-        li
-          div.sidebar-nav-heading 其它
-        li.active
-          a(href='/admin')
-            span.float-right.nav-label
-            span.nav-icon
-              em.ion-clipboard
-            span 帳號資訊
-        li
-          a(href='/admin/log_login')
-            span.float-right.nav-label
-            span.nav-icon
-              em.ion-clipboard
-            span 登入歷程
+        if is_maintenance != '1'
+          li
+            div.sidebar-nav-heading 其它
+          li(class=is_current_url('/admin/account', 'active'))
+            a(href='/admin')
+              span.float-right.nav-label
+              span.nav-icon
+                em.ion-clipboard
+              span 帳號資訊
+          li(class=is_current_url('/admin/log_login', 'active'))
+            a(href='/admin/log_login')
+              span.float-right.nav-label
+              span.nav-icon
+                em.ion-clipboard
+              span 登入歷程
         li
           a(href='/user/logout')
             span.float-right.nav-label
@@ -42,37 +43,38 @@ aside.sidebar-container
         if auth.user.role_id == 1
           li
             div.sidebar-nav-heading 網站管理(只有平台管理者才看得到)
-          li
-            a(href='/admin/management/all_members')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
-              span 公務帳號
-          li
-            a(href='/admin/management/service')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
-              span 平台服務說明
-          li
-            a(href='/admin/management/log_login')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
-              span 登入歷程(所有帳號)
-          li
-            a(href='/admin/management/organization/import_data')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
-              span 組織部門匯入
-          li
+          if is_maintenance != '1'
+            li(class=is_current_url('/admin/management/all_members', 'active'))
+              a(href='/admin/management/all_members')
+                span.float-right.nav-label
+                span.nav-icon
+                  em.ion-clipboard
+                span 公務帳號
+            li(class=is_current_url('/admin/management/service', 'active'))
+              a(href='/admin/management/service')
+                span.float-right.nav-label
+                span.nav-icon
+                  em.ion-clipboard
+                span 平台服務說明
+            li(class=is_current_url('/admin/management/log_login', 'active'))
+              a(href='/admin/management/log_login')
+                span.float-right.nav-label
+                span.nav-icon
+                  em.ion-clipboard
+                span 登入歷程(所有帳號)
+            li(class=is_current_url('/admin/management/organization/import_data', 'active'))
+              a(href='/admin/management/organization/import_data')
+                span.float-right.nav-label
+                span.nav-icon
+                  em.ion-clipboard
+                span 組織部門匯入
+          li(class=is_current_url('/admin/management/settings', 'active'))
             a(href='/admin/management/settings')
               span.float-right.nav-label
               span.nav-icon
                 em.ion-clipboard
               span 其它設定
-          li
+          li(class=is_current_url('/admin/management/maintenance', 'active'))
             a(href='/admin/management/maintenance')
               span.float-right.nav-label
               span.nav-icon

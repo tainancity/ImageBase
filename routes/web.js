@@ -72,7 +72,12 @@ module.exports = function(app){
   app.group('/admin', (app) => {
     app.use(Auth.is_auth(app))
 
-    app.get('/', AdminAccount.index(options))
+    app.get('/', function(req, res, next){
+      res.redirect('/admin/account')
+    })
+    
+    // 帳號資訊
+    app.get('/account', AdminAccount.index(options))
 
     // 登入歷程
     app.get('/log_login', AdminLogLogin.log_login_own(options))

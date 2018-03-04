@@ -26,6 +26,10 @@ block append content_sl
                   = setting.option_value
                 div.btn_send
                   input.btn.btn-primary.btn_input(type='submit' value='更新')
+                  span.mode_hint_text
+                    a(href='/pages/maintain' target='_blank') 頁面連結
+                    |
+                    | (在維護模式為關閉的狀態下，只有平台管理者可得到維護模式的頁面。)
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)

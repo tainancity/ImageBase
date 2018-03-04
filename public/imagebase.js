@@ -58,6 +58,7 @@ app.use(flash({ locals: 'flash' }))
 // ========== Custom Middlewares ========== //
 app.use(require(CONFIG.path.middlewares + '/rm_trailing_slash').rm_trailing_slash(app)) // Disable trailing slash
 //app.use(require(CONFIG.path.middlewares + '/lang').custom_lang(app))                  // language setting
+app.use(require(CONFIG.path.middlewares + '/is_maintenance_mode').is_maintenance_mode(app))
 app.use(require(CONFIG.path.middlewares + '/global').global(app))                     // view global functions and variables
 app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))
 app.use(require(CONFIG.path.middlewares + '/ga').get_ga_code(app))
