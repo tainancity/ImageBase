@@ -1,0 +1,40 @@
+img.portrait_url{
+  width: 20px;
+}
+span.name{
+  margin-left: 2px;
+}
+ul.action_list{
+  margin:0;
+  padding:0;
+  > li{
+    display: inline-block;
+    list-style: none;
+    &:first-child{
+      margin-right: 5px;
+    }
+  }
+}
+table.custom_table{
+  thead{
+    tr{
+      th:nth-child(1){
+        width: 30px;
+      }
+    }
+  }
+  tbody{
+    tr{
+      td:nth-child(1){
+        text-align: center;
+        span.sort_move{
+          cursor: move;
+          color: #288ae2;
+        }
+      }
+      td{
+
+      }
+    }
+  }
+}

@@ -50,6 +50,12 @@ aside.sidebar-container
                 span.nav-icon
                   em.ion-clipboard
                 span 公務帳號
+            li(class=is_current_url('/admin/management/announcement_', 'active'))
+              a(href='/admin/management/announcement_list')
+                span.float-right.nav-label
+                span.nav-icon
+                  em.ion-clipboard
+                span 公告列表管理
             li(class=is_current_url('/admin/management/service', 'active'))
               a(href='/admin/management/service')
                 span.float-right.nav-label

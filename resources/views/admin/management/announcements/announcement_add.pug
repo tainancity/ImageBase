@@ -1,0 +1,135 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 公告列表新增
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/announcement_add.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 公告列表新增
+          ul.action_list
+            li
+              a(href='/admin/management/announcement_list') 回列表
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='announcement_add_post')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 標題
+                    .col-lg-10
+                      input.form-control.title(type='text' name='title')
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 連結
+                    .col-lg-10
+                      input.form-control.contents(type='text' name='contents')
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 是否為草稿？
+                    .col-lg-10
+                      label.draft_label.first_label
+                        input.form-control.is_draft(type='radio' name='is_draft' value='1' checked)
+                        | 是
+                      label.draft_label
+                        input.form-control.is_draft(type='radio' name='is_draft' value='0')
+                        | 否
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 顯示成連結
+                    .col-lg-10
+                      label.draft_label.first_label
+                        input.form-control.is_draft(type='radio' name='is_only_link' value='1' checked)
+                        | 是
+                      label.draft_label
+                        input.form-control.is_draft(type='radio' name='is_only_link' value='0')
+                        | 否(就不會為標題加上連結)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_input(type='submit' value='更新')
+              //-
+                form(method='post' action='/admin/management/list_announcement_post')
+                  //-
+                    input(type='hidden' name='_method' value='put')
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                  
+                  each val, index in settings
+                    if val.option_name == 'upload_filesize_limit'
+                      fieldset
+                        .form-group.row
+                          label.col-lg-2.col-form-label 上傳檔案的大小上限
+                          .col-lg-10
+                            input.form-control.upload_filesize_limit(type='text' name='upload_filesize_limit' value=val.option_value)
+                            span.custom_text KB。 (1MB = 1024KB)。(可輸入之最大值：<strong>10240</strong>，代表10MB。)
+                    if val.option_name == 'ga_code'
+                      fieldset
+                        .form-group.row
+                          label.col-lg-2.col-form-label Google Analytics<br>全域網站代碼 (gtag.js)
+                          .col-lg-10
+                            textarea.form-control.ga_code(type='text' name='ga_code' rows='8')= val.option_value
+                            span.other_text 註：此 GA Code 在前台、後台皆會載入。
+                    if val.option_name == 'is_maintenance'
+                      fieldset
+                        .form-group.row
+                          label.col-lg-2.col-form-label 開啟「網站維護中」模式？
+                          .col-lg-10
+                            if val.option_value == '1'
+                              label.maintenance_label.first_label
+                                input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1' checked)
+                                | 開啟
+                              label.maintenance_label
+                                input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0')
+                                | 關閉
+                            else
+                              label.maintenance_label.first_label
+                                input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1')
+                                | 開啟
+                              label.maintenance_label
+                                input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0' checked)
+                                | 關閉
+                            span.other_text_mode 註：若開啟，除了圖片的絕對路徑可用之外，其餘功能皆無法使用，會直接進入維護的說明頁面。(僅平台管理者可登入後台，再度「關閉」維護模式。)
+                  
+                  fieldset
+                    .form-group.row
+                      label.col-lg-2.col-form-label
+                      .col-lg-10
+                        input.btn.btn-primary.btn_input(type='submit' value='更新')
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+
+block append body_end_others_sl
+  script.
+    $(function(){
+      $("input.btn_input").on('click', function(e){
+        e.preventDefault();
+        var input_title = $("input.title");
+        var title_val = ($(input_title).val()).trim();
+        
+        var input_contents = $("input.contents");
+        var contents_val = ($(input_contents).val()).trim();
+        
+        $(input_title).val(title_val);
+        $(input_contents).val(contents_val);
+        if(title_val == ""){
+          alert('請輸入標題！');
+        }else{
+          $(this).closest('form').submit();
+        }
+      })
+    });

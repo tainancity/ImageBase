@@ -11,6 +11,7 @@ var File = require(CONFIG.path.controllers + '/file.js')
 var Search = require(CONFIG.path.controllers + '/search.js')
 
 var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
+var AdminAnnouncement = require(CONFIG.path.controllers + '/admin/announcement.js')
 var AdminPage = require(CONFIG.path.controllers + '/admin/page.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
@@ -75,7 +76,7 @@ module.exports = function(app){
     app.get('/', function(req, res, next){
       res.redirect('/admin/account')
     })
-    
+
     // 帳號資訊
     app.get('/account', AdminAccount.index(options))
 
@@ -88,6 +89,12 @@ module.exports = function(app){
 
     // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))
+
+
+    // 公告列表管理
+    app.get('/announcement_list', AdminAnnouncement.announcement_list(options))
+    app.get('/announcement_add', AdminAnnouncement.announcement_add(options))
+    app.post('/announcement_add_post', AdminAnnouncement.announcement_add_post(options))
 
     // 平台服務說明及儲存
     app.get('/service', AdminPage.service(options))

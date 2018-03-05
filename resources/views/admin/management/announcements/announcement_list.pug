@@ -1,0 +1,73 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 公告列表管理
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/announcement_list.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 公告列表管理
+          //-
+            p.mb-4 text
+          ul.action_list
+            li
+              a(href='/admin/management/announcement_add') 新增
+            
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th
+                        i.fas.fa-arrows-alt
+                      th #
+                      th 標題
+                      th 連結
+                      th 是否顯示為連結(若「否」，則只會顯示標題)
+                      th 草稿
+                      th 建立時間
+                      th 更新時間
+                      th 其它
+                  tbody
+                    each item, index in results
+                      tr
+                        td
+                          span.sort_move
+                            i.fas.fa-arrows-alt
+                        td a
+                        td a
+                        td a
+                        td a
+                        td a
+                        td a
+                        td a
+                        td 丟到垃圾桶 刪除
+                      //-
+                        tr
+                          td= index+1
+                          td= item.pid
+                          td= item.verified_message
+                          td= item.ip
+                          if item.logout_at
+                            td
+                          else
+                            td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                          if item.logout_at
+                            td= time.get_time_from_timestamp('zh-tw', item.logout_at)
+                          else
+                            td
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
