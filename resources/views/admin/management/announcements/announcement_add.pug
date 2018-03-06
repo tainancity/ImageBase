@@ -14,10 +14,10 @@ block append content_sl
           h5.mt-0 公告列表新增
           ul.action_list
             li
-              a(href='/admin/management/announcement_list') 回列表
+              a.btn.btn-secondary.btn-sm(href='/admin/management/announcement_list') 回列表
           div.cardbox
             div.cardbox-body
-              form(method='post' action='announcement_add_post')
+              form(method='post' action='/admin/management/announcement_add_post')
                 //-
                   input(type='hidden' name='_method' value='put')
                 input(type='hidden' name='_csrf' value=csrfToken)
@@ -57,7 +57,7 @@ block append content_sl
                   .form-group.row
                     label.col-lg-2.col-form-label
                     .col-lg-10
-                      input.btn.btn-primary.btn_input(type='submit' value='更新')
+                      input.btn.btn-primary.btn_input(type='submit' value='新增')
               //-
                 form(method='post' action='/admin/management/list_announcement_post')
                   //-

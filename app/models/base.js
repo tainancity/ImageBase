@@ -55,3 +55,12 @@ exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
   })
   //console.log(query.sql)
 }
+
+// ========== 刪除相關 ========== //
+exports.deleteOne = function(table_name, u_id_col, u_id, cb) {
+  conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? LIMIT 1', [u_id], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}

@@ -8,7 +8,7 @@ const table_columns = ['title', 'is_only_link', 'is_draft', 'sort_index', 'conte
 exports.save = function(insert_obj, cb) {
   baseModel.save(table_name, table_columns, insert_obj, cb)
 }
-/*
+
 exports.update = function(update_obj, where_obj, cb) {
   baseModel.update(table_name, update_obj, where_obj, cb)
 }
@@ -16,7 +16,7 @@ exports.update = function(update_obj, where_obj, cb) {
 exports.getOne = function(u_id_col, u_id, cb) {
   baseModel.getOne(table_name, u_id_col, u_id, cb)
 }
-*/
+
 
 /**
  * sort_obj = { "column": "created_at", "sort_type": "DESC" }
@@ -32,4 +32,9 @@ exports.getAll = function(sort_obj, cb) {
  */
 exports.getAllWhere = function(sort_obj, where_obj, cb) {
   baseModel.getAllWhere(table_name, sort_obj, where_obj, cb)
+}
+
+// ========== 刪除相關 ========== //
+exports.deleteOne = function(u_id_col, u_id, cb) {
+  baseModel.deleteOne(table_name, u_id_col, u_id, cb)
 }

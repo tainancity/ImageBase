@@ -30,13 +30,14 @@ section.announcement_sec{
         > li{
           margin:0 0 5px 0;
           padding:0;
+          color: $white;
           &:last-child{
             margin:0;
           }
           > a{
             color: $white;
             font-size: 1.125rem;
-            text-decoration: none;
+            text-decoration: underline;
             width: 100%;
             display: inline-block;
             text-overflow: ellipsis;

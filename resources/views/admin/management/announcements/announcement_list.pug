@@ -5,6 +5,7 @@ block append page_title
 
 block append head_end_tag_sl
   link(href=asset_path('css/admin/management/announcement_list.css') rel='stylesheet')
+  script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
 
 block append content_sl
   section.section-container
@@ -16,12 +17,15 @@ block append content_sl
             p.mb-4 text
           ul.action_list
             li
-              a(href='/admin/management/announcement_add') 新增
-            
+              a.btn.btn-secondary.btn-sm(href='/admin/management/announcement_add') 新增
+          
+          div#sort_alert.alert.alert-success
+            | 排序更新成功
+          
           div.cardbox
             div.cardbox-body
               div.table-responsive
-                table.table.custom_table
+                table#sortable_table.table.custom_table
                   thead
                     tr
                       th
@@ -29,39 +33,38 @@ block append content_sl
                       th #
                       th 標題
                       th 連結
-                      th 是否顯示為連結(若「否」，則只會顯示標題)
-                      th 草稿
+                      th 是否顯示為連結<br>(若「否」，則前台只會顯示標題)
+                      th 是否為草稿
                       th 建立時間
                       th 更新時間
-                      th 其它
-                  tbody
+                      th
+                  tbody#sortable_table_tbody
                     each item, index in results
                       tr
                         td
-                          span.sort_move
+                          span.sort_move(data-id=item.id)
                             i.fas.fa-arrows-alt
-                        td a
-                        td a
-                        td a
-                        td a
-                        td a
-                        td a
-                        td a
-                        td 丟到垃圾桶 刪除
-                      //-
-                        tr
-                          td= index+1
-                          td= item.pid
-                          td= item.verified_message
-                          td= item.ip
-                          if item.logout_at
-                            td
+                        td= index + 1
+                        td= item.title
+                        td= item.contents
+                        td
+                          if item.is_only_link == '1'
+                            | 是
                           else
-                            td= time.get_time_from_timestamp('zh-tw', item.created_at)
-                          if item.logout_at
-                            td= time.get_time_from_timestamp('zh-tw', item.logout_at)
+                            | 否
+                        td
+                          if item.is_draft == '1'
+                            | 是
                           else
-                            td
+                            | 否
+                        td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                        td= time.get_time_from_timestamp('zh-tw', item.updated_at)
+                        td
+                          a.item_edit(href='/admin/management/announcement_edit/' + item.id) 編輯
+                          |
+                          | |
+                          |
+                          a.item_delete(href='#' data-id=item.id) 刪除
               
           
           
@@ -71,3 +74,67 @@ block append content_sl
 
   
 block append body_end_others_sl
+  script.
+    $(function(){
+      
+      // 排序
+          var custom_table = document.getElementById("sortable_table_tbody");
+          Sortable.create(custom_table, {
+              animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
+              handle: ".sort_move", // Restricts sort start click/touch to the specified element
+              //draggable: ".tile", // Specifies which items inside the element should be sortable
+              onUpdate: function (evt/**Event*/){
+                  //var item = evt.item; // the current dragged HTMLElement
+                  
+                  var item_sort = [];
+                  $("#sortable_table").children("tbody").find("tr").each(function(index, item){
+                      var data_id = $(item).find("span.sort_move").attr("data-id");
+                      item_sort.push(data_id);
+                      $(this).children("td").eq(1).html(index+1);
+                  });
+                  
+                  $.ajax({
+                      url: '/admin/management/announcements_sort_update',
+                      type: 'POST',
+                      data: "send_data=" + JSON.stringify(item_sort),
+                      dataType: 'json',
+                      headers: {
+                          "X-CSRF-Token":"#{csrfToken}"
+                      },
+                      success: function(data){
+                          if(data){
+                              $("#sort_alert").slideDown("fast", function(){
+                                  setTimeout(function(){
+                                      $("#sort_alert").slideUp();
+                                  }, 1000);
+                              });
+                          }
+                      }
+                  });
+
+              }
+          });
+      
+      
+      $("a.item_delete").on("click", function(e){
+        e.preventDefault();
+        var item_id = $(this).attr("data-id");
+        var r = confirm("確定刪除？(無法復原)");
+        if (r == true) {
+          $.ajax({
+        		url: '/admin/management/announcement_delete',
+        		type: 'delete',
+        		data: 'item_id='+item_id,
+        		dataType: 'json',
+            headers: {
+              "X-CSRF-Token":"#{csrfToken}",
+            },
+        		success: function(data){
+              if(data.result == "1"){
+                location.reload();
+              }
+        		}
+        	});
+        }
+      });
+    });

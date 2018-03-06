@@ -95,6 +95,10 @@ module.exports = function(app){
     app.get('/announcement_list', AdminAnnouncement.announcement_list(options))
     app.get('/announcement_add', AdminAnnouncement.announcement_add(options))
     app.post('/announcement_add_post', AdminAnnouncement.announcement_add_post(options))
+    app.delete('/announcement_delete', AdminAnnouncement.announcement_delete(options))
+    app.get('/announcement_edit/:itemId', AdminAnnouncement.announcement_edit(options))
+    app.post('/announcement_edit_post', AdminAnnouncement.announcement_edit_post(options))
+    app.post('/announcements_sort_update', AdminAnnouncement.announcements_sort_update(options))
 
     // 平台服務說明及儲存
     app.get('/service', AdminPage.service(options))

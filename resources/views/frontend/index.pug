@@ -9,24 +9,25 @@ block append head_end_tag
 include ./partials/btn_like_box.pug
 
 block append content
-  section.announcement_sec
-    h2.display_none 公告
-    div.container
-      div.row
-        div.col
-          div.announcement_block
-            div.announcement_left
-              span(class='span_icon'): i.fas.fa-bullhorn
-            div.announcement_middle
-              marquee(direction='up' scrollamount='1' height='20' onMouseOver='this.stop()' onMouseOut='this.start()')
-                ul.announcement_list
-                  li: a(href='#') 這是這是這是這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表這是列表
-                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
-                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
-                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
-                  li: a(href='#') 這是列表這是列表這是列表這是列表這是列表
-            div.announcement_right
-              a(href='/announcement/list'): i.fas.fa-list-alt.fa-lg
+  if results.length > 0
+    section.announcement_sec
+      h2.display_none 公告
+      div.container
+        div.row
+          div.col
+            div.announcement_block
+              div.announcement_left
+                span(class='span_icon'): i.fas.fa-bullhorn
+              div.announcement_middle
+                marquee(direction='up' scrollamount='1' height='20' onMouseOver='this.stop()' onMouseOut='this.start()')
+                  ul.announcement_list
+                    each item, index in results
+                      if item.is_only_link == 1
+                        li: a(href=item.contents target='_blank')= item.title
+                      else
+                        li= item.title
+              div.announcement_right
+                a(href='/announcement/list'): i.fas.fa-list-alt.fa-lg
   
   section.slick_slider_sec
     h2.display_none 主題輪播

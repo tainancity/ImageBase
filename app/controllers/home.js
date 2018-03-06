@@ -3,6 +3,7 @@ var fs = require('fs')
 var util = require('util')
 
 var CONFIG = require('../config/global.js')
+var announcementModel = require(CONFIG.path.models + '/announcement.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 
@@ -10,8 +11,10 @@ var CONFIG = require('../config/global.js')
 
 exports.index = function(options) {
   return function(req, res) {
-    // { csrfToken: req.csrfToken() }
-    var a = 'abctd'
-    res.render('frontend/index', {testVar: a})
+    var sort_obj = { "column": "sort_index", "sort_type": "ASC" }
+    var where_obj = { "column_name": "is_draft", "operator": "=", "column_value": 0 }
+    announcementModel.getAllWhere(sort_obj, where_obj, function(results){
+      res.render('frontend/index', {results: results})
+    })
   }
 }

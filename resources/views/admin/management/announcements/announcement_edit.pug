@@ -1,0 +1,103 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 公告列表更新
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/announcement_edit.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 公告列表更新
+          ul.action_list
+            li
+              a.btn.btn-secondary.btn-sm(href='/admin/management/announcement_list') 回列表
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='/admin/management/announcement_edit_post')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                input(type='hidden' name='id' value=result.id)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 標題
+                    .col-lg-10
+                      input.form-control.title(type='text' name='title' value=result.title)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 連結
+                    .col-lg-10
+                      input.form-control.contents(type='text' name='contents' value=result.contents)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 是否為草稿？
+                    .col-lg-10
+                      if result.is_draft == 1
+                        label.draft_label.first_label
+                          input.form-control.is_draft(type='radio' name='is_draft' value='1' checked)
+                          | 是
+                        label.draft_label
+                          input.form-control.is_draft(type='radio' name='is_draft' value='0')
+                          | 否
+                      else
+                        label.draft_label.first_label
+                          input.form-control.is_draft(type='radio' name='is_draft' value='1')
+                          | 是
+                        label.draft_label
+                          input.form-control.is_draft(type='radio' name='is_draft' value='0' checked)
+                          | 否
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 顯示成連結
+                    .col-lg-10
+                      if result.is_only_link == 1
+                        label.draft_label.first_label
+                          input.form-control.is_draft(type='radio' name='is_only_link' value='1' checked)
+                          | 是
+                        label.draft_label
+                          input.form-control.is_draft(type='radio' name='is_only_link' value='0')
+                          | 否(就不會為標題加上連結)
+                      else
+                        label.draft_label.first_label
+                          input.form-control.is_draft(type='radio' name='is_only_link' value='1')
+                          | 是
+                        label.draft_label
+                          input.form-control.is_draft(type='radio' name='is_only_link' value='0' checked)
+                          | 否(就不會為標題加上連結)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_input(type='submit' value='更新')
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+
+block append body_end_others_sl
+  script.
+    $(function(){
+      $("input.btn_input").on('click', function(e){
+        e.preventDefault();
+        var input_title = $("input.title");
+        var title_val = ($(input_title).val()).trim();
+        
+        var input_contents = $("input.contents");
+        var contents_val = ($(input_contents).val()).trim();
+        
+        $(input_title).val(title_val);
+        $(input_contents).val(contents_val);
+        if(title_val == ""){
+          alert('請輸入標題！');
+        }else{
+          $(this).closest('form').submit();
+        }
+      })
+    });
