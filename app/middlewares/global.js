@@ -1,4 +1,5 @@
 var CONFIG = require('../config/global.js')
+var settingModel = require(CONFIG.path.models + '/setting.js')
 var fs = require('fs')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')

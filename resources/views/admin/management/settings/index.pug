@@ -16,6 +16,34 @@ block append content_sl
             p.mb-4 text
           div.cardbox
             div.cardbox-body
+              
+              form(method='#' action='#')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                
+                each val, index in settings
+                  if val.option_name == 'logo_file'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label Logo
+                        .col-lg-10
+                          input.form-control.logo_file(type='file' name='upload')
+                          span.logo_hint 建議大小： 650 x 116。(前台會將高度固定為 58px)
+                          if val.option_value == '' || val.option_value == null
+                            img.logo_file(src=asset_path('images/logo.svg'))
+                          else
+                            img.logo_file(src=val.option_value)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_change_logo(type='submit' value='更新')
+                        
+          div.cardbox
+            div.cardbox-body
+              
               form(method='post' action='/admin/management/settings-post')
                 //-
                   input(type='hidden' name='_method' value='put')
@@ -62,43 +90,6 @@ block append content_sl
                     label.col-lg-2.col-form-label
                     .col-lg-10
                       input.btn.btn-primary.btn_input(type='submit' value='更新')
-                
-                //-
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 所屬組織(代號)
-                      .col-lg-10
-                        p.account_info= account.organ_name + '(' + account.organ_id + ')'
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 帳號
-                      .col-lg-10
-                        p.account_info= account.pid
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 名稱
-                      .col-lg-10
-                        p.account_info= decrypt(account.name)
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label Email
-                      .col-lg-10
-                        p.account_info= decrypt(account.email)
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 職稱
-                      .col-lg-10
-                        p.account_info= account.job_title
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 辦公電話
-                      .col-lg-10
-                        p.account_info= decrypt(account.tel_office)
-                  fieldset
-                    .form-group.row
-                      label.col-lg-2.col-form-label 個人電話
-                      .col-lg-10
-                        p.account_info= decrypt(account.tel_personal)
           
           
           //-
@@ -109,6 +100,77 @@ block append content_sl
 block append body_end_others_sl
   script.
     $(function(){
+      
+      var progressHandlingFunction = function(e){
+        if(e.lengthComputable){
+          console.log(e)
+          /*
+          this.progress_percent = parseInt((e.loaded / e.total) * 100);
+          if(this.progress_percent == 100){
+            this.choose_filename = '選擇圖片';
+            this.image_uploading = false;
+            this.$refs.the_file.value = '';
+            var that = this;
+            setTimeout(function(){
+              that.progress_percent = 0;
+            }, 1000);
+          }
+          */
+        }
+      }
+      
+      $("input.btn_change_logo").on("click", function(e){
+        e.preventDefault()
+        var el_logo_file = $(this).closest("form").find("input.logo_file")
+        if( $(this).hasClass('-disabled') ){
+          alert("請勿重覆點擊");
+        }else{
+          if($(el_logo_file).val() == ""){
+            alert("尚未選擇檔案！");
+          }else{
+            $(this).addClass('-disabled');
+            // change logo
+            $.ajax({
+              url: '#{config.appenv.domain}/image-upload?_csrf=#{csrfToken}&d=g',
+              type: 'POST',
+              data: new FormData($(this).closest('form')[0]),
+              contentType: false,
+              cache: false,
+              processData:false,
+              xhr: function() {
+                var myXhr = $.ajaxSettings.xhr();
+                if(myXhr.upload){
+                  myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+                }
+                return myXhr;
+              },
+              dataType: 'json',
+              //headers: {
+              //    "X-CSRF-Token":"#{csrfToken}"
+              //},
+              success: function(data){
+                if(data.uploaded == 1){
+                  $.ajax({
+                    url: '#{config.appenv.domain}/admin/management/settings-logo-file-post',
+                    type: 'POST',
+                    data: 'logo_file=' + data.url,
+                    dataType: 'json',
+                    headers: {
+                      "X-CSRF-Token":"#{csrfToken}"
+                    },
+                    success: function(data){
+                      alert("更新成功");
+                      location.reload();
+                    }
+                  });
+                }
+              }
+            });
+          }
+        }
+        
+      });
+      
       $("textarea.ga_code").on("focus", function(){
         $(this).select();
       })

@@ -5,7 +5,10 @@ header.header
         div.header_content
           h1.main_title= config.app.sitename
           a.logo(href='/')
-            img(src=asset_path('images/logo.svg') alt=config.app.sitename title=config.app.sitename)
+            if logo_path == ''
+              img(src=asset_path('images/logo.svg') alt=config.app.sitename title=config.app.sitename)
+            else
+              img(src=logo_path alt=config.app.sitename title=config.app.sitename)
           div.right_block
             button(type='button' class='toggle_nav')
               i.fas.fa-bars.fa-lg

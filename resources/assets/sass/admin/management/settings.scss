@@ -8,6 +8,9 @@ span.custom_text{
   vertical-align: middle;
   margin-left: 5px;
 }
+span.logo_hint{
+  display: block;
+}
 span.other_text{
   color: gray;
   font-size: 12px;
@@ -28,5 +31,16 @@ label.maintenance_label{
   cursor: pointer;
   &.first_label{
     margin-right: 10px;
+  }
+}
+img.logo_file{
+  height: 58px;
+}
+input.btn_change_logo{
+  &.-disabled{
+    background-color: gray;
+    border-color: gray;
+    color: #eeeeee;
+    cursor: not-allowed;
   }
 }

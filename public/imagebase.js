@@ -62,6 +62,7 @@ app.use(require(CONFIG.path.middlewares + '/is_maintenance_mode').is_maintenance
 app.use(require(CONFIG.path.middlewares + '/global').global(app))                     // view global functions and variables
 app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))
 app.use(require(CONFIG.path.middlewares + '/ga').get_ga_code(app))
+app.use(require(CONFIG.path.middlewares + '/get_logo_path').get_logo_path(app))
 
 // ========== Routes ========== //
 require(CONFIG.path.routes + '/api-ajax')(app)

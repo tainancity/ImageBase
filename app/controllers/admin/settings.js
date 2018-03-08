@@ -43,3 +43,16 @@ exports.index_post = function(options) {
 
   }
 }
+
+// 設定 logo_file 的 post 儲存
+exports.logo_file_post = function(options) {
+  return function(req, res) {
+
+    var update_obj = {"option_value": req.body.logo_file}
+    var where_obj = {"option_name": "logo_file"}
+    settingModel.update(update_obj, where_obj, function(){
+      res.json({result: 1})
+    })
+
+  }
+}
