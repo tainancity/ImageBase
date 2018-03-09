@@ -79,6 +79,7 @@ module.exports = function(app){
 
     // 帳號資訊
     app.get('/account', AdminAccount.index(options))
+    app.post('/apply_api_key', AdminAccount.apply_api_key(options))
 
     // 登入歷程
     app.get('/log_login', AdminLogLogin.log_login_own(options))

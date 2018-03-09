@@ -40,6 +40,16 @@ module.exports = {
     return temp_id
   },
 
+  // 產生 api key
+  generate_api_key: function(){
+    var temp_api_key = ""
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    for (var i = 0; i < 32; i++){
+      temp_api_key += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return temp_api_key
+  },
+
   // generate token:
   generate_token: function(){
     var temp_token = ""
