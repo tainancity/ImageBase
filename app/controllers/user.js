@@ -71,7 +71,8 @@ exports.login_post = function(options) {
       "token": generated_token,
       "verified_result": "",
       "verified_message": "",
-      "ip": req.ip
+      //"ip": req.ip
+      "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress
     }
 
     logLoginModel.save(insert_log_obj, function(log_login_result){
@@ -183,7 +184,8 @@ exports.logout = function(options) {
       // log_login
       var insert_log_obj_for_logout = {
         "user_id": results[0].id,
-        "ip": req.ip,
+        //"ip": req.ip,
+        "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress,
         "logout_at": Date.now() / 1000
       }
       logLoginModel.save_for_logout(insert_log_obj_for_logout, function(){})
