@@ -63,6 +63,14 @@ block append content_sl
                     label.col-lg-2.col-form-label 個人電話
                     .col-lg-10
                       p.account_info= decrypt(account.tel_personal)
+          h5.mt-0 申請 API Key
+          div.cardbox
+            div.cardbox-body
+              p 用途：提供開發人員使用「圖片 RESTful API」。<a href='#{config.appenv.domain}/api-docs/' target='_blank'>RESTful API</a>
+              button.mb-4.btn.btn-lg.btn-gradient.wd-sm.btn-primary.btn_apply_key(type='button') 申請
+              p 您的 API Key：
+                input.api_key(type='text' value='abcdefasdf1234567890abcdefdkij32')
+              
           
           
           //-
@@ -71,3 +79,12 @@ block append content_sl
 
   
 block append body_end_others_sl
+  script.
+    $(function(){
+      $("input.api_key").on("click", function(){
+        $(this).select();
+      });
+      $("input.api_key").on("keydown", function(e){
+        e.preventDefault();
+      });
+    });
