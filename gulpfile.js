@@ -28,6 +28,8 @@ gulp.task('watch', function(){
 
 // compile scss by gulp-sass
 gulp.task('styles', function() {
+  gulp.src('resources/assets/sass/**/*.{ttf,woff}')
+    .pipe(gulp.dest('./public/css/'));
   return gulp.src('resources/assets/sass/**/*.{scss,css}')
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(gulp.dest('./public/css/'));
@@ -68,7 +70,7 @@ gulp.task('common_vendors', function() {
 gulp.task('version', ['styles', 'js_build', 'copy_images', 'copy_vendors_plugins', 'common_vendors'], function(){ // 表示執行 version 之前，會先執行 styles、js_build、copy_images、common_vendors
   return gulp.src(
     [
-      './public/css/**/*.css',
+      './public/css/**/*.{css,ttf,woff}',
       './public/images/**/*.{png,jpg,jpeg,gif,svg,ico}',
       './public/js/**/*.js',
       './public/vendors/**/*.{png,jpg,jpeg,gif,svg,ico,js,css,scss,eot,svg,ttf,woff}'

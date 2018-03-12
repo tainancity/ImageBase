@@ -21,21 +21,18 @@ aside.sidebar-container
             div.sidebar-nav-heading 其它
           li(class=is_current_url('/admin/account', 'active'))
             a(href='/admin')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
+              span.nav-icon.custom_icon
+                i.fas.fa-user
               span 帳號資訊
           li(class=is_current_url('/admin/log_login', 'active'))
             a(href='/admin/log_login')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
+              span.nav-icon.custom_icon
+                i.fas.fa-history
               span 登入歷程
         li
           a(href='/user/logout')
-            span.float-right.nav-label
-            span.nav-icon
-              em.ion-clipboard
+            span.nav-icon.custom_icon
+              i.fas.fa-sign-out-alt
             span 登出
         
         //-
@@ -46,43 +43,36 @@ aside.sidebar-container
           if is_maintenance != '1'
             li(class=is_current_url('/admin/management/all_members', 'active'))
               a(href='/admin/management/all_members')
-                span.float-right.nav-label
-                span.nav-icon
-                  em.ion-clipboard
+                span.nav-icon.custom_icon
+                  i.fas.fa-users
                 span 公務帳號
             li(class=is_current_url('/admin/management/announcement_', 'active'))
               a(href='/admin/management/announcement_list')
-                span.float-right.nav-label
-                span.nav-icon
-                  em.ion-clipboard
+                span.nav-icon.custom_icon
+                  i.fas.fa-clipboard
                 span 公告列表管理
             li(class=is_current_url('/admin/management/service', 'active'))
               a(href='/admin/management/service')
-                span.float-right.nav-label
-                span.nav-icon
-                  em.ion-clipboard
+                span.nav-icon.custom_icon
+                  i.fas.fa-file-alt
                 span 平台服務說明
             li(class=is_current_url('/admin/management/log_login', 'active'))
               a(href='/admin/management/log_login')
-                span.float-right.nav-label
-                span.nav-icon
-                  em.ion-clipboard
+                span.nav-icon.custom_icon
+                  i.fas.fa-history
                 span 登入歷程(所有帳號)
             li(class=is_current_url('/admin/management/organization/import_data', 'active'))
               a(href='/admin/management/organization/import_data')
-                span.float-right.nav-label
-                span.nav-icon
-                  em.ion-clipboard
+                span.nav-icon.custom_icon
+                  i.fas.fa-sitemap
                 span 組織部門匯入
           li(class=is_current_url('/admin/management/settings', 'active'))
             a(href='/admin/management/settings')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
+              span.nav-icon.custom_icon
+                i.fas.fa-cog
               span 其它設定
           li(class=is_current_url('/admin/management/maintenance', 'active'))
             a(href='/admin/management/maintenance')
-              span.float-right.nav-label
-              span.nav-icon
-                em.ion-clipboard
+              span.nav-icon.custom_icon
+                i.fas.fa-exclamation-circle
               span 維護模式頁面內容
