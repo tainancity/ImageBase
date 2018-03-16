@@ -16,7 +16,7 @@ exports.service_post = function(options) {
   return function(req, res) {
     var update_obj = {'option_value': req.body.platform_desc}
     var where_obj = {'option_name': 'platform_desc'}
-    settingModel.update(update_obj, where_obj, function(){
+    settingModel.update(update_obj, where_obj, true, function(){
       res.redirect('/admin/management/service')
     })
   }
@@ -36,7 +36,7 @@ exports.maintenance_post = function(options) {
   return function(req, res) {
     var update_obj = {'option_value': req.body.maintenance_desc}
     var where_obj = {'option_name': 'maintenance_desc'}
-    settingModel.update(update_obj, where_obj, function(){
+    settingModel.update(update_obj, where_obj, true, function(){
       res.redirect('/admin/management/maintenance')
     })
   }

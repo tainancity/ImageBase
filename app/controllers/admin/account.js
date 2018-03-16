@@ -39,7 +39,7 @@ var duplicate_func = function(req, res){
             api_key: generate_api_key,
             request_times: 0
           }
-          apiKeyModel.save(insert_obj, function(){
+          apiKeyModel.save(insert_obj, true, function(){
             res.redirect('/admin/account')
           })
         }

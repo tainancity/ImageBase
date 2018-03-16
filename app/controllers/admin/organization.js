@@ -52,7 +52,7 @@ exports.import_data_post = function(options) {
                 }
                 //console.log(insert_obj)
 
-                organizationModel.update(update_obj, {"organ_id": data.organ_id}, function(){})
+                organizationModel.update(update_obj, {"organ_id": data.organ_id}, true, function(){})
               }else{
                 insert_obj = {
                   "organ_id": data.organ_id,
@@ -64,7 +64,7 @@ exports.import_data_post = function(options) {
                 }
                 //console.log(insert_obj)
 
-                organizationModel.save(insert_obj, function(){})
+                organizationModel.save(insert_obj, true, function(){})
               }
             })
           }

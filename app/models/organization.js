@@ -4,12 +4,12 @@ var baseModel = require(CONFIG.path.models + '/base.js')
 const table_name = 'organizations'
 const table_columns = ['organ_id', 'organ_name', 'organ_name_abbr', 'level', 'parent_organ_id', 'sort_index']
 
-exports.save = function(insert_obj, cb) {
-  baseModel.save(table_name, table_columns, insert_obj, cb)
+exports.save = function(insert_obj, has_time, cb) {
+  baseModel.save(table_name, table_columns, insert_obj, has_time, cb)
 }
 
-exports.update = function(update_obj, where_obj, cb) {
-  baseModel.update(table_name, update_obj, where_obj, cb)
+exports.update = function(update_obj, where_obj, has_time, cb) {
+  baseModel.update(table_name, update_obj, where_obj, has_time, cb)
 }
 
 exports.getOne = function(u_id_col, u_id, cb) {

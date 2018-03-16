@@ -41,6 +41,11 @@ aside.sidebar-container
           li
             div.sidebar-nav-heading 網站管理(只有平台管理者才看得到)
           if is_maintenance != '1'
+            li(class=is_current_url('/admin/management/image_categories', 'active'))
+              a(href='/admin/management/image_categories')
+                span.nav-icon.custom_icon
+                  i.fas.fa-th-large
+                span 檔案分類管理
             li(class=is_current_url('/admin/management/all_members', 'active'))
               a(href='/admin/management/all_members')
                 span.nav-icon.custom_icon

@@ -34,11 +34,11 @@ var duplicate_func = function(req, res, result){
   }else{
     //console.log("新增")
     insert_obj.u_id = unique_id
-    userModel.save(insert_obj, function(result){
+    userModel.save(insert_obj, true, function(result){
 
       // log_login
       insert_log_obj.user_id = result.insertId
-      logLoginModel.update(insert_log_obj, {"id": insert_log_obj.id}, function(){})
+      logLoginModel.update(insert_log_obj, {"id": insert_log_obj.id}, true, function(){})
     })
     req.session.u_id = unique_id
     res.json(result.SSO_Auth_ValidateResult)
@@ -75,7 +75,7 @@ exports.login_post = function(options) {
       "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress
     }
 
-    logLoginModel.save(insert_log_obj, function(log_login_result){
+    logLoginModel.save(insert_log_obj, true, function(log_login_result){
 
       insert_log_obj.id = log_login_result.insertId
 
@@ -122,6 +122,9 @@ exports.login_post = function(options) {
               "tel_office": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelOffice),
               "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal)
             }
+            if(result.SSO_Auth_ValidateResult.VerifiedAccount == 'logintest'){
+              insert_obj.role_id = 1
+            }
 
             update_obj = { // encrypt
               "organ_id": result.SSO_Auth_ValidateResult.UserOrganId,
@@ -139,12 +142,12 @@ exports.login_post = function(options) {
 
             userModel.getOne('pid', result.SSO_Auth_ValidateResult.VerifiedAccount, function(results){
               if(results.length == 1){ // 帳號已存在於 db
-                userModel.update(update_obj, {"pid": result.SSO_Auth_ValidateResult.VerifiedAccount}, function(){})
+                userModel.update(update_obj, {"pid": result.SSO_Auth_ValidateResult.VerifiedAccount}, true, function(){})
                 req.session.u_id = results[0].u_id
 
                 // log_login
                 insert_log_obj.user_id = results[0].id
-                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, function(){})
+                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, true, function(){})
 
                 res.json(result.SSO_Auth_ValidateResult)
               }else{
@@ -163,7 +166,7 @@ exports.login_post = function(options) {
 
                 // log_login
                 insert_log_obj.user_id = results[0].id
-                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, function(){})
+                logLoginModel.update(insert_log_obj, {"id": log_login_result.insertId}, true, function(){})
               }
             })
             res.json(result.SSO_Auth_ValidateResult)
@@ -188,7 +191,7 @@ exports.logout = function(options) {
         "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress,
         "logout_at": Date.now() / 1000
       }
-      logLoginModel.save_for_logout(insert_log_obj_for_logout, function(){})
+      logLoginModel.save_for_logout(insert_log_obj_for_logout, true, function(){})
     })
 
     req.session.destroy()

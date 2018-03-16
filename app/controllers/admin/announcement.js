@@ -33,7 +33,7 @@ exports.announcement_add_post = function(options){
       "is_draft": req.body.is_draft,
       "sort_index": 0
     }
-    announcementModel.save(insert_obj, function(){
+    announcementModel.save(insert_obj, true, function(){
       res.redirect('/admin/management/announcement_list')
     })
   }
@@ -63,7 +63,7 @@ exports.announcement_edit_post = function(options){
     var where_obj = {
       "id": req.body.id
     }
-    announcementModel.update(update_obj, where_obj, function(){
+    announcementModel.update(update_obj, where_obj, true, function(){
       res.redirect('/admin/management/announcement_edit/' + req.body.id)
     })
   }
@@ -87,7 +87,7 @@ exports.announcements_sort_update = function(options){
 
       var update_obj = { "sort_index": index }
       var where_obj = { "id": item }
-      announcementModel.update(update_obj, where_obj, function(){
+      announcementModel.update(update_obj, where_obj, true, function(){
         if(data_array.length == index + 1){
           res.json({result: 1})
         }

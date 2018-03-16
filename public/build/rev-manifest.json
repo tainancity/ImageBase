@@ -1,5 +1,8 @@
 {
   "css/admin/css/app.css": "css/admin/css/app-bd41f8c6be.css",
+  "css/admin/image/image_categories.css": "css/admin/image/image_categories-6be0826b75.css",
+  "css/admin/image/image_category_create.css": "css/admin/image/image_category_create-4fba063499.css",
+  "css/admin/image/image_category_edit.css": "css/admin/image/image_category_edit-4fba063499.css",
   "css/admin/logs/log_login.css": "css/admin/logs/log_login-e8940773ac.css",
   "css/admin/management/all_members.css": "css/admin/management/all_members-f7475055a8.css",
   "css/admin/management/announcement_add.css": "css/admin/management/announcement_add-edc0502474.css",

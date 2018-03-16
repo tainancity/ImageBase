@@ -1,0 +1,70 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 編輯分類 - 檔案分類管理
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/image_category_edit.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 編輯分類 - 檔案分類管理
+          //-
+            p.mb-4 text
+          a.btn.btn-secondary.btn-sm.btn_custom(href='/admin/management/image_categories') 回列表
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='/admin/management/image_categories/edit_post')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                input(type='hidden' name='category_id' value=category.id)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 分類名稱
+                    .col-lg-10
+                      input.form-control.category-name(type='text' name='category_name' value=category.category_name)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 上層分類
+                    .col-lg-10
+                      select.form-control(name='parent_category_id')
+                        if category.parent_category_id == 0
+                          option(value='' selected='selected') (無上層)
+                        else
+                          option(value='') (無上層)
+                        each val, index in categories
+                          if category.parent_category_id == val.id
+                            option(value=val.id selected='selected')= val.category_name
+                          else
+                            option(value=val.id)= val.category_name
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_create_category(type='submit' value='更新')
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+    $(function(){
+      $("input.btn_create_category").on("click", function(e){
+        var el_category_name = $("input.category-name");
+        var category_name = ($(el_category_name).val()).trim();
+        $(el_category_name).val(category_name);
+        if(category_name == ""){
+          e.preventDefault();
+          alert("請輸入分類名稱");
+        }
+      });
+    });

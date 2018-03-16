@@ -24,7 +24,7 @@ exports.up = function(db) {
   }, function(err){
     if (err) console.error(err)
 
-    db.runSql("INSERT INTO file_categories(`category_name`) VALUES('其它');");
+    db.runSql("INSERT INTO file_categories(`category_name`, `level`, `parent_category_id`, `sort_index`) VALUES('其它', 1, 0, 0);");
   });
 };
 

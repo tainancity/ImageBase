@@ -8,13 +8,15 @@ var timestamp_now = function(){
 
 exports.conn = conn
 
-exports.save = function(table_name, table_columns, insert_data, cb) {
+exports.save = function(table_name, table_columns, insert_data, has_time, cb) {
   // save only specific columns in table
   var insert_obj = {}
   for (var i = 0; i < table_columns.length; i++) {
     insert_obj[table_columns[i]] = insert_data[table_columns[i]]
   }
-  insert_obj.created_at = insert_obj.updated_at = timestamp_now()
+  if(has_time){
+    insert_obj.created_at = insert_obj.updated_at = timestamp_now()
+  }
 
   conn.query('INSERT INTO ' + table_name + ' SET ?', insert_obj, function (error, results, fields) {
     if (error) throw error
@@ -23,8 +25,10 @@ exports.save = function(table_name, table_columns, insert_data, cb) {
   //console.log(query.sql)
 }
 
-exports.update = function(table_name, update_obj, where_obj, cb) {
-  update_obj.updated_at = timestamp_now()
+exports.update = function(table_name, update_obj, where_obj, has_time, cb) {
+  if(has_time){
+    update_obj.updated_at = timestamp_now()
+  }
   conn.query('UPDATE ' + table_name + ' SET ? WHERE ?', [update_obj, where_obj], function (error, results, fields) {
     if (error) throw error
     cb(results)
