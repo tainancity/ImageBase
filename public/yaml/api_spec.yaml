@@ -1,0 +1,81 @@
+---
+swagger: '2.0'
+info:
+  title: 圖片API - 臺南市政府圖片資料庫平台
+  description: |-
+    提供圖片 API，包含：取得、新增、更新、刪除。
+    透過 API Key 方能使用。
+  version: 1.0.0
+schemes:
+  - http
+  - https
+basePath: ""
+produces:
+  - application/json
+securityDefinitions:
+  APIKeyAuth:
+    type: apiKey
+    in: query
+    name: api_key
+security:
+  - APIKeyAuth: []
+paths:
+  "/api/v1.0/image":
+    get:
+      tags:
+        - 圖片
+      summary: 取得圖片
+      description: 這裡是取得圖片的敘述
+      parameters: []
+      responses: {}
+    post:
+      tags:
+        - 圖片
+      summary: 上傳圖片
+      description: 這裡是上傳圖片的敘述
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: title
+          in: formData
+          description: 圖片標題
+          required: false
+          type: string
+        - name: upload
+          in: formData
+          description: 選擇檔案
+          required: true
+          type: file
+        - name: permissions
+          in: formData
+          default: "1"
+          enum:
+            - "1"
+            - "2"
+            - "3"
+          description: |-
+            檔案權限：
+            1 公開(此為預設，代表前台看得到)；
+            2 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)；
+            3 共用(前台看不到，知道短網址的人，皆可看到)
+          required: true
+          type: string
+        - name: category
+          in: formData
+          description: |-
+            分類：1其它
+          default: "1"
+          enum:
+            - "1"
+          required: true
+          type: string
+        - name: tags
+          in: formData
+          description: 以半形逗號(,)做分隔
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 回傳圖片網址及相關資料
+        '403':
+          description: 未提供 API Key 或 未經授權的 API Key

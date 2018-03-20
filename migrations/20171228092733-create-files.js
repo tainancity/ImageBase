@@ -18,6 +18,15 @@ exports.up = function(db) {
   return db.createTable('files', {
     id: { type: 'int', primaryKey: true, autoIncrement: true, unsigned: true, length: 11 },
     u_id: { type: 'string', unique: true, length: 191, notNull: true },
+    user_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
+      name: 'fk_user_id_in_files',
+      table: 'users',
+      rules: {
+        onDelete: 'RESTRICT',
+        onUpdate: 'RESTRICT'
+      },
+      mapping: 'id'
+    }},
     category_id: { type: 'int', unsigned: true, notNull: true,defaultValue: 1, foreignKey: {
       name: 'fk_category_id_in_files',
       table: 'file_categories',
@@ -27,15 +36,7 @@ exports.up = function(db) {
       },
       mapping: 'id'
     }},
-    organ_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
-      name: 'fk_organ_id_in_files',
-      table: 'organizations',
-      rules: {
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT'
-      },
-      mapping: 'id'
-    }},
+    organ_id: { type: 'string', notNull: false}, // 使用者單位代碼
     title: { type: 'string' },            // 標題
     file_type: { type: 'char' },          // 檔案類型：1圖片、2非圖片
     file_path: { type: 'string' },         // 路徑

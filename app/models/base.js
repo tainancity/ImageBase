@@ -60,6 +60,13 @@ exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
   //console.log(query.sql)
 }
 
+exports.getAll2Where = function(table_name, sort_obj, where_obj1, where_obj2, cb){
+  conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj1.column_name + ' ' + where_obj1.operator + ' ' + where_obj1.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+}
+
 // ========== 刪除相關 ========== //
 exports.deleteOne = function(table_name, u_id_col, u_id, cb) {
   conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? LIMIT 1', [u_id], function (error, results, fields) {

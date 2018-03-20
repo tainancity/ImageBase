@@ -60,6 +60,16 @@ module.exports = {
     return temp_token
   },
 
+  // generate random code:
+  generate_random_code: function(num){
+    var temp_code = ""
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789"
+    for (var i = 0; i < num; i++){
+      temp_code += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return temp_code
+  },
+
   // get url language
   get_url_lang: function(original_url){
     var req_url_array = original_url.split('/')
