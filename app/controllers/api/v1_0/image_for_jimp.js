@@ -1,6 +1,6 @@
 var formidable = require('formidable')
 var fs = require('fs')
-const sharp = require('sharp')
+var Jimp = require("jimp")
 
 var CONFIG = require('../../../config/global.js')
 var settingModel = require(CONFIG.path.models + '/setting.js')
@@ -172,15 +172,18 @@ exports.image_post = function(options){
                         var data_files = []
                         var data_files_save = []
 
-                        sharp(form.uploadDir + '/' + file_new_name)
-                          .rotate()
-                          .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
+                        Jimp.read(form.uploadDir + '/' + file_new_name, function(err_ini_origin, info_ini_origin){
+                          if (err_ini_origin) throw err_ini_origin
+
+                          info_ini_origin.exifRotate().write(form.uploadDir + '/' + file_new_name, function(err_origin, info_origin){
+
+                            var stats = fs.statSync(form.uploadDir + '/' + file_new_name)
 
                             var json_origin_data = {
-                              format: info_origin.format,
-                              width: info_origin.width,
-                              height: info_origin.height,
-                              size: info_origin.size,
+                              format: file_ext,
+                              width: info_origin.bitmap.width,
+                              height: info_origin.bitmap.height,
+                              size: stats.size,
                               origin: true
                             }
                             var saved_origin_data = JSON.parse(JSON.stringify(json_origin_data));
@@ -191,113 +194,102 @@ exports.image_post = function(options){
                             data_files.push(json_origin_data)
                             data_files_save.push(saved_origin_data)
 
-                            // 將原本未 rotate 的移除
-                            fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-                              if (err) throw err
-                              fs.rename(form.uploadDir + '/' + 'temp_' + file_new_name, form.uploadDir + '/' + file_new_name, function(){
+                            // 重這開始
+                            generated_filename.forEach(function(item, index, arr) {
+                              var split_item = item.split('_')
+                              var setting_width = ((split_item[2]).split('.'))[0] // 寬度
 
-                                generated_filename.forEach(function(item, index, arr) {
-                                  var split_item = item.split('_')
-                                  var setting_width = ((split_item[2]).split('.'))[0] // 寬度
-                                  sharp(form.uploadDir + "/" + file_new_name)
-                                    //.rotate()
-                                    .resize(parseInt(setting_width))
-                                    .toFile(form.uploadDir + '/' + item, function(err, info){
-                                      //console.log(info)
-                                      //{ format: 'jpeg',
-                                      //  width: 960,
-                                      //  height: 720,
-                                      //  channels: 3,
-                                      //  premultiplied: false,
-                                      //  size: 65616 }
-                                      var json_data = {
-                                        format: info.format,
-                                        width: info.width,
-                                        height: info.height,
-                                        size: info.size,
-                                        origin: false
+                              Jimp.read(form.uploadDir + '/' + file_new_name, function(err_for_jimp_img, info_for_jimp_img){
+                                if (err_for_jimp_img) throw err_for_jimp_img
+
+                                info_for_jimp_img.resize(parseInt(setting_width), Jimp.AUTO).write(form.uploadDir + '/' + item, function(err, info){
+                                  var stats = fs.statSync(form.uploadDir + '/' + item)
+                                  var json_data = {
+                                    format: file_ext,
+                                    width: info.bitmap.width,
+                                    height: info.bitmap.width,
+                                    size: stats.size,
+                                    origin: false
+                                  }
+                                  var saved_data = JSON.parse(JSON.stringify(json_data));
+
+                                  saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
+                                  json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
+
+                                  data_files_save.push(saved_data)
+                                  data_files.push(json_data)
+
+                                  if(index+1 == generated_filename.length){
+
+                                    userModel.getOne('id', results[0].user_id, function(user_results){
+
+                                      saved_obj = {
+                                        //u_id: Math.floor((Math.random() * 10000) + 1),
+                                        user_id: parseInt(user_results[0].id),
+                                        category_id: parseInt(fields.category),
+                                        organ_id: user_results[0].organ_id,
+                                        title: fields.title,
+                                        file_type: file_type_num,
+                                        file_path: file_save_path,
+                                        file_ext: file_ext,
+                                        file_data: JSON.stringify(data_files_save),
+                                        pageviews: 0,
+                                        permissions: fields.permissions
                                       }
-                                      var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                                      saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
-                                      json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
+                                      unique_id = functions.generate_random_code(code_num)
+                                      have_the_same_u_id(unique_id, function(){
+                                        duplicate_func(req, res, fields, data_files)
+                                      })
 
-                                      data_files_save.push(saved_data)
-                                      data_files.push(json_data)
+                                      if(CONFIG.appenv.env != 'local'){
+                                        // 建遠端資料夾
+                                        client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
+                                          client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category, function(err){
 
-                                      if(index+1 == generated_filename.length){
+                                            // 傳原圖至 Storage
+                                            client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name, function(){
 
-                                        userModel.getOne('id', results[0].user_id, function(user_results){
+                                              // 將原本機端的原檔案刪除
+                                              fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                                                if (err) throw err
+                                              })
 
-                                          saved_obj = {
-                                            //u_id: Math.floor((Math.random() * 10000) + 1),
-                                            user_id: parseInt(user_results[0].id),
-                                            category_id: parseInt(fields.category),
-                                            organ_id: user_results[0].organ_id,
-                                            title: fields.title,
-                                            file_type: file_type_num,
-                                            file_path: file_save_path,
-                                            file_ext: file_ext,
-                                            file_data: JSON.stringify(data_files_save),
-                                            pageviews: 0,
-                                            permissions: fields.permissions
-                                          }
-
-                                          unique_id = functions.generate_random_code(code_num)
-                                          have_the_same_u_id(unique_id, function(){
-                                            duplicate_func(req, res, fields, data_files)
-                                          })
-
-                                          if(CONFIG.appenv.env != 'local'){
-                                            // 建遠端資料夾
-                                            client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
-                                              client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category, function(err){
-
-                                                // 傳原圖至 Storage
-                                                client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name, function(){
-
-                                                  // 將原本機端的原檔案刪除
-                                                  fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                                              // 傳縮圖至 Storage，然後刪除
+                                              generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
+                                                client_scp2.upload(form.uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_item, function(){
+                                                  fs.unlink(form.uploadDir + '/' + generated_item, (err) => {
+                                                    console.log("完成")
                                                     if (err) throw err
                                                   })
-
-                                                  // 傳縮圖至 Storage，然後刪除
-                                                  generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
-                                                    client_scp2.upload(form.uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_item, function(){
-                                                      fs.unlink(form.uploadDir + '/' + generated_item, (err) => {
-                                                        console.log("完成")
-                                                        if (err) throw err
-                                                      })
-                                                    })
-                                                  })
-
                                                 })
                                               })
+
                                             })
-                                          }
-
+                                          })
                                         })
-
-
-
-
                                       }
+
                                     })
+
+
+
+
+                                  }
                                 })
-
-
                               })
+
+
                             })
 
+
+
+
+
                           })
+                        })
 
 
-
-                      //}else{
-
-
-
-                      //}
                     }
                   })
 
