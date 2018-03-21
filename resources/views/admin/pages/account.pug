@@ -73,7 +73,7 @@ block append content_sl
                   button.mb-4.btn.btn-lg.btn-gradient.wd-sm.btn-primary.btn_apply_key(type='submit') 申請
               else
                 p 您的 API Key：
-                  input.api_key(type='text' value=account.api_key)
+                  input.api_key(type='text' value=account.api_key readonly)
               
               
           
@@ -88,8 +88,5 @@ block append body_end_others_sl
     $(function(){
       $("input.api_key").on("click", function(){
         $(this).select();
-      });
-      $("input.api_key").on("keydown", function(e){
-        e.preventDefault();
       });
     });

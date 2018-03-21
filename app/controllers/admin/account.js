@@ -84,8 +84,8 @@ exports.index = function(options) {
 // 申請 api key
 exports.apply_api_key = function(options){
   return function(req, res){
-    //generate_api_key = functions.generate_api_key()
-    generate_api_key = 'oydsOH3Cef7YP4SxnebJ6g8DnN5O5qOw'
+    generate_api_key = functions.generate_api_key()
+    //generate_api_key = 'oydsOH3Cef7YP4SxnebJ6g8DnN5O5qOw'
     check_api_key(generate_api_key, function(){
       duplicate_func(req, res)
     })
