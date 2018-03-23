@@ -20,25 +20,36 @@ securityDefinitions:
 security:
   - APIKeyAuth: []
 paths:
-  "/api/v1.0/image":
+  "/api/v1.0/image/{u_id}":
     get:
       tags:
         - 圖片
-      summary: 取得圖片
-      description: 這裡是取得圖片的敘述
-      parameters: []
-      responses: {}
+      summary: 取得檔案
+      description: 透過短網址 id，取得檔案資料
+      parameters:
+        - name: u_id
+          in: path
+          description: 短網址 id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 回傳檔案網址及相關資料
+        403:
+          description: 未提供 API Key、未經授權的 API Key、沒有相關資料、無權取得該檔案資料
+        404:
+          description: 找不到該檔案
     post:
       tags:
         - 圖片
-      summary: 上傳圖片
-      description: 這裡是上傳圖片的敘述
+      summary: 上傳檔案
+      description: 這裡是上傳檔案的敘述
       consumes:
         - multipart/form-data
       parameters:
         - name: title
           in: formData
-          description: 圖片標題
+          description: 檔案標題
           required: false
           type: string
         - name: upload
@@ -75,7 +86,7 @@ paths:
           required: false
           type: string
       responses:
-        '200':
+        200:
           description: 回傳圖片網址及相關資料
-        '403':
+        403:
           description: 未提供 API Key 或 未經授權的 API Key

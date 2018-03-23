@@ -16,7 +16,8 @@ var AdminPage = require(CONFIG.path.controllers + '/admin/page.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
 var Settings = require(CONFIG.path.controllers + '/admin/settings.js')
-var AdminImage = require(CONFIG.path.controllers + '/admin/image.js')
+var AdminFileCategory = require(CONFIG.path.controllers + '/admin/file_category.js')
+var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
 
 module.exports = function(app){
 
@@ -86,21 +87,35 @@ module.exports = function(app){
     app.get('/log_login', AdminLogLogin.log_login_own(options))
   })
 
+  // 公務帳號上傳的檔案管理
+  app.group('/admin/file', (app) => {
+    app.use(Auth.is_auth(app))
+    app.get('/', function(req, res, next){
+      res.redirect('/admin/file/list')
+    })
+
+    // 檔案列表
+    app.get('/list', AdminFileManage.file_list(options))
+  })
+
   // 平台 Admin
   app.group('/admin/management', (app) => {
     app.use(Auth.is_admin(app))
+
+    // 檔案列表
+    app.get('/file/list', AdminFileManage.file_list(options))
 
     // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))
 
     // 圖片分類管理
-    app.get('/image_categories', AdminImage.image_categories(options))
-    app.get('/image_categories/create', AdminImage.image_categories_create(options))
-    app.post('/image_categories/create_post', AdminImage.image_categories_create_post(options))
-    app.get('/image_categories/edit/:itemId', AdminImage.image_categories_edit(options))
-    app.post('/image_categories/edit_post', AdminImage.image_categories_edit_post(options))
-    app.delete('/image_categories/delete/:itemId', AdminImage.image_categories_delete(options))
-    app.post('/image_categories_sort_update', AdminImage.image_categories_sort_update(options))
+    app.get('/image_categories', AdminFileCategory.image_categories(options))
+    app.get('/image_categories/create', AdminFileCategory.image_categories_create(options))
+    app.post('/image_categories/create_post', AdminFileCategory.image_categories_create_post(options))
+    app.get('/image_categories/edit/:itemId', AdminFileCategory.image_categories_edit(options))
+    app.post('/image_categories/edit_post', AdminFileCategory.image_categories_edit_post(options))
+    app.delete('/image_categories/delete/:itemId', AdminFileCategory.image_categories_delete(options))
+    app.post('/image_categories_sort_update', AdminFileCategory.image_categories_sort_update(options))
 
     // 公告列表管理
     app.get('/announcement_list', AdminAnnouncement.announcement_list(options))

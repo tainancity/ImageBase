@@ -1,0 +1,189 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案列表
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_list.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 檔案列表
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 檔案
+                      th 短網址
+
+                      th 分類
+                      if show_uploader_and_organ
+                        th 上傳者
+                        th 所屬組織(id)
+                        
+                      th 副檔名
+                      th 標題
+                      th 瀏覽量
+                      th 權限
+                      th 建立時間
+                      th 更新時間
+                      th
+                      
+                  tbody
+                    each item, index in files
+                      tr
+                        td= index+1
+                        if item.file_type == '1'
+                          each file, f_index in JSON.parse(item.file_data)
+                            if file.width == 320
+                              td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
+                        if item.file_type == '2'
+                          td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): span.other_file: i.fas.fa-file-pdf.fa-3x
+                        td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank')= config.appenv.domain + '/f/' + item.u_id
+                        
+                        td= item.category_name
+                        
+                        if show_uploader_and_organ
+                          td= item.pid
+                          td= item.organ_name + '(' + item.organ_id + ')'
+                        
+                        td= item.file_ext
+                        td= item.title
+                        td= item.pageviews
+                        if item.permissions == 1
+                          td 公開
+                        if item.permissions == 2
+                          td 隱藏
+                        if item.permissions == 3
+                          td 共用
+                        td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                        td= time.get_time_from_timestamp('zh-tw', item.updated_at)
+                        td
+                          ul.action_list
+                            li
+                              button.btn_action(type='button' title='更多資訊' data-toggle='modal' data-target='.picture-modal-lg' data-id=item.u_id): i.fas.fa-info-circle
+                            li
+                              button.btn_action(type='button' title='編輯'): i.fas.fa-edit
+                            li
+                              button.btn_action(type='button' title='垃圾桶'): i.fas.fa-trash-alt
+                            li
+                              button.btn_action(type='button' title='刪除(無法復原)'): i.fas.fa-times
+                          
+                        
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  div.modal.fade.picture-modal-lg
+    div.modal-dialog.modal-lg
+      div.modal-content
+        div.modal-header
+          h5.mt-0.modal-title abc picture
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span ×
+        div.modal-body
+          p.para (原圖定義：上傳之圖片，會視狀況(EXIF Orientation)將圖片方向轉正，並且不會另外壓縮圖片品質，檔案大小會有所不同。)
+          ul.picture_list
+            li
+              div.left_block
+                div.img_block
+                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_original.jpg')
+                  span.original_pic 原圖
+              div.right_block
+                ul.data_info_list
+                  li
+                    span.label_text 格式：
+                    span.label_value jpeg
+                  li
+                    span.label_text 寬度：
+                    span.label_value 2448
+                  li
+                    span.label_text 高度：
+                    span.label_value 3264
+                  li
+                    span.label_text 大小：
+                    span.label_value 667868 bytes
+                  li
+                    span.label_text 路徑：
+                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
+            li
+              div.left_block
+                div.img_block
+                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
+              div.right_block
+                ul.data_info_list
+                  li
+                    span.label_text 格式：
+                    span.label_value jpeg
+                  li
+                    span.label_text 寬度：
+                    span.label_value 2448
+                  li
+                    span.label_text 高度：
+                    span.label_value 3264
+                  li
+                    span.label_text 大小：
+                    span.label_value 667868 bytes
+                  li
+                    span.label_text 路徑：
+                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
+            li
+              div.left_block
+                div.img_block
+                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
+              div.right_block
+                ul.data_info_list
+                  li
+                    span.label_text 格式：
+                    span.label_value jpeg
+                  li
+                    span.label_text 寬度：
+                    span.label_value 2448
+                  li
+                    span.label_text 高度：
+                    span.label_value 3264
+                  li
+                    span.label_text 大小：
+                    span.label_value 667868 bytes
+                  li
+                    span.label_text 路徑：
+                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
+            li
+              div.left_block
+                div.img_block
+                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
+              div.right_block
+                ul.data_info_list
+                  li
+                    span.label_text 格式：
+                    span.label_value jpeg
+                  li
+                    span.label_text 寬度：
+                    span.label_value 2448
+                  li
+                    span.label_text 高度：
+                    span.label_value 3264
+                  li
+                    span.label_text 大小：
+                    span.label_value 667868 bytes
+                  li
+                    span.label_text 路徑：
+                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
+          
+            
+        
+block append body_end_others_sl
+  //-
+    script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script.
+    $(function(){
+      
+      
+    });

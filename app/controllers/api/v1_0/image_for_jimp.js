@@ -9,6 +9,8 @@ var userModel = require(CONFIG.path.models + '/user.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var tagModel = require(CONFIG.path.models + '/tag.js')
 var fileTagModel = require(CONFIG.path.models + '/file_tag.js')
+var organizationModel = require(CONFIG.path.models + '/organization.js')
+var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
@@ -101,6 +103,124 @@ var save_tags = function(tags_str, fileid){
     })
 
   })
+}
+
+
+
+exports.image_get = function(options){
+  return function(req, res){
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+        if(results.length > 0){
+          // 將此 api_key 的 request_times 次數加 1
+          apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+        }
+
+        var sort_obj = { column: "created_at", sort_type: "DESC" }
+        var where_obj = { column_name: "deleted_at", operator: "", column_value: 'IS NULL' }
+        var prepare_data = []
+
+        organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
+          //console.log(all_organs)
+          userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
+            //console.log(all_users)
+            fileCategoryModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_categories){
+              //console.log(all_categories)
+              tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
+                //console.log(all_tags)
+
+                fileModel.getOne('u_id', req.params.u_id, function(files){
+                  if(files.length == 0){
+                    res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+                  }else{
+
+                    // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者 圖片的 permissions 為 '1' 的話，也可回傳。
+                    if(results[0].user_id == files[0].user_id || files[0].permissions == '1'){
+                      // 找出該檔案之 tags
+                      fileTagModel.getAllWhere({column: 'id', sort_type: 'DESC'}, { column_name: 'file_id', operator: '=', column_value: files[0].id }, function(tags_result){
+
+                        var file_tags_arr = []
+                        all_tags.forEach(function(the_tag, tag_index){
+                          tags_result.forEach(function(tags_result_item, tags_result_index){
+                            if(the_tag.id == tags_result_item.tag_id){
+                              file_tags_arr.push(the_tag.tag_name)
+                            }
+                          })
+                        })
+                        // tags 字串，以逗號分隔
+                        var file_tags_str = file_tags_arr.join()
+
+                        // 找出所屬組織名稱
+                        all_organs.forEach(function(the_organ, organ_index){
+                          if(files[0].organ_id == the_organ.organ_id){
+                            files[0].organ_name = the_organ.organ_name
+                            //prepare_data.push(item)
+                          }
+                        })
+                        // 找出使用者名稱
+                        all_users.forEach(function(the_user, user_index){
+                          if(files[0].user_id == the_user.id){
+                            files[0].pid = the_user.pid
+                            //prepare_data.push(item)
+                          }
+                        })
+                        // 找出分類名稱
+                        all_categories.forEach(function(the_category, category_index){
+                          if(files[0].category_id == the_category.id){
+                            files[0].category_name = the_category.category_name
+                            //prepare_data.push(item)
+                          }
+                        })
+
+                        // 將 url 前面加上 storage domain
+                        var new_file_data = JSON.parse(files[0].file_data)
+                        new_file_data.forEach(function(file_data_item, file_data_index){
+                          new_file_data[file_data_index].url = CONFIG.appenv.storage.domain + file_data_item.url
+                        })
+
+                        // 資料回傳重組
+                        var file_data = [{
+                          u_id: files[0].u_id,
+                          short_url: CONFIG.appenv.domain + '/f/' + files[0].u_id,
+                          title: files[0].title,
+                          file_ext: files[0].file_ext,
+                          pageviews: files[0].pageviews,
+                          organ_name: files[0].organ_name,
+                          pid: files[0].pid,
+                          category_name: files[0].category_name,
+                          file_data: new_file_data,
+                          tags: file_tags_str,
+                          created_at: files[0].created_at,
+                          updated_at: files[0].updated_at
+                        }]
+
+                        res.status(200).json({ code: 200, data: { files: file_data} })
+
+                      })
+                    }else{
+                      res.status(403).json({ code: 403, error: { 'message': '無權取得該檔案資料'} })
+                    }
+
+                  }
+                })
+
+              })
+
+            })
+          })
+        })
+
+
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
+
+
+  }
 }
 
 exports.image_post = function(options){

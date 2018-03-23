@@ -18,11 +18,13 @@ exports.getOne = function(u_id_col, u_id, cb) {
   baseModel.getOne(table_name, u_id_col, u_id, cb)
 }
 
-/*
+/**
+ * sort_obj = { "column": "created_at", "sort_type": "DESC" }
+ * where_obj = { "column_name": "user_id", "operator": ">=", "column_value": 0 }
+ */
 exports.getAllWhere = function(sort_obj, where_obj, cb) {
   baseModel.getAllWhere(table_name, sort_obj, where_obj, cb)
 }
-*/
 
 /**
  * sort_obj = { "column": "id", "sort_type": "DESC" }

@@ -9,13 +9,12 @@ if( CONFIG.appenv.env == 'staging' ){
   var apiImage = require(CONFIG.path.controllers + '/api/v1_0/image_for_sharp.js')
 }
 
-
 module.exports = function(app){
 
   var options = {}
 
   app.group('/api/v1.0/image', (app) => {
-    //app.get('/', apiImage.image_get(options))
+    app.get('/:u_id', apiImage.image_get(options))
     app.post('/', apiImage.image_post(options))
     //app.put('/', )
     //app.delete('/', )

@@ -18,6 +18,24 @@ aside.sidebar-container
       ul
         if is_maintenance != '1'
           li
+            div.sidebar-nav-heading 檔案管理
+            li(class=is_current_url('/admin/file/list', 'active'))
+              a(href='/admin/file/list')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file
+                span 檔案列表
+            //-
+              li(class=is_current_url('#', 'active'))
+                a(href='#')
+                  span.nav-icon.custom_icon
+                    i.fas.fa-upload
+                  span 檔案上傳
+              li(class=is_current_url('#', 'active'))
+                a(href='#')
+                  span.nav-icon.custom_icon
+                    i.fas.fa-trash-alt
+                  span 垃圾桶
+          li
             div.sidebar-nav-heading 其它
           li(class=is_current_url('/admin/account', 'active'))
             a(href='/admin')
@@ -41,6 +59,30 @@ aside.sidebar-container
           li
             div.sidebar-nav-heading 網站管理(只有平台管理者才看得到)
           if is_maintenance != '1'
+            li(class=is_current_url('/admin/management/file/', 'active'))
+              a(href='#')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file
+                span.float-right.nav-caret
+                  i.fas.fa-angle-right
+                span 檔案管理
+              ul.sidebar-subnav
+                li(class=is_current_url('/admin/management/file/list', 'active'))
+                  a(href='/admin/management/file/list')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-file
+                    span 檔案列表
+                //-
+                  li(class=is_current_url('#', 'active'))
+                    a(href='#')
+                      span.nav-icon.custom_icon
+                        i.fas.fa-upload
+                      span 檔案上傳
+                  li(class=is_current_url('#', 'active'))
+                    a(href='#')
+                      span.nav-icon.custom_icon
+                        i.fas.fa-trash-alt
+                      span 垃圾桶
             li(class=is_current_url('/admin/management/image_categories', 'active'))
               a(href='/admin/management/image_categories')
                 span.nav-icon.custom_icon
