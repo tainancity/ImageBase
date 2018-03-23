@@ -31,6 +31,7 @@ block append content_sl
                       th 標題
                       th 瀏覽量
                       th 權限
+                      th 標籤
                       th 建立時間
                       th 更新時間
                       th
@@ -62,6 +63,14 @@ block append content_sl
                           td 隱藏
                         if item.permissions == 3
                           td 共用
+                          
+                        if item.tags.length > 0
+                          td
+                            each tag_item, tag_index in item.tags
+                              span.tag_item= tag_item
+                        else
+                          td
+                            
                         td= time.get_time_from_timestamp('zh-tw', item.created_at)
                         td= time.get_time_from_timestamp('zh-tw', item.updated_at)
                         td
