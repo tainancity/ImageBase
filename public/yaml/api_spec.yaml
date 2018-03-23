@@ -39,6 +39,7 @@ paths:
           description: 未提供 API Key、未經授權的 API Key、沒有相關資料、無權取得該檔案資料
         404:
           description: 找不到該檔案
+  "/api/v1.0/image":
     post:
       tags:
         - 圖片
