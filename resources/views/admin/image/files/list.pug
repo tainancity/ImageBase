@@ -76,7 +76,7 @@ block append content_sl
                         td
                           ul.action_list
                             li
-                              button.btn_action(type='button' title='更多資訊' data-toggle='modal' data-target='.picture-modal-lg' data-id=item.u_id): i.fas.fa-info-circle
+                              button.btn_action.get_pic_more_info(type='button' title='更多資訊' data-toggle='modal' data-target='.picture-modal-lg' data-id=item.u_id data-file-type=item.file_type): i.fas.fa-info-circle
                             li
                               button.btn_action(type='button' title='編輯'): i.fas.fa-edit
                             li
@@ -94,98 +94,37 @@ block append content_sl
     div.modal-dialog.modal-lg
       div.modal-content
         div.modal-header
-          h5.mt-0.modal-title abc picture
+          h5.mt-0.modal-title
           button.close(type='button', data-dismiss='modal', aria-label='Close')
             span ×
         div.modal-body
           p.para (原圖定義：上傳之圖片，會視狀況(EXIF Orientation)將圖片方向轉正，並且不會另外壓縮圖片品質，檔案大小會有所不同。)
           ul.picture_list
             li
-              div.left_block
-                div.img_block
-                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_original.jpg')
-                  span.original_pic 原圖
-              div.right_block
-                ul.data_info_list
-                  li
-                    span.label_text 格式：
-                    span.label_value jpeg
-                  li
-                    span.label_text 寬度：
-                    span.label_value 2448
-                  li
-                    span.label_text 高度：
-                    span.label_value 3264
-                  li
-                    span.label_text 大小：
-                    span.label_value 667868 bytes
-                  li
-                    span.label_text 路徑：
-                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
-            li
-              div.left_block
-                div.img_block
-                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
-              div.right_block
-                ul.data_info_list
-                  li
-                    span.label_text 格式：
-                    span.label_value jpeg
-                  li
-                    span.label_text 寬度：
-                    span.label_value 2448
-                  li
-                    span.label_text 高度：
-                    span.label_value 3264
-                  li
-                    span.label_text 大小：
-                    span.label_value 667868 bytes
-                  li
-                    span.label_text 路徑：
-                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
-            li
-              div.left_block
-                div.img_block
-                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
-              div.right_block
-                ul.data_info_list
-                  li
-                    span.label_text 格式：
-                    span.label_value jpeg
-                  li
-                    span.label_text 寬度：
-                    span.label_value 2448
-                  li
-                    span.label_text 高度：
-                    span.label_value 3264
-                  li
-                    span.label_text 大小：
-                    span.label_value 667868 bytes
-                  li
-                    span.label_text 路徑：
-                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
-            li
-              div.left_block
-                div.img_block
-                  img.file_info(src='/storage_uploads/a/1/1_1521606792489_960.jpg')
-              div.right_block
-                ul.data_info_list
-                  li
-                    span.label_text 格式：
-                    span.label_value jpeg
-                  li
-                    span.label_text 寬度：
-                    span.label_value 2448
-                  li
-                    span.label_text 高度：
-                    span.label_value 3264
-                  li
-                    span.label_text 大小：
-                    span.label_value 667868 bytes
-                  li
-                    span.label_text 路徑：
-                    span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
-          
+              i.fas.fa-spinner.fa-spin.fa-2x
+            //-
+              li
+                div.left_block
+                  div.img_block
+                    img.file_info(src='/storage_uploads/a/1/1_1521606792489_original.jpg')
+                    span.original_pic 原圖
+                div.right_block
+                  ul.data_info_list
+                    li
+                      span.label_text 格式：
+                      span.label_value jpeg
+                    li
+                      span.label_text 寬度：
+                      span.label_value 2448
+                    li
+                      span.label_text 高度：
+                      span.label_value 3264
+                    li
+                      span.label_text 大小：
+                      span.label_value 667868 bytes
+                    li
+                      span.label_text 路徑：
+                      span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
             
         
 block append body_end_others_sl
@@ -194,5 +133,76 @@ block append body_end_others_sl
   script.
     $(function(){
       
+      $("button.get_pic_more_info").on("click", function(){
+        var img_u_id = $(this).attr("data-id");
+        var file_type = parseInt($(this).attr("data-file-type"));
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api/v1.0/image/' + img_u_id + '?api_key=#{config.appenv.full_api_key}',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            $("h5.modal-title").html(r_data.data.files[0].title)
+            
+            var html_str = "";
+            $.each(r_data.data.files[0].file_data, function( i, item ) {
+              html_str += "<li>";
+              html_str +=   "<div class='left_block'>";
+              html_str +=     "<div class='img_block'>";
+              
+              if(file_type == 1){
+                html_str +=     "<img class='file_info' src='" + item.url + "'>";
+              }else{
+                html_str +=     "<i class='fas fa-file-pdf fa-8x'></i>";
+              }
+              
+              if(item.origin && file_type == 1){
+                html_str +=     "<span class='original_pic'>原圖</span>";
+              }
+              
+              html_str +=     "</div>";
+              html_str +=   "</div>";
+              html_str +=   "<div class='right_block'>";
+              html_str +=     "<ul class='data_info_list'>";
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>格式：</span>";
+              html_str +=         "<span class='label_value'>" + item.format + "</span>";
+              html_str +=       "</li>";
+              
+              if(file_type == 1){
+                html_str +=     "<li>";
+                html_str +=       "<span class='label_text'>寬度：</span>";
+                html_str +=       "<span class='label_value'>" + item.width + "</span>";
+                html_str +=     "</li>";
+                html_str +=     "<li>";
+                html_str +=       "<span class='label_text'>高度：</span>";
+                html_str +=       "<span class='label_value'>" + item.height + "</span>";
+                html_str +=     "</li>";
+              }
+              
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>大小：</span>";
+              html_str +=         "<span class='label_value'>" + item.size + " bytes</span>";
+              html_str +=       "</li>";
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>路徑：</span>";
+              html_str +=         "<span class='label_value'>" + item.url + "</span>";
+              html_str +=       "</li>";
+              html_str +=     "</ul>";
+              html_str +=   "</div>";
+              html_str += "</li>";
+            });
+            $("ul.picture_list").html(html_str);
+            
+          }
+        });
+        
+      });
       
     });

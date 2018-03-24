@@ -114,9 +114,13 @@ exports.image_get = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
-        if(results.length > 0){
-          // 將此 api_key 的 request_times 次數加 1
-          apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
         }
 
         var sort_obj = { column: "created_at", sort_type: "DESC" }
@@ -137,8 +141,8 @@ exports.image_get = function(options){
                     res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
                   }else{
 
-                    // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者 圖片的 permissions 為 '1' 的話，也可回傳。
-                    if(results[0].user_id == files[0].user_id || files[0].permissions == '1'){
+                    // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者 圖片的 permissions 為 '1' 的話，也可回傳；或者使用 full_api_key 也可回傳
+                    if( req.query.api_key == CONFIG.appenv.full_api_key || results[0].user_id == files[0].user_id || files[0].permissions == '1'){
                       // 找出該檔案之 tags
                       fileTagModel.getAllWhere({column: 'id', sort_type: 'DESC'}, { column_name: 'file_id', operator: '=', column_value: files[0].id }, function(tags_result){
 
