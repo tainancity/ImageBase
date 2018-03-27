@@ -33,8 +33,12 @@ exports.file_list = function(options) {
               //console.log(files_tags_result)
 
               fileModel.getAllWhere(sort_obj, where_obj, function(files){
-                files.forEach(function(item, index) {
 
+                if(files.length == 0){
+                  return res.render('admin/image/files/list', {files: [], show_uploader_and_organ: show_uploader_and_organ})
+                }
+                
+                files.forEach(function(item, index) {
                   var file_tags_arr = []
                   files_tags_result.forEach(function(tags_result_item, tags_result_index){
                     all_tags.forEach(function(the_tag, tag_index){
@@ -91,6 +95,7 @@ exports.file_list = function(options) {
                   }
 
                 })
+
               })
 
             })
