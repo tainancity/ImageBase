@@ -12,7 +12,7 @@ script.
         $.each(filenames, function( index, filename_value ) {
           $("article.upload_block").find("ul.pic_list").children("li").each(function(){
             if(filename_value == $(this).attr("data-original-filename")){
-              $(this).find("div.progress_block").addClass("-uploading").css("width", progress_percent + "%");
+              $(this).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
               $(this).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
               if(progress_percent == 100){
                 $(this).find("div.progress_block").find("span.percentag_text").fadeOut();
@@ -29,10 +29,10 @@ script.
     $("article.upload_block").find("input.select_file").on("change", function(){
       var article_upload_block = $(this).closest("article");
       
-      var html = '';
       var accepted_ext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
       filenames = [];
       for (var i = 0; i < $(this).get(0).files.length; ++i) {
+        var html = '';
         var file_ext = ($(this).get(0).files[i].name).split('.').pop();
         filenames.push($(this).get(0).files[i].name);
         
@@ -49,12 +49,9 @@ script.
         }
         html +=   "</div>";
         html += "</li>";
-      }
-      $(article_upload_block).find("ul.pic_list").prepend(html);
-      $(article_upload_block).find("span.hint").addClass("display_none");
-
-      for (var i = 0; i < $(this).get(0).files.length; ++i) {
-        var file_ext = ($(this).get(0).files[i].name).split('.').pop();
+        
+        $(article_upload_block).find("ul.pic_list").prepend(html);
+        
         if(accepted_ext.includes(file_ext)){
           var data = new FormData();
           data.append('upload', $(this).get(0).files[i])
@@ -91,6 +88,13 @@ script.
 
         }
       }
+      
+      $(article_upload_block).find("span.hint").addClass("display_none");
+
+      /*for (var i = 0; i < $(this).get(0).files.length; ++i) {
+        var file_ext = ($(this).get(0).files[i].name).split('.').pop();
+        
+      }*/
 
 
     });
