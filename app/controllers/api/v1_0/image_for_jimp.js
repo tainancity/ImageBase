@@ -139,11 +139,12 @@ var save_file_related_data = function(req, res, results){
         }
 
         var current_timestamp = Date.now()
-        var file_new_name = results[0].user_id + '_' + current_timestamp + '_' + functions.generate_random_code(4) + '_original' + '.' + file_ext  // 完整檔案名稱(含副檔名)
+        var random_for_new_file = functions.generate_random_code(4)
+        var file_new_name = results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_original' + '.' + file_ext  // 完整檔案名稱(含副檔名)
         var generated_filename = [
-          results[0].user_id + '_' + current_timestamp + '_320.' + file_ext,
-          results[0].user_id + '_' + current_timestamp + '_640.' + file_ext,
-          results[0].user_id + '_' + current_timestamp + '_960.' + file_ext
+          results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_320.' + file_ext,
+          results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_640.' + file_ext,
+          results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_960.' + file_ext
         ]
 
         fs.rename(files.upload.path, form.uploadDir + "/" + file_new_name, function(){
