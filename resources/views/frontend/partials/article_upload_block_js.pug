@@ -6,7 +6,7 @@ script.
       progress_percent = parseInt((e.loaded / e.total) * 100);
       
       var li_item = $("li[data-original-filename='" + filet + "']")[0];
-      $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
+      $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'fast');
       $(li_item).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
       if(progress_percent == 100){
         $(li_item).find("div.progress_block").find("span.percentag_text").fadeOut();
