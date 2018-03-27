@@ -1,40 +1,18 @@
 script.
-  var filenames = [];
   $(function(){
     $("article.upload_block").find("button.choose_file").on("click", function(){
       $(this).closest("article").find("input.select_file").click();
     });
-    
-    var progressHandlingFunction = function(e) {
-      if(e.lengthComputable){
-        progress_percent = parseInt((e.loaded / e.total) * 100);
-        
-        $.each(filenames, function( index, filename_value ) {
-          $("article.upload_block").find("ul.pic_list").children("li").each(function(){
-            if(filename_value == $(this).attr("data-original-filename")){
-              $(this).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
-              $(this).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
-              if(progress_percent == 100){
-                $(this).find("div.progress_block").find("span.percentag_text").fadeOut();
-              }
-            }
-          })
-        });
-        
-        
-      }
-    };
-
 
     $("article.upload_block").find("input.select_file").on("change", function(){
       var article_upload_block = $(this).closest("article");
       
       var accepted_ext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
-      filenames = [];
+      
       for (var i = 0; i < $(this).get(0).files.length; ++i) {
         var html = '';
         var file_ext = ($(this).get(0).files[i].name).split('.').pop();
-        filenames.push($(this).get(0).files[i].name);
+        var file_item_li = $(this).get(0).files[i].name;
         
         html += "<li data-original-filename='" + $(this).get(0).files[i].name + "'>";
         html +=   "<div class='progress_block' style='width:0%'>";
@@ -69,7 +47,19 @@ script.
             xhr: function() {
               var myXhr = $.ajaxSettings.xhr();
               if(myXhr.upload){
-                myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                myXhr.upload.addEventListener('progress', function(e) {
+                  if(e.lengthComputable){
+                    progress_percent = parseInt((e.loaded / e.total) * 100);
+                    
+                    var li_item = $(article_upload_block).find("li[data-original-filename='" + file_item_li + "']")[0];
+                    $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
+                    $(li_item).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
+                    if(progress_percent == 100){
+                      $(li_item).find("div.progress_block").find("span.percentag_text").fadeOut();
+                    }
+                    
+                  }
+                }, false);
               }
               return myXhr;
             },
@@ -84,17 +74,10 @@ script.
             }
           });
 
-
-
         }
       }
       
       $(article_upload_block).find("span.hint").addClass("display_none");
-
-      /*for (var i = 0; i < $(this).get(0).files.length; ++i) {
-        var file_ext = ($(this).get(0).files[i].name).split('.').pop();
-        
-      }*/
 
 
     });
