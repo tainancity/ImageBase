@@ -2,6 +2,7 @@
 @import "../partials/header";
 @import "../partials/footer";
 @import "../partials/file";
+@import "../partials/article_upload_block";
 @import "../vars";
 
 .display_none{
@@ -67,7 +68,8 @@ div.upload_pics_modal{
   width: 100%;
   height: 100%;
   z-index: 2;
-  article.upload_block{
+
+  div.upload_block_container{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -89,97 +91,6 @@ div.upload_pics_modal{
       background: none;
       outline: none;
       cursor: pointer;
-    }
-    div.file_zone{
-      position: relative;
-      border-radius: 8px;
-      border: 3px dashed #979797;
-      height: 180px;
-      margin: 0 auto;
-      overflow-y: scroll;
-      -webkit-overflow-scrolling: touch;
-      @media screen and (max-width: 767px){
-        height: 240px;
-        max-height: 70vh;
-      }
-      span.hint{
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        color: $white_level_1;
-      }
-      ul.pic_list{
-        margin:0;
-        padding:0;
-        > li{
-          list-style: none;
-          margin:0;
-          padding:3px 0 3px 10px;
-          color: $white;
-          position: relative;
-          border-bottom:1px solid $white_level_1;
-          div.info_block{
-            position: relative;
-            z-index: 2;
-            span.icon_type{
-              display: inline-block;
-              vertical-align: top;
-            }
-            span.file_text{
-              display: inline-block;
-              margin-left:5px;
-              width: calc(100% - 50px);
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              overflow: hidden;
-              vertical-align: top;
-            }
-            a.info_success{
-              display: inline-block;
-              vertical-align: top;
-              color: $white;
-              float:right;
-              margin-right: 10px;
-              text-decoration: none;
-            }
-          }
-          div.progress_block{
-            position: absolute;
-            top:0;
-            left:0;
-            width: 100%;
-            height: 100%;
-            &.-uploading{
-              background-color: hsl(135, 80%, 41%);
-            }
-            &.-failing{
-              background-color: hsl(0, 98%, 73%);
-            }
-          }
-        }
-      }
-    }
-    div.or_select_file{
-      margin-top:10px;
-      p.or_para{
-        color: $white;
-        margin:0 10px 0 0;
-        display: inline-block;
-        vertical-align: middle;
-      }
-      button.choose_file{
-        border:0;
-        background: none;
-        color: $white;
-        background-color: $orange_level_1;
-        padding: 5px 20px;
-        cursor: pointer;
-        outline: none;
-      }
-      input.select_file{
-
-      }
     }
   }
 }

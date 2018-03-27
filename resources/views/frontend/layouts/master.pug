@@ -22,35 +22,16 @@ html(lang='zh-hant')
     
     if auth.is_auth
       div.upload_pics_modal.display_none
-        article.upload_block
+        div.upload_block_container
           button.close_upload: i.fas.fa-times.fa-lg
-          div.file_zone
-            span.hint 將檔案拖曳進來即可上傳
-            ul.pic_list
-              each val in [0, 1, 2]
-                li
-                  div.progress_block
-                  div.info_block  
-                    span.icon_type: i.fas.fa-file-image
-                    span.file_text 檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案
-                    a.info_success(href='#' target='_blank'): i.fas.fa-link
-              each val in [0, 1, 2, 3, 4, 5, 6]
-                li
-                  div.progress_block
-                  div.info_block  
-                    span.icon_type: i.fas.fa-file-image
-                    span.file_text 檔案
-                    a.info_success(href='#' target='_blank'): i.fas.fa-link
-                
-          div.or_select_file
-            p.or_para 或
-            button.choose_file(type='button') 選擇檔案
-            input.select_file.display_none(type='file')
-      
+          include ../partials/article_upload_block.pug
     
     block body_end_tag
     script(src=asset_path('vendors/common/v.js'))
     script(src=asset_path('js/all.js'))
+    //-
+      script(src=asset_path('js/upload_file.js'))
+    include ../partials/article_upload_block_js.pug
     block body_end_others
     script.
       $(function(){

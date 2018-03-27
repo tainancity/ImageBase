@@ -50,10 +50,6 @@ app.use(methodOverride(function (req, res) {
   }
 }))
 
-// 放在這裡的原因是此圖片 api 不需要經過 csrfToken。
-require(CONFIG.path.routes + '/api-image')(app)
-
-app.use(csrf({ cookie: true }))
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
   secret: CONFIG.appenv.cookieSessionSecret,
@@ -61,6 +57,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+
+// 放在這裡的原因是此圖片 api 不需要經過 csrfToken。
+require(CONFIG.path.routes + '/api-image')(app)
+
+app.use(csrf({ cookie: true }))
 app.use(flash({ locals: 'flash' }))
 
 // ========== Custom Middlewares ========== //

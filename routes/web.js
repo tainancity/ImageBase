@@ -90,12 +90,14 @@ module.exports = function(app){
   // 公務帳號上傳的檔案管理
   app.group('/admin/file', (app) => {
     app.use(Auth.is_auth(app))
-    app.get('/', function(req, res, next){
+    app.get('/', function(req, res, next){ // 直接進到檔案列表
       res.redirect('/admin/file/list')
     })
 
     // 檔案列表
     app.get('/list', AdminFileManage.file_list(options))
+    // 檔案上傳
+    app.get('/upload', AdminFileManage.file_upload(options))
   })
 
   // 平台 Admin

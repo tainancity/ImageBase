@@ -1,0 +1,19 @@
+article.upload_block
+  div.file_zone_parent
+    span.hint 將檔案拖曳進來即可上傳
+    div.file_zone
+      ul.pic_list
+        //-
+          each val in [0, 1, 2]
+            li
+              div.progress_block.-uploading(style='width:10%;')
+                span.percentag_text 20%
+              div.info_block  
+                span.icon_type: i.fas.fa-file-image
+                span.file_text 檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案
+                a.info_success(href='#' target='_blank'): i.fas.fa-link
+          
+  div.or_select_file
+    p.or_para 或
+    button.choose_file(type='button') 選擇檔案
+    input.select_file.display_none(type='file' multiple)

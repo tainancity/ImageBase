@@ -7,6 +7,7 @@ var tagModel = require(CONFIG.path.models + '/tag.js')
 var fileTagModel = require(CONFIG.path.models + '/file_tag.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
+// 檔案列表
 exports.file_list = function(options) {
   return function(req, res) {
     // csrfToken: req.csrfToken()
@@ -103,121 +104,9 @@ exports.file_list = function(options) {
   }
 }
 
-/*
-// 建立分類
-exports.image_categories_create = function(options) {
+// 檔案上傳
+exports.file_upload = function(options) {
   return function(req, res) {
-    var sort_obj = { "column": "id", "sort_type": "DESC" }
-    fileCategoryModel.getAll(sort_obj, function(results){
-      res.render('admin/image/categories/create', {categories: results, csrfToken: req.csrfToken()})
-    })
+    res.render('admin/image/files/upload')
   }
 }
-
-// 建立分類：資料送出
-exports.image_categories_create_post = function(options) {
-  return function(req, res) {
-    fileCategoryModel.getOne('id', req.body.parent_category_id, function(results){
-      if(results.length == 0){
-        var category_level = 1
-      }else{
-        var category_level = results[0].level + 1
-      }
-      var insert_obj = {
-        category_name: req.body.category_name,
-        level: category_level,
-        parent_category_id: req.body.parent_category_id,
-        sort_index: 0
-      }
-      fileCategoryModel.save(insert_obj, false, function(results){
-        res.redirect('/admin/management/image_categories')
-      })
-    })
-
-  }
-}
-
-// 編輯分類
-exports.image_categories_edit = function(options) {
-  return function(req, res) {
-    var sort_obj = { "column": "id", "sort_type": "DESC" }
-    fileCategoryModel.getAll(sort_obj, function(results){
-      //res.render('admin/image/categories/edit', {categories: results, csrfToken: req.csrfToken()})
-      fileCategoryModel.getOne('id', req.params.itemId, function(result){
-        res.render('admin/image/categories/edit', {categories: results, category: result[0], csrfToken: req.csrfToken()})
-      })
-    })
-  }
-}
-
-// 編輯分類：資料送出
-exports.image_categories_edit_post = function(options) {
-  return function(req, res) {
-    fileCategoryModel.getOne('id', req.body.parent_category_id, function(results){
-      if(results.length == 0){
-        var category_level = 1
-      }else{
-        var category_level = results[0].level + 1
-      }
-      var update_obj = {
-        category_name: req.body.category_name,
-        level: category_level,
-        parent_category_id: req.body.parent_category_id
-      }
-      var where_obj = {
-        id: req.body.category_id
-      }
-      fileCategoryModel.update(update_obj, where_obj, false, function(results){
-        res.redirect('/admin/management/image_categories')
-      })
-    })
-  }
-}
-
-// 刪除分類
-exports.image_categories_delete = function(options) {
-  return function(req, res) {
-    fileCategoryModel.getOne('id', req.params.itemId, function(result){
-      fileCategoryModel.getOne('parent_category_id', result[0].id, function(results){
-        if(results.length > 0){
-          //category_id: req.params.itemId
-          // 尚有子分類
-          res.json({result: 0})
-        }else{
-          fileModel.getOne('category_id', result[0].id, function(file_results){
-            if(results.length > 0){
-              // 該分類尚有圖片
-              res.json({result: 0})
-            }else{
-              fileCategoryModel.deleteOne('id', result[0].id, function(result){
-                // 刪除成功。
-                res.json({result: 1})
-              })
-            }
-          })
-        }
-
-      })
-    })
-  }
-}
-
-// 送出更新的資料：排序更新
-exports.image_categories_sort_update = function(options){
-  return function(req, res){
-    var data_array = JSON.parse(req.body.send_data)
-    data_array.forEach(function(item, index) {
-      //console.log(item + ' ' + index);
-
-      var update_obj = { "sort_index": index }
-      var where_obj = { "id": item }
-      fileCategoryModel.update(update_obj, where_obj, false, function(){
-        if(data_array.length == index + 1){
-          res.json({result: 1})
-        }
-      })
-
-    })
-  }
-}
-*/

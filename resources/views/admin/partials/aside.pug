@@ -24,12 +24,13 @@ aside.sidebar-container
                 span.nav-icon.custom_icon
                   i.fas.fa-file
                 span 檔案列表
+            
+            li(class=is_current_url('/admin/file/upload', 'active'))
+              a(href='/admin/file/upload')
+                span.nav-icon.custom_icon
+                  i.fas.fa-upload
+                span 檔案上傳
             //-
-              li(class=is_current_url('#', 'active'))
-                a(href='#')
-                  span.nav-icon.custom_icon
-                    i.fas.fa-upload
-                  span 檔案上傳
               li(class=is_current_url('#', 'active'))
                 a(href='#')
                   span.nav-icon.custom_icon
@@ -73,11 +74,6 @@ aside.sidebar-container
                       i.fas.fa-file
                     span 檔案列表
                 //-
-                  li(class=is_current_url('#', 'active'))
-                    a(href='#')
-                      span.nav-icon.custom_icon
-                        i.fas.fa-upload
-                      span 檔案上傳
                   li(class=is_current_url('#', 'active'))
                     a(href='#')
                       span.nav-icon.custom_icon
