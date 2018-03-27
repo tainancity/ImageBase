@@ -1,4 +1,20 @@
 script.
+  var filenames = [];
+  
+  var uploadProgress = function(e, filet){
+    if(e.lengthComputable){
+      progress_percent = parseInt((e.loaded / e.total) * 100);
+      
+      var li_item = $("li[data-original-filename='" + filet + "']")[0];
+      $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
+      $(li_item).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
+      if(progress_percent == 100){
+        $(li_item).find("div.progress_block").find("span.percentag_text").fadeOut();
+      }
+      
+    }
+  };
+
   $(function(){
     $("article.upload_block").find("button.choose_file").on("click", function(){
       $(this).closest("article").find("input.select_file").click();
@@ -8,11 +24,13 @@ script.
       var article_upload_block = $(this).closest("article");
       
       var accepted_ext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
-      
+      filenames = [];
       for (var i = 0; i < $(this).get(0).files.length; ++i) {
         var html = '';
         var file_ext = ($(this).get(0).files[i].name).split('.').pop();
-        var file_item_li = $(this).get(0).files[i].name;
+        filenames.push($(this).get(0).files[i].name);
+        //var file_item_li = $(this).get(0).files[i].name;
+        
         
         html += "<li data-original-filename='" + $(this).get(0).files[i].name + "'>";
         html +=   "<div class='progress_block' style='width:0%'>";
@@ -28,7 +46,7 @@ script.
         html +=   "</div>";
         html += "</li>";
         
-        $(article_upload_block).find("ul.pic_list").prepend(html);
+        $(article_upload_block).find("ul.pic_list").append(html);
         
         if(accepted_ext.includes(file_ext)){
           var data = new FormData();
@@ -46,19 +64,10 @@ script.
             processData:false,
             xhr: function() {
               var myXhr = $.ajaxSettings.xhr();
+              var file_item_li = filenames[i];
               if(myXhr.upload){
                 myXhr.upload.addEventListener('progress', function(e) {
-                  if(e.lengthComputable){
-                    progress_percent = parseInt((e.loaded / e.total) * 100);
-                    
-                    var li_item = $(article_upload_block).find("li[data-original-filename='" + file_item_li + "']")[0];
-                    $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'slow');
-                    $(li_item).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
-                    if(progress_percent == 100){
-                      $(li_item).find("div.progress_block").find("span.percentag_text").fadeOut();
-                    }
-                    
-                  }
+                  uploadProgress(e, file_item_li);
                 }, false);
               }
               return myXhr;
@@ -73,6 +82,8 @@ script.
               
             }
           });
+
+
 
         }
       }
