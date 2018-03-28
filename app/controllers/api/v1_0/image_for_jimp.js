@@ -189,7 +189,7 @@ var save_file_related_data = function(req, res, results){
                     // 重這開始
                     generated_filename.forEach(function(item, index, arr) {
                       var split_item = item.split('_')
-                      var setting_width = ((split_item[2]).split('.'))[0] // 寬度
+                      var setting_width = ((split_item[3]).split('.'))[0] // 寬度
 
                       Jimp.read(form.uploadDir + '/' + file_new_name, function(err_for_jimp_img, info_for_jimp_img){
                         if (err_for_jimp_img) throw err_for_jimp_img
@@ -326,35 +326,11 @@ var save_file_related_data = function(req, res, results){
 
                   unique_id = functions.generate_random_code(code_num)
                   have_the_same_u_id(unique_id, function(){
-                    duplicate_func(req, res, fields, data_files)
+                    duplicate_func(req, res, fields, data_files, original_filename)
                   })
 
                   if(CONFIG.appenv.env != 'local'){
-                    // 建遠端資料夾
-                    client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
-                      client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category, function(err){
-
-                        // 傳原圖至 Storage
-                        client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name, function(){
-
-                          // 將原本機端的原檔案刪除
-                          fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-                            if (err) throw err
-                          })
-
-                          // 傳縮圖至 Storage，然後刪除
-                          generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
-                            client_scp2.upload(form.uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_item, function(){
-                              fs.unlink(form.uploadDir + '/' + generated_item, (err) => {
-                                console.log("完成")
-                                if (err) throw err
-                              })
-                            })
-                          })
-
-                        })
-                      })
-                    })
+                    scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
                   }
 
                 })
