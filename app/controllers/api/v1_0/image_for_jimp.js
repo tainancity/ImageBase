@@ -23,55 +23,49 @@ var client_scp2 = new Client({
 })
 
 
-var u_id_duplicate = false
+//var u_id_duplicate = false
 var u_id_duplicate_times = 0
-var unique_id
 var code_num = 4 // 資料庫裡 u_id 的位數
-var saved_obj
 var have_the_same_u_id = function(u_id, cb){
   fileModel.getOne('u_id', u_id, function(results_check){
     if(results_check.length == 1){
-      u_id_duplicate = true
       u_id_duplicate_times += 1
+      if(u_id_duplicate_times >= 3){ // 重覆跑超過三次之後，將位數增加
+        code_num += 1
+      }
+      var unique_id = functions.generate_random_code(code_num)
+      have_the_same_u_id(unique_id, function(){
+        duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
+      })
     }else{
-      u_id_duplicate = false
+      cb()
     }
-    cb()
+
   })
 }
 
-var duplicate_func = function(req, res, fields, data_files, original_filename){
-  if(u_id_duplicate){
-    //console.log("重新產生新的u_id")
-    if(u_id_duplicate_times >= 3){ // 重覆跑超過三次之後，將位數增加
-      code_num += 1
+var duplicate_func = function(req, res, fields, data_files, original_filename, unique_id, saved_obj){
+
+  saved_obj.u_id = unique_id
+  fileModel.save(saved_obj, true, function(save_results){
+
+    // 儲存 tags
+    if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
+      save_tags((fields.tags).trim(), save_results.insertId)
     }
-    unique_id = functions.generate_random_code(code_num)
-    have_the_same_u_id(unique_id, function(){
-      duplicate_func(req, res, fields, data_files, original_filename)
-    })
-  }else{
-    saved_obj.u_id = unique_id
-    fileModel.save(saved_obj, true, function(save_results){
 
-      // 儲存 tags
-      if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
-        save_tags((fields.tags).trim(), save_results.insertId)
+    //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
+    res.status(200).json({
+      code: 200,
+      data:{
+        short_url: CONFIG.appenv.domain + '/f/' + unique_id,
+        original_filename: original_filename,
+        files: data_files
       }
-
-      //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
-      res.status(200).json({
-        code: 200,
-        data:{
-          short_url: CONFIG.appenv.domain + '/f/' + unique_id,
-          original_filename: original_filename,
-          files: data_files
-        }
-      })
-
     })
 
-  }
+  })
+
 }
 
 // save tags
@@ -215,7 +209,7 @@ var save_file_related_data = function(req, res, results){
 
                             userModel.getOne('id', results[0].user_id, function(user_results){
 
-                              saved_obj = {
+                              var saved_obj = {
                                 //u_id: Math.floor((Math.random() * 10000) + 1),
                                 user_id: parseInt(user_results[0].id),
                                 category_id: parseInt(fields.category),
@@ -229,9 +223,9 @@ var save_file_related_data = function(req, res, results){
                                 permissions: fields.permissions
                               }
 
-                              unique_id = functions.generate_random_code(code_num)
+                              var unique_id = functions.generate_random_code(code_num)
                               have_the_same_u_id(unique_id, function(){
-                                duplicate_func(req, res, fields, data_files, original_filename)
+                                duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                               })
 
                               if(CONFIG.appenv.env != 'local'){
@@ -310,7 +304,7 @@ var save_file_related_data = function(req, res, results){
 
                 userModel.getOne('id', results[0].user_id, function(user_results){
 
-                  saved_obj = {
+                  var saved_obj = {
                     //u_id: Math.floor((Math.random() * 10000) + 1),
                     user_id: parseInt(user_results[0].id),
                     category_id: parseInt(fields.category),
@@ -324,9 +318,9 @@ var save_file_related_data = function(req, res, results){
                     permissions: fields.permissions
                   }
 
-                  unique_id = functions.generate_random_code(code_num)
+                  var unique_id = functions.generate_random_code(code_num)
                   have_the_same_u_id(unique_id, function(){
-                    duplicate_func(req, res, fields, data_files, original_filename)
+                    duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                   })
 
                   if(CONFIG.appenv.env != 'local'){
