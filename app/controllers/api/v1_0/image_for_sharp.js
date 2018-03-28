@@ -243,31 +243,7 @@ var save_file_related_data = function(req, res, results){
                                   })
 
                                   if(CONFIG.appenv.env != 'local'){
-                                    // 建遠端資料夾
-                                    client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
-                                      client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category, function(err){
-
-                                        // 傳原圖至 Storage
-                                        client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name, function(){
-
-                                          // 將原本機端的原檔案刪除
-                                          fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-                                            if (err) throw err
-                                          })
-
-                                          // 傳縮圖至 Storage，然後刪除
-                                          generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
-                                            client_scp2.upload(form.uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_item, function(){
-                                              fs.unlink(form.uploadDir + '/' + generated_item, (err) => {
-                                                //console.log("完成")
-                                                if (err) throw err
-                                              })
-                                            })
-                                          })
-
-                                        })
-                                      })
-                                    })
+                                    scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
                                   }
 
                                 })
@@ -380,7 +356,7 @@ var save_file_related_data = function(req, res, results){
                           generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
                             client_scp2.upload(form.uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_item, function(){
                               fs.unlink(form.uploadDir + '/' + generated_item, (err) => {
-                                console.log("完成")
+                                //console.log("完成")
                                 if (err) throw err
                               })
                             })
@@ -405,6 +381,33 @@ var save_file_related_data = function(req, res, results){
         res.status(403).json({ code: 403, error: { 'message': '檔案類型不支援！(非圖片限 PDF)' } })
     }
 
+  })
+}
+
+var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, file_new_name, generated_filename){
+  client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
+    client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category, function(err){
+
+      // 傳原圖至 Storage
+      client_scp2.upload(form_uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + file_new_name, function(){
+
+        // 將原本機端的原檔案刪除
+        fs.unlink(form_uploadDir + '/' + file_new_name, (err) => {
+          if (err) throw err
+        })
+
+        // 傳縮圖至 Storage，然後刪除
+        generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
+          client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(){
+            fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
+              //console.log("完成")
+              if (err) throw err
+            })
+          })
+        })
+
+      })
+    })
   })
 }
 
