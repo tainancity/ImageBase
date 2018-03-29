@@ -1,5 +1,11 @@
 @import "../colors";
 article.upload_block{
+  p.upload_desc{
+    color: $white_level_1;
+    margin:0;
+    padding:0;
+    font-size: .875rem;
+  }
   div.file_zone_parent{
     position: relative;
     span.hint{
