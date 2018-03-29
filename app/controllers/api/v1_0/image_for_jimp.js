@@ -155,7 +155,7 @@ var save_file_related_data = function(req, res, results){
               fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
                 if (err) throw err
                 // 回傳圖片路徑
-                res.status(403).json({ code: 403, error: { 'message': '檔案過大，無法上傳！' } })
+                res.status(403).json({ code: 403, error: { 'message': '檔案過大，無法上傳！', original_filename: original_filename } })
               })
             }else{
               var data_files = []
@@ -304,7 +304,7 @@ var save_file_related_data = function(req, res, results){
               fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
                 if (err) throw err
                 // 回傳圖片路徑
-                res.status(403).json({ code: 403, error: { 'message': '檔案過大，無法上傳！' } })
+                res.status(403).json({ code: 403, error: { 'message': '檔案過大，無法上傳！', original_filename: original_filename } })
               })
             }else{
               //if(CONFIG.appenv.env == 'local'){ // 如果是 local 端，直接回傳
@@ -381,7 +381,7 @@ var save_file_related_data = function(req, res, results){
         })
         break;
       default:
-        res.status(403).json({ code: 403, error: { 'message': '檔案類型不支援！(非圖片限 PDF)' } })
+        res.status(403).json({ code: 403, error: { 'message': '檔案類型不支援！(非圖片限 PDF)', original_filename: original_filename } })
     }
 
   })
