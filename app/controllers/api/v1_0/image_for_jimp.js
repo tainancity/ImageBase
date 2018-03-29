@@ -26,7 +26,7 @@ var client_scp2 = new Client({
 //var u_id_duplicate = false
 var u_id_duplicate_times = 0
 var code_num = 4 // 資料庫裡 u_id 的位數
-var have_the_same_u_id = function(u_id, cb){
+var have_the_same_u_id = function(u_id, data_for_have_the_same_u_id, cb){
   fileModel.getOne('u_id', u_id, function(results_check){
     if(results_check.length == 1){
       u_id_duplicate_times += 1
@@ -34,8 +34,8 @@ var have_the_same_u_id = function(u_id, cb){
         code_num += 1
       }
       var unique_id = functions.generate_random_code(code_num)
-      have_the_same_u_id(unique_id, function(){
-        duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
+      have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+        duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
       })
     }else{
       cb()
@@ -109,15 +109,19 @@ var save_file_related_data = function(req, res, results){
 
   form.parse(req, function(err, fields, files) {
 
-    var file_ext = files.upload.name.split('.').pop()  // 副檔名
+    var file_ext = (files.upload.name.split('.').pop()).toLowerCase()  // 副檔名
     var original_filename = files.upload.name; // 原檔名
 
     if( file_ext == "jpeg" || file_ext == "jpg" || file_ext == "png" || file_ext == "gif" ){
       var file_type_num = 1
+      if(file_ext == 'gif'){ // 因為 Staging 目前使用 Jimp，不支援 gif
+        return res.status(403).json({ code: 403, error: { message: 'Staging 不支援 gif 圖檔！', original_filename: original_filename } })
+      }
     }
     if(file_ext == "pdf"){
       var file_type_num = 2
     }
+
 
     switch(file_type_num) {
       case 1:
@@ -154,102 +158,120 @@ var save_file_related_data = function(req, res, results){
                 res.status(403).json({ code: 403, error: { 'message': '檔案過大，無法上傳！' } })
               })
             }else{
-              //if(CONFIG.appenv.env == 'local'){ // 如果是 local 端，直接回傳
-                var data_files = []
-                var data_files_save = []
+              var data_files = []
+              var data_files_save = []
 
-                Jimp.read(form.uploadDir + '/' + file_new_name, function(err_ini_origin, info_ini_origin){
-                  if (err_ini_origin) throw err_ini_origin
+              Jimp.read(form.uploadDir + '/' + file_new_name, function(err_ini_origin, info_ini_origin){
+                if (err_ini_origin) throw err_ini_origin
 
-                  info_ini_origin.exifRotate().write(form.uploadDir + '/' + file_new_name, function(err_origin, info_origin){
+                info_ini_origin.exifRotate().write(form.uploadDir + '/' + file_new_name, function(err_origin, info_origin){
 
-                    var stats = fs.statSync(form.uploadDir + '/' + file_new_name)
+                  var stats = fs.statSync(form.uploadDir + '/' + file_new_name)
 
-                    var json_origin_data = {
-                      format: file_ext,
-                      width: info_origin.bitmap.width,
-                      height: info_origin.bitmap.height,
-                      size: stats.size,
-                      origin: true
-                    }
-                    var saved_origin_data = JSON.parse(JSON.stringify(json_origin_data));
+                  var json_origin_data = {
+                    format: file_ext,
+                    width: info_origin.bitmap.width,
+                    height: info_origin.bitmap.height,
+                    size: stats.size,
+                    origin: true
+                  }
+                  var saved_origin_data = JSON.parse(JSON.stringify(json_origin_data))
 
-                    saved_origin_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
-                    json_origin_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
+                  saved_origin_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
+                  json_origin_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
 
-                    data_files.push(json_origin_data)
-                    data_files_save.push(saved_origin_data)
+                  data_files.push(json_origin_data)
+                  data_files_save.push(saved_origin_data)
 
-                    // 重這開始
-                    generated_filename.forEach(function(item, index, arr) {
-                      var split_item = item.split('_')
-                      var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                  // 重這開始
+                  generated_filename.forEach(function(item, index, arr) {
+                    var split_item = item.split('_')
+                    var setting_width = ((split_item[3]).split('.'))[0] // 寬度
 
-                      Jimp.read(form.uploadDir + '/' + file_new_name, function(err_for_jimp_img, info_for_jimp_img){
-                        if (err_for_jimp_img) throw err_for_jimp_img
+                    Jimp.read(form.uploadDir + '/' + file_new_name, function(err_for_jimp_img, info_for_jimp_img){
+                      if (err_for_jimp_img) throw err_for_jimp_img
 
-                        info_for_jimp_img.resize(parseInt(setting_width), Jimp.AUTO).write(form.uploadDir + '/' + item, function(err, info){
-                          var stats = fs.statSync(form.uploadDir + '/' + item)
-                          var json_data = {
-                            format: file_ext,
-                            width: info.bitmap.width,
-                            height: info.bitmap.width,
-                            size: stats.size,
-                            origin: false
-                          }
-                          var saved_data = JSON.parse(JSON.stringify(json_data));
+                      info_for_jimp_img.resize(parseInt(setting_width), Jimp.AUTO).write(form.uploadDir + '/' + item, function(err, info){
+                        var stats = fs.statSync(form.uploadDir + '/' + item)
+                        var json_data = {
+                          format: file_ext,
+                          width: info.bitmap.width,
+                          height: info.bitmap.width,
+                          size: stats.size,
+                          origin: false
+                        }
+                        var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                          saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
-                          json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
+                        saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
+                        json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
 
-                          data_files_save.push(saved_data)
-                          data_files.push(json_data)
+                        data_files_save.push(saved_data)
+                        data_files.push(json_data)
 
-                          if(index+1 == generated_filename.length){
+                        if(index+1 == generated_filename.length){
 
-                            userModel.getOne('id', results[0].user_id, function(user_results){
+                          userModel.getOne('id', results[0].user_id, function(user_results){
 
-                              var saved_obj = {
-                                //u_id: Math.floor((Math.random() * 10000) + 1),
-                                user_id: parseInt(user_results[0].id),
-                                category_id: parseInt(fields.category),
-                                organ_id: user_results[0].organ_id,
-                                title: fields.title,
-                                file_type: file_type_num,
-                                file_path: file_save_path,
-                                file_ext: file_ext,
-                                file_data: JSON.stringify(data_files_save),
-                                pageviews: 0,
-                                permissions: fields.permissions
-                              }
+                            var saved_obj = {
+                              //u_id: Math.floor((Math.random() * 10000) + 1),
+                              user_id: parseInt(user_results[0].id),
+                              category_id: parseInt(fields.category),
+                              organ_id: user_results[0].organ_id,
+                              title: fields.title,
+                              file_type: file_type_num,
+                              file_path: file_save_path,
+                              file_ext: file_ext,
+                              file_data: JSON.stringify(data_files_save),
+                              pageviews: 0,
+                              permissions: fields.permissions
+                            }
 
+                            var data_for_have_the_same_u_id = {
+                              req: req,
+                              res: res,
+                              fields: fields,
+                              data_files: data_files,
+                              original_filename: original_filename,
+                              saved_obj: saved_obj
+                            }
+                            if(CONFIG.appenv.env == 'local'){ // local 端直接儲存
                               var unique_id = functions.generate_random_code(code_num)
-                              have_the_same_u_id(unique_id, function(){
+                              have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
                                 duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                               })
+                            }else{
+                              scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
+                            }
 
-                              if(CONFIG.appenv.env != 'local'){
-                                scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
-                              }
-
+                            /*
+                            var unique_id = functions.generate_random_code(code_num)
+                            have_the_same_u_id(unique_id, function(){
+                              duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                             })
 
+                            if(CONFIG.appenv.env != 'local'){
+                              scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
+                            }
+                            */
+
+                          })
 
 
 
-                          }
-                        })
+
+                        }
                       })
-
-
                     })
 
 
-
-
-
                   })
+
+
+
+
+
                 })
+              })
 
 
             }
@@ -318,6 +340,26 @@ var save_file_related_data = function(req, res, results){
                     permissions: fields.permissions
                   }
 
+                  var data_for_have_the_same_u_id = {
+                    req: req,
+                    res: res,
+                    fields: fields,
+                    data_files: data_files,
+                    original_filename: original_filename,
+                    saved_obj: saved_obj
+                  }
+                  if(CONFIG.appenv.env == 'local'){ // local 端直接儲存
+                    var unique_id = functions.generate_random_code(code_num)
+                    have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+                      duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
+                    })
+                  }else{
+                    var generated_filename = []
+                    scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
+                  }
+
+
+                  /*
                   var unique_id = functions.generate_random_code(code_num)
                   have_the_same_u_id(unique_id, function(){
                     duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
@@ -326,6 +368,7 @@ var save_file_related_data = function(req, res, results){
                   if(CONFIG.appenv.env != 'local'){
                     scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
                   }
+                  */
 
                 })
 
@@ -344,7 +387,7 @@ var save_file_related_data = function(req, res, results){
   })
 }
 
-var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, file_new_name, generated_filename){
+var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id){
   client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
     client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category, function(err){
 
@@ -357,14 +400,28 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
         })
 
         // 傳縮圖至 Storage，然後刪除
-        generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
-          client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(){
-            fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
-              //console.log("完成")
-              if (err) throw err
+        if(generated_filename.length > 0){
+          generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
+            client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(){
+              fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
+                if (err) throw err
+
+                if(generated_index + 1 == generated_filename.length){
+                  var unique_id = functions.generate_random_code(code_num)
+                  have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+                    duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
+                  })
+                }
+
+              })
             })
           })
-        })
+        }else{
+          var unique_id = functions.generate_random_code(code_num)
+          have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+            duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
+          })
+        }
 
       })
     })

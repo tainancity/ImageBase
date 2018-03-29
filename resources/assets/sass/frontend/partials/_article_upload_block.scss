@@ -83,7 +83,7 @@ article.upload_block{
             left:0;
             height: 100%;
             &.-uploading{
-              background-color: hsl(135, 80%, 41%);
+              background-color: #0e6123;
             }
             &.-failing{
               background-color: hsl(0, 98%, 73%);
@@ -100,6 +100,12 @@ article.upload_block{
               z-index: 3;
               padding-left: 5px;
               padding-right: 5px;
+              &.-transmitting{
+
+              }
+              &.-processing{
+                display: none;
+              }
             }
           }
         }

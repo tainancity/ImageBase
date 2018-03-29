@@ -7,9 +7,10 @@ script.
       
       var li_item = $("li[data-original-filename='" + filet + "']")[0];
       $(li_item).find("div.progress_block").addClass("-uploading").animate({width: progress_percent + '%'}, 'fast');
-      //$(li_item).find("div.progress_block").find("span.percentag_text").html(progress_percent + "%");
+      //$(li_item).find("div.progress_block").find("span.percentag_text.-transmitting").css("display", "inline-block");
       if(progress_percent == 100){
-        //$(li_item).find("div.progress_block").find("span.percentag_text").fadeOut();
+        $(li_item).find("div.progress_block").find("span.percentag_text.-transmitting").fadeOut();
+        $(li_item).find("div.progress_block").find("span.percentag_text.-processing").css("display", "inline-block");
       }
       
     }
@@ -27,14 +28,15 @@ script.
       filenames = [];
       for (var i = 0; i < $(this).get(0).files.length; ++i) {
         var html = '';
-        var file_ext = ($(this).get(0).files[i].name).split('.').pop();
+        var file_ext = (($(this).get(0).files[i].name).split('.').pop()).toLowerCase();
         filenames.push($(this).get(0).files[i].name);
         //var file_item_li = $(this).get(0).files[i].name;
         
         
         html += "<li data-original-filename='" + $(this).get(0).files[i].name + "'>";
         html +=   "<div class='progress_block' style='width:0%'>";
-        html +=     "<span class='percentag_text'>處理中...<i class='fas fa-spinner fa-spin'></i></span>";
+        html +=     "<span class='percentag_text -transmitting'>傳輸中...<i class='fas fa-spinner fa-spin'></i></span>";
+        html +=     "<span class='percentag_text -processing'>處理中...<i class='fas fa-spinner fa-spin'></i></span>";
         html +=   "</div>";
         html +=   "<div class='info_block'>";
         html +=     "<span class='icon_type'><i class='fas fa-file-image'></i></span>";
@@ -72,15 +74,30 @@ script.
               }
               return myXhr;
             },
+            statusCode: {
+              403: function(data_obj) {
+                $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+                  if(data_obj.responseJSON.error.original_filename == $(this).attr("data-original-filename")){
+                    $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                    $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
+                    $(this).find("div.info_block").append("<span class='info_file'>" + data_obj.responseJSON.error.message + "</span>");
+                    $(this).removeAttr("data-original-filename");
+                  }
+                });
+              }
+            },
             success: function(data_obj) {
               
               $(article_upload_block).find("ul.pic_list").children("li").each(function(){
                 if(data_obj.data.original_filename == $(this).attr("data-original-filename")){
                   $(this).find("div.info_block").find("a.info_success").removeClass("display_none").attr("href", data_obj.data.short_url);
-                  $(this).find("div.progress_block").find("span.percentag_text").fadeOut();
+                  $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                  $(this).removeAttr("data-original-filename");
                 }
               })
               
+            },
+            complete: function(r){
             }
           });
 
