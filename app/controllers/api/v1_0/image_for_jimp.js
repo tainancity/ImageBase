@@ -703,3 +703,125 @@ exports.image_soft_delete_undo = function(options){
 
   }
 }
+
+// 將檔案刪除
+exports.image_hard_delete = function(options){
+  return function(req, res){
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
+        }
+
+        fileModel.getOne('u_id', req.params.u_id, function(files){
+          if(files.length == 0){
+            return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+          }else{
+
+            // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者使用 full_api_key 也可回傳
+            if( req.query.api_key == CONFIG.appenv.full_api_key || results[0].user_id == files[0].user_id ){
+
+              // step 1: 刪除 資料表 files_tags
+              fileTagModel.deleteWhere('file_id', files[0].id, function(del_tag_result){
+
+                // step 2: 刪除 資料表 file_like
+                fileLikeModel.deleteWhere('file_id', files[0].id, function(del_like_result){
+
+                  // step 3: 刪除 資料表 file_carousel
+                  fileCarouselModel.deleteWhere('file_id', files[0].id, function(del_like_result){
+
+                    // step 4: 刪除 實際檔案
+                    if(CONFIG.appenv.env == 'local'){
+
+                      JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
+
+                        // 取得欲刪除的檔案路徑
+                        var file_path_split = files[0].file_path.split('/')
+                        file_path_split.splice(0, 1)
+                        var dir_path = file_path_split[0].split('_')
+                        file_path_split.splice(0, 1)
+                        var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
+
+                        var will_del_file_name = file_item.url.split('/').pop()  // 檔名
+
+                        var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+                        if (fs.existsSync(delete_file_path)) {
+                          fs.unlinkSync(delete_file_path)
+                        }
+                        if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
+                          // step 5: 刪除 資料表 files
+                          fileModel.deleteWhere('id', files[0].id, function(){
+                            return res.status(200).json({code: 200, msg:'刪除成功'})
+                          })
+                        }
+
+                      })
+
+                    }else{ // 非 local 端，刪除遠端路徑
+                      JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
+
+                        // 取得欲刪除的檔案路徑
+                        var file_path_split = files[0].file_path.split('/')
+                        file_path_split.splice(0, 1)
+                        var dir_path = file_path_split[0].split('_')
+                        file_path_split.splice(0, 1)
+                        var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
+
+                        var will_del_file_name = file_item.url.split('/').pop()  // 檔名
+
+                        var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+
+                        //client_scp2: here
+                        client_ssh_sftp.connect({
+                            host: CONFIG.appenv.storage.scp.ip,
+                            port: 22,
+                            username: CONFIG.appenv.storage.scp.user,
+                            password: CONFIG.appenv.storage.scp.password
+                        }).then(() => {
+                          console.log(delete_file_path)
+                          client_ssh_sftp.delete(delete_file_path);
+                          if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
+                            // step 5: 刪除 資料表 files
+                            fileModel.deleteWhere('id', files[0].id, function(){
+                              return res.status(200).json({code: 200, msg:'刪除成功'})
+                            })
+                          }
+                        }).catch((err) => {
+                          console.log(err, 'catch error');
+                        });
+
+
+
+                      })
+                    }
+
+
+                  })
+
+                })
+
+              })
+
+            }else{
+              res.status(403).json({ code: 403, error: { 'message': '無權更新該檔案資料'} })
+            }
+
+          }
+        })
+
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
+
+
+  }
+}
