@@ -24,8 +24,9 @@ var client_scp2 = new Client({
   password: CONFIG.appenv.storage.scp.password
 })
 
+let client_ssh = require('ssh2-sftp-client')
+let client_ssh_sftp = new client_ssh();
 
-//var u_id_duplicate = false
 var u_id_duplicate_times = 0
 var code_num = 4 // 資料庫裡 u_id 的位數
 var have_the_same_u_id = function(u_id, data_for_have_the_same_u_id, cb){
