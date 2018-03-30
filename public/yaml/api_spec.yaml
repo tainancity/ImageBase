@@ -91,3 +91,60 @@ paths:
           description: 回傳圖片網址及相關資料
         403:
           description: 未提供 API Key 或 未經授權的 API Key
+  "/api/v1.0/image/trash/{u_id}":
+    delete:
+      tags:
+        - 圖片
+      summary: 將檔案丟到垃圾桶，實際未刪除
+      description: 透過短網址 id，將檔案丟到垃圾桶
+      parameters:
+        - name: u_id
+          in: path
+          description: 短網址 id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 回傳相關資料
+        403:
+          description: 未提供 API Key、未經授權的 API Key、無權更新該檔案資料
+        404:
+          description: 找不到該檔案
+  "/api/v1.0/image/trash/{u_id}/undo":
+    delete:
+      tags:
+        - 圖片
+      summary: 將垃圾桶裡的檔案復原
+      description: 透過短網址 id，將垃圾桶裡的檔案復原
+      parameters:
+        - name: u_id
+          in: path
+          description: 短網址 id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 回傳相關資料
+        403:
+          description: 未提供 API Key、未經授權的 API Key、無權更新該檔案資料、此檔案過去未被丟至垃圾桶
+        404:
+          description: 找不到該檔案
+  "/api/v1.0/image/delete/{u_id}":
+    delete:
+      tags:
+        - 圖片
+      summary: 將檔案刪除，無法復原
+      description: 透過短網址 id，將檔案刪除，無法復原
+      parameters:
+        - name: u_id
+          in: path
+          description: 短網址 id
+          required: true
+          type: string
+      responses:
+        200:
+          description: 回傳相關資料
+        403:
+          description: 未提供 API Key、未經授權的 API Key、無權更新該檔案資料
+        404:
+          description: 找不到該檔案

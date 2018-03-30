@@ -25,6 +25,8 @@ exports.save = function(table_name, table_columns, insert_data, has_time, cb) {
   //console.log(query.sql)
 }
 
+// var update_obj = { column_name: 'column_name_value' }
+// var where_obj = { column_name: 'column_name_value' }
 exports.update = function(table_name, update_obj, where_obj, has_time, cb) {
   if(has_time){
     update_obj.updated_at = timestamp_now()
@@ -70,6 +72,16 @@ exports.getAll2Where = function(table_name, sort_obj, where_obj1, where_obj2, cb
 // ========== 刪除相關 ========== //
 exports.deleteOne = function(table_name, u_id_col, u_id, cb) {
   conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? LIMIT 1', [u_id], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}
+
+// u_id_col
+// u_id
+exports.deleteWhere = function(table_name, u_id_col, u_id, cb) {
+  conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ?', [u_id], function (error, results, fields) {
     if (error) throw error
     cb(results)
   })

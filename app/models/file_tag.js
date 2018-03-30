@@ -35,12 +35,14 @@ exports.getAll2Where = function(sort_obj, where_obj1, where_obj2, cb) {
   baseModel.getAll2Where(table_name, sort_obj, where_obj1, where_obj2, cb)
 }
 
-
-
 /**
  * sort_obj = { "column": "created_at", "sort_type": "DESC" }
  *
  */
 exports.getAll = function(sort_obj, cb) {
   baseModel.getAll(table_name, sort_obj, cb)
+}
+
+exports.deleteWhere = function(u_id_col, u_id, cb){
+  baseModel.deleteWhere(table_name, u_id_col, u_id, cb)
 }

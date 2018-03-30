@@ -17,7 +17,10 @@ module.exports = function(app){
     app.get('/:u_id', apiImage.image_get(options))
     app.post('/', apiImage.image_post(options))
     //app.put('/', )
-    //app.delete('/', )
+    app.delete('/trash/:u_id', apiImage.image_soft_delete(options))
+    app.delete('/trash/:u_id/undo', apiImage.image_soft_delete_undo(options))
+    app.delete('/delete/:u_id', apiImage.image_hard_delete(options))
+    //app.delete('/:u_id', apiImage.image_hard_delete(options))
   })
 
 }

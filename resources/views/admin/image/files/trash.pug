@@ -1,17 +1,17 @@
 extends ../../layouts/admin
 
 block append page_title
-  title 檔案列表
+  title 檔案列表 - 垃圾桶
 
 block append head_end_tag_sl
-  link(href=asset_path('css/admin/image/file_list.css') rel='stylesheet')
+  link(href=asset_path('css/admin/image/file_list_trash.css') rel='stylesheet')
 
 block append content_sl
   section.section-container
     .container-fluid
       .row
         .col-xl-12
-          h5.mt-0 檔案列表
+          h5.mt-0 檔案列表 - 垃圾桶
           div.cardbox
             div.cardbox-body
               div.table-responsive
@@ -34,6 +34,7 @@ block append content_sl
                       th 標籤
                       th 建立時間
                       th 更新時間
+                      th 刪除時間
                       th
                       
                   tbody
@@ -73,6 +74,7 @@ block append content_sl
                             
                         td= time.get_time_from_timestamp('zh-tw', item.created_at)
                         td= time.get_time_from_timestamp('zh-tw', item.updated_at)
+                        td= time.get_time_from_timestamp('zh-tw', item.deleted_at)
                         td
                           ul.action_list
                             li
@@ -80,7 +82,7 @@ block append content_sl
                             li
                               button.btn_action(type='button' title='編輯'): i.fas.fa-edit
                             li
-                              button.btn_action.btn_to_trash(type='button' title='垃圾桶' data-id=item.u_id): i.fas.fa-trash-alt
+                              button.btn_action.btn_trash_undo(type='button' title='復原' data-id=item.u_id): i.fas.fa-undo
                             li
                               button.btn_action(type='button' title='刪除(無法復原)'): i.fas.fa-times
                           
@@ -205,11 +207,10 @@ block append body_end_others_sl
         
       });
       
-      $("button.btn_to_trash").on("click", function(){
+      $("button.btn_trash_undo").on("click", function(){
         var u_id = $(this).attr("data-id");
-        
         $.ajax({
-          url: '#{config.appenv.domain}' + '/api/v1.0/image/trash/' + u_id + '?api_key=#{config.appenv.full_api_key}',
+          url: '#{config.appenv.domain}' + '/api/v1.0/image/trash/' + u_id + '/undo?api_key=#{config.appenv.full_api_key}',
           type: 'delete',
           //data: data,
           dataType: 'json',
@@ -224,7 +225,6 @@ block append body_end_others_sl
             }
           }
         });
-        
       });
       
     });

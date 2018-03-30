@@ -98,6 +98,8 @@ module.exports = function(app){
     app.get('/list', AdminFileManage.file_list(options))
     // 檔案上傳
     app.get('/upload', AdminFileManage.file_upload(options))
+    // 垃圾桶
+    app.get('/trash', AdminFileManage.file_list_trash(options))
   })
 
   // 平台 Admin
@@ -106,6 +108,8 @@ module.exports = function(app){
 
     // 檔案列表
     app.get('/file/list', AdminFileManage.file_list(options))
+    // 垃圾桶
+    app.get('/file/trash', AdminFileManage.file_list_trash(options))
 
     // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))

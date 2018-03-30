@@ -1,0 +1,128 @@
+table.custom_table{
+  thead{
+    tr{
+      th{
+        &:first-child{
+          width: 20px;
+        }
+        &:last-child{
+          width: 90px;
+        }
+      }
+    }
+  }
+  tbody{
+    tr{
+      td{
+        img.w_32{
+          width: 32px;
+        }
+        span.other_file{
+          color: red;
+        }
+        span.tag_item{
+          border:1px solid #e0e5e8;
+          border-radius: 3px;
+          padding: 2px 3px;
+          display: inline-block;
+          margin-right: 1px;
+          margin-bottom: 1px;
+        }
+        ul.action_list{
+          margin:0;
+          padding:0;
+          > li{
+            margin:0 5px 0 0;
+            padding:0;
+            list-style: none;
+            display: inline-block;
+            &:last-child{
+              margin-right:0;
+            }
+            button.btn_action{
+              padding:0;
+              border:0;
+              cursor: pointer;
+              outline: none;
+            }
+          }
+        }
+
+      }
+    }
+  }
+}
+
+div.picture-modal-lg{
+  div.modal-body{
+    p.para{
+      font-size: .875rem;
+      color: rgb(179, 179, 179);
+      font-style: italic;
+    }
+    ul.picture_list{
+      margin:0;
+      padding:0;
+      > li{
+        display: block;
+        margin:0 0 5px 0;
+        padding:0;
+        list-style: none;
+        &:last-child{
+          margin-bottom: 0;
+        }
+        div.left_block, div.right_block{
+          display: inline-block;
+          vertical-align: top;
+          /*@media screen and (max-width: 767px){
+            display: block;
+          }*/
+        }
+        div.left_block{
+          width: 100px;
+          margin-right: 10px;
+          div.img_block{
+            position: relative;
+            img.file_info{
+              width: 100%;
+            }
+            span.original_pic{
+              position: absolute;
+              color: white;
+              top:3px;
+              left:3px;
+              display: inline-block;
+              background-color: black;
+              font-size: .75rem;
+              border-radius: 5px;
+              padding: 2px 4px;
+            }
+          }
+        }
+        div.right_block{
+          width: calc(100% - 200px);
+          ul.data_info_list{
+            margin:0;
+            padding:0;
+            > li{
+              display: block;
+              margin:0;
+              padding:0;
+              list-style: none;
+              word-break: break-all;
+              span.label_text{
+                display: inline-block;
+                vertical-align: middle;
+                text-align: right;
+              }
+              span.label_value{
+                display: inline-block;
+                vertical-align: middle;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

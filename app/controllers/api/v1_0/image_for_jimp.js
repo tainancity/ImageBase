@@ -9,6 +9,8 @@ var userModel = require(CONFIG.path.models + '/user.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var tagModel = require(CONFIG.path.models + '/tag.js')
 var fileTagModel = require(CONFIG.path.models + '/file_tag.js')
+var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
+var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var organizationModel = require(CONFIG.path.models + '/organization.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 
@@ -590,6 +592,113 @@ exports.image_post = function(options){
 
     }
 
+  }
+}
+
+// 將檔案標記為刪除：軟刪除
+exports.image_soft_delete = function(options){
+  return function(req, res){
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
+        }
+
+
+        fileModel.getOne('u_id', req.params.u_id, function(files){
+          if(files.length == 0){
+            return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+          }else{
+
+            // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者使用 full_api_key 也可回傳
+            if( req.query.api_key == CONFIG.appenv.full_api_key || results[0].user_id == files[0].user_id ){
+
+              if(files[0].deleted_at == null){
+                var time_now = parseInt(Date.now() / 1000)
+                var update_obj = { deleted_at: time_now }
+                var where_obj = { u_id: req.params.u_id }
+                fileModel.update(update_obj, where_obj, false, function(delete_results){
+                  return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, deleted_at: time_now } })
+                })
+              }else{
+                return res.status(403).json({ code: 403, error: { u_id : req.params.u_id, message: '先前已刪除過' } })
+              }
+
+
+            }else{
+              res.status(403).json({ code: 403, error: { 'message': '無權更新該檔案資料'} })
+            }
+
+          }
+        })
+
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
+
+
+  }
+}
+
+// 將檔案標記為刪除：軟刪除復原
+exports.image_soft_delete_undo = function(options){
+  return function(req, res){
+    //console.log(req.get('host'))
+
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
+        }
+
+
+        fileModel.getOne('u_id', req.params.u_id, function(files){
+          if(files.length == 0){
+            return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+          }else{
+
+            // 若該 api_key 的使用者 與 圖片的使用者一致的話，不論 permissions 為何，都可回傳；或者使用 full_api_key 也可回傳
+            if( req.query.api_key == CONFIG.appenv.full_api_key || results[0].user_id == files[0].user_id ){
+
+              if(files[0].deleted_at == null){
+                return res.status(403).json({ code: 403, error: { u_id : req.params.u_id, message: '此檔案過去未被丟至垃圾桶' } })
+              }else{
+                var update_obj = { deleted_at: null }
+                var where_obj = { u_id: req.params.u_id }
+                fileModel.update(update_obj, where_obj, false, function(delete_results){
+                  return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, message: '已復原' } })
+                })
+              }
+
+
+            }else{
+              res.status(403).json({ code: 403, error: { 'message': '無權更新該檔案資料'} })
+            }
+
+          }
+        })
+
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
 
 
   }
