@@ -787,7 +787,7 @@ exports.image_hard_delete = function(options){
                             username: CONFIG.appenv.storage.scp.user,
                             password: CONFIG.appenv.storage.scp.password
                         }).then(() => {
-                          console.log(delete_file_path)
+                          //console.log(delete_file_path)
                           client_ssh_sftp.delete(delete_file_path);
                           if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
