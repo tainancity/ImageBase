@@ -1,7 +1,10 @@
 var express = require('express')
 //var methodOverride = require('method-override')
 require('express-group-routes')
+var cors = require('cors')
 var app = express()
+
+app.use(cors()) // allow cors
 
 var CONFIG = require('../app/config/global.js')
 // ========== Global Middlewares ========== //

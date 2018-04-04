@@ -1,0 +1,143 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案編輯
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_update.css') rel='stylesheet')
+  link(href=asset_path('vendors/plugins/cropper/cropper.min.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 檔案編輯
+          div.cardbox
+            div.cardbox-body
+              div.crop_block_container
+                if no_file
+                  p.no_file 無相關檔案
+                else if no_privilege
+                  p.no_prievelege 無權取得該檔案
+                else
+                  h1.title1 裁切圖片
+                  p.para 裁切功能：裁切過後，除了原始檔案之外，其它檔案都會自動刪除，然後將裁切的圖，分別縮放至 320px、640px、960px 的寬。
+                  div.crop_block
+                    div.left_b
+                      div.crop_image
+                        img#image(src=config.appenv.storage.domain + origin_file.url)
+                    div.right_b
+                      div.img_preview: span.temp_text 預覽區域
+                      div.info_b
+                        span.img_width
+                        span.img_height
+                      div.action_block
+                        div.act1
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='1' data-ratio-height='1') 1:1
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='2' data-ratio-height='3') 2:3
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='3' data-ratio-height='2') 3:2
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='3' data-ratio-height='4') 3:4
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='4' data-ratio-height='3') 4:3
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='9' data-ratio-height='16') 9:16
+                          button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='16' data-ratio-height='9') 16:9
+                          button.btn.btn-secondary.btn_ratio.-on(type='button' data-ratio-width='0' data-ratio-height='1') 任意
+                          
+                        div.act2
+                          button.btn.btn-secondary.btn_preview(type='button') 預覽
+                          button.btn.btn-primary.btn_save(type='button' data-u-id=file.u_id) <span class='-saving'>儲存</span><span class='-cropping'>裁切中</span>
+                  
+                  //-
+                    div.image-editor
+                      div.cropit-preview
+                      div.b_container
+                        div.zoom_b
+                          div.image-size-label 圖片縮放
+                          input.cropit-image-zoom-input(type='range')
+                        div.rotate_b
+                          button.rotate-ccw.btn.btn-secondary 逆時針旋轉
+                          button.rotate-cw.btn.btn-secondary 順時針旋轉
+                        div.save_b
+                          button.btn.btn-primary.btn_save 儲存
+                    div.export_preview_b
+                      img.export_preview(src='#')
+              //-      
+                div= file.file_data
+                          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+        
+block append body_end_others_sl
+  //-
+    script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script(src=asset_path('vendors/plugins/cropper/cropper.min.js'))
+  script(src=asset_path('vendors/plugins/cropper/jquery-cropper.min.js'))
+  script.
+    //var cropper;
+    $(function(){
+      
+      var $image = $('#image');
+      $image.cropper({
+        //aspectRatio: 16 / 9,
+        //preview: [$('div.img_preview')[0]],
+        dragMode: 'move',
+        zoomOnWheel: false,
+        crop: function(event) {
+          /* console.log('x: ' + event.detail.x);
+          console.log('y: ' + event.detail.y);
+          console.log('width: ' + event.detail.width);
+          console.log('height: ' + event.detail.height);
+          console.log('rotate: ' + event.detail.rotate);
+          console.log('scaleX: ' + event.detail.scaleX);
+          console.log('scaleY: ' + event.detail.scaleY); */
+          $("span.img_width").html(parseInt(event.detail.width) + "px");
+          $("span.img_height").html(parseInt(event.detail.height) + "px");
+        }
+      });
+      // Get the Cropper.js instance after initialized
+      var cropper = $image.data('cropper');
+      
+      $('button.btn_ratio').on('click', function(){
+        $(this).closest('div.act1').find('button.btn_ratio').removeClass('-on');
+        $(this).addClass('-on');
+        cropper.setAspectRatio( parseInt($(this).attr("data-ratio-width")) / parseInt($(this).attr("data-ratio-height")) );
+      });
+      $('button.btn_preview').on('click', function(){
+        var croppedCanvas = cropper.getCroppedCanvas();
+        $('div.img_preview').html(croppedCanvas);
+      });
+      $('button.btn_save').on('click', function(){
+        if($(this).hasClass('-cropping')){
+          alert('裁切中…請勿重覆點擊');
+        }else{
+          if($('div.img_preview').find('canvas').length > 0){
+            var r = confirm("確認裁切？除了原始檔案之外，其它檔案都會自動刪除。");
+            if (r == true) {
+              var u_id = $(this).attr('data-u-id')
+              $(this).addClass('-cropping')
+              $.ajax({
+                type: "POST",
+                url: '#{config.appenv.domain}/api/v1.0/image/crop',
+                data: "img_id=" + u_id + "&img_data=" + ($('div.img_preview').find('canvas')[0]).toDataURL(),
+                //dataType: dataType,
+                success: function(data){
+                  alert(data.msg);
+                  if(data.code == 200){
+                    location.href = '#{config.appenv.domain}/admin/file/list'
+                  }else{
+                    location.reload();
+                  }
+                }
+              });
+            }
+          }else{
+            alert("請先執行預覽，再按儲存。");
+          }
+        }
+        
+      });
+      
+      
+      
+    });

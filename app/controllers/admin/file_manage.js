@@ -109,6 +109,38 @@ exports.file_list = function(options) {
   }
 }
 
+// 檔案編輯
+exports.file_update = function(options) {
+  return function(req, res) {
+    fileModel.getOne('u_id', req.params.u_id, function(result){
+      if(result.length > 0){
+        userModel.getOne('u_id', req.session.u_id, function(user_result){
+          if(result[0].user_id == user_result[0].id){
+            var origin_file
+            JSON.parse(result[0].file_data).forEach(function(file_item, file_index){
+
+              if(file_item.origin){
+                origin_file = file_item
+              }
+
+
+              /*if(file_item.width == 960){
+                origin_file = file_item
+              }*/
+
+            })
+            res.render('admin/image/files/update', {u_id: req.params.u_id, file: result[0], origin_file: origin_file})
+          }else{
+            res.render('admin/image/files/update', {u_id: req.params.u_id, no_privilege: true})
+          }
+        })
+      }else{
+        res.render('admin/image/files/update', {u_id: req.params.u_id, no_file: true})
+      }
+    })
+  }
+}
+
 // 檔案上傳
 exports.file_upload = function(options) {
   return function(req, res) {

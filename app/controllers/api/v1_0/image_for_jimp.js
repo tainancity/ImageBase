@@ -826,3 +826,160 @@ exports.image_hard_delete = function(options){
 
   }
 }
+
+// 裁切
+exports.image_crop = function(options){
+  return function(req, res){
+    //console.log('u_id: ' + req.session.u_id)
+    //console.log('img_id: ' + req.body.img_id)
+    var api_upload_dir = 'a'
+
+    fileModel.getOne('u_id', req.body.img_id, function(file_result){
+
+      // 將 「data:image\/png;base64,」移除，最後將「空白」問題，用「+」號取代。
+      var base64Data = (req.body.img_data.replace(/^data:image\/png;base64,/, "")).replace(/\s/g, "+")
+
+      var savePath = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + 'crop_' + req.body.img_id + '.png'
+      var dataBuffer = new Buffer(base64Data, 'base64')
+
+    	fs.writeFile(savePath, dataBuffer, function(err) {
+    		if(err){
+          if (err) throw err
+          return res.status(403).json({code: 403, msg: '發生不預期的錯誤。'})
+    		}else{
+          var file_data = JSON.parse(file_result[0].file_data)
+          var new_file_data = []
+          var file_name_arr = []
+          var file_width_arr = [] // 縮放的寬度，應該都是 320、640、960
+
+          // 取得原主檔名，並刪除
+          file_data.forEach(function(file_item, file_index){
+            if(!file_item.origin){
+              //file_item.url
+              var original_filename_arr = (file_item.url).split('/')
+              var original_full_name = original_filename_arr[original_filename_arr.length-1]
+              var new_file_name = ((original_filename_arr[original_filename_arr.length-1]).split('.')[0])
+              file_name_arr.push(new_file_name)
+              file_width_arr.push(file_item.width)
+              if(CONFIG.appenv.env == 'local'){ // 本機端刪檔
+                if (fs.existsSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)) {
+                  fs.unlinkSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)
+                }
+              }else{ // 遠端刪檔
+                // 取得欲刪除的檔案路徑
+                var file_path_split = file_result[0].file_path.split('/')
+                file_path_split.splice(0, 1)
+                var dir_path = file_path_split[0].split('_')
+                file_path_split.splice(0, 1)
+                var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
+
+                var will_del_file_name = file_item.url.split('/').pop()  // 檔名
+
+                var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+
+                //client_scp2: here
+                client_ssh_sftp.connect({
+                    host: CONFIG.appenv.storage.scp.ip,
+                    port: 22,
+                    username: CONFIG.appenv.storage.scp.user,
+                    password: CONFIG.appenv.storage.scp.password
+                }).then(() => {
+                  //console.log(delete_file_path)
+                  client_ssh_sftp.delete(delete_file_path);
+
+                }).catch((err) => {
+                  console.log(err, 'catch error');
+                })
+
+              }
+            }else{
+              new_file_data.push(file_item)
+            }
+          })
+
+          var to_file_path = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id
+
+          Jimp.read(savePath, function(err_crop_img, info_crop_img){
+            if (err_crop_img) throw err_crop_img
+
+            info_crop_img.resize(file_width_arr[0], Jimp.AUTO).write(to_file_path + '/' + file_name_arr[0] + '.png', function(err_jimp0, jimp0_img){
+
+              var stats = fs.statSync(to_file_path + '/' + file_name_arr[0] + '.png')
+              new_file_data.push({
+                format: 'png',
+                width: jimp0_img.bitmap.width,
+                height: jimp0_img.bitmap.height,
+                size: stats.size,
+                origin: false,
+                url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[0] + '.png'
+              })
+
+              info_crop_img.resize(file_width_arr[1], Jimp.AUTO).write(to_file_path + '/' + file_name_arr[1] + '.png', function(err_jimp1, jimp1_img){
+
+                var stats = fs.statSync(to_file_path + '/' + file_name_arr[1] + '.png')
+                new_file_data.push({
+                  format: 'png',
+                  width: jimp1_img.bitmap.width,
+                  height: jimp1_img.bitmap.height,
+                  size: stats.size,
+                  origin: false,
+                  url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[1] + '.png'
+                })
+
+                info_crop_img.resize(file_width_arr[2], Jimp.AUTO).write(to_file_path + '/' + file_name_arr[2] + '.png', function(err_jimp2, jimp2_img){
+
+                  var stats = fs.statSync(to_file_path + '/' + file_name_arr[2] + '.png')
+                  new_file_data.push({
+                    format: 'png',
+                    width: jimp2_img.bitmap.width,
+                    height: jimp2_img.bitmap.height,
+                    size: stats.size,
+                    origin: false,
+                    url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[2] + '.png'
+                  })
+
+                  var update_obj = {file_data: JSON.stringify(new_file_data)}
+                  var where_obj = {u_id: file_result[0].u_id}
+                  fileModel.update(update_obj, where_obj, true, function(file_update_result){
+                    if (fs.existsSync(savePath)) {
+                      fs.unlinkSync(savePath)
+                    }
+
+                    // 複製檔案至 storage
+                    if(CONFIG.appenv.env != 'local'){
+                      file_name_arr.forEach(function(file_name_item, file_name_index){
+                        client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
+
+                          // 將原本機端的原檔案刪除
+                          fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
+                          if(file_name_arr.length == file_name_index + 1){
+                            return res.status(200).json({code: 200, msg: '裁切成功。'})
+                          }
+                        })
+                      })
+                    }else{
+                      return res.status(200).json({code: 200, msg: '裁切成功。'})
+                    }
+
+                  })
+
+
+                })
+
+              })
+
+            })
+          })
+
+    		}
+    	})
+
+    })
+
+
+
+
+
+
+  }
+}

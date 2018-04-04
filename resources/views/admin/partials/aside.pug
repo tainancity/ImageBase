@@ -24,6 +24,12 @@ aside.sidebar-container
                 span.nav-icon.custom_icon
                   i.fas.fa-file
                 span 檔案列表
+            if is_current_url('/admin/file/update', 'true') == 'true'
+              li(class=is_current_url('/admin/file/update', 'active'))
+                a(href='/admin/file/update/'+u_id)
+                  span.nav-icon.custom_icon
+                    i.fas.fa-edit
+                  span 檔案編輯
             li(class=is_current_url('/admin/file/upload', 'active'))
               a(href='/admin/file/upload')
                 span.nav-icon.custom_icon

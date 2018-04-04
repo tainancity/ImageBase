@@ -39,11 +39,13 @@ table.custom_table{
             &:last-child{
               margin-right:0;
             }
-            button.btn_action{
+            button.btn_action, a.btn_action{
               padding:0;
               border:0;
               cursor: pointer;
               outline: none;
+              color: black;
+              text-decoration: none;
             }
           }
         }

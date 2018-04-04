@@ -40,7 +40,16 @@ app.use(function(req, res, next){
 app.use(express.static(CONFIG.path.public))
 app.use(helmet())
 app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: false }))
+
+//app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json({
+  limit: '10mb'
+}));
+app.use(bodyParser.urlencoded({
+  extended: true,
+  limit: '10mb'
+}));
+
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     // look in urlencoded POST bodies and delete it

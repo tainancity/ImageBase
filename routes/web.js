@@ -96,6 +96,9 @@ module.exports = function(app){
 
     // 檔案列表
     app.get('/list', AdminFileManage.file_list(options))
+    // 檔案編輯
+    app.get('/update/:u_id', AdminFileManage.file_update(options))
+
     // 檔案上傳
     app.get('/upload', AdminFileManage.file_upload(options))
     // 垃圾桶
