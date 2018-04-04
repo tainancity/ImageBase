@@ -189,7 +189,7 @@ block append body_end_others_sl
               
               html_str +=       "<li>";
               html_str +=         "<span class='label_text'>大小：</span>";
-              html_str +=         "<span class='label_value'>" + item.size + " bytes</span>";
+              html_str +=         "<span class='label_value'>" + parseInt(item.size / 1024) + " KB</span>";
               html_str +=       "</li>";
               html_str +=       "<li>";
               html_str +=         "<span class='label_text'>路徑：</span>";
