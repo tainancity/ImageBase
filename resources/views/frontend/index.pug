@@ -9,7 +9,8 @@ block append head_end_tag
 include ./partials/btn_like_box.pug
 
 block append content
-  if results.length > 0
+  //- 公告
+  if announcement_results.length > 0
     section.announcement_sec
       h2.display_none 公告
       div.container
@@ -21,7 +22,7 @@ block append content
               div.announcement_middle
                 marquee(direction='up' scrollamount='1' height='20' onMouseOver='this.stop()' onMouseOut='this.start()')
                   ul.announcement_list
-                    each item, index in results
+                    each item, index in announcement_results
                       if item.is_only_link == 1
                         li: a(href=item.contents target='_blank')= item.title
                       else
@@ -29,25 +30,20 @@ block append content
               div.announcement_right
                 a(href='/announcement/list'): i.fas.fa-list-alt.fa-lg
   
-  section.slick_slider_sec
-    h2.display_none 主題輪播
-    div.container
-      div.row
-        div.col
-          div.slick_slider_container
-            div.slick_slider
-              div.slick_content
-                div.inner_content
-                  a(href='#' class='content_link'): img(src='//via.placeholder.com/600x300' class='content_img')
-              div.slick_content
-                div.inner_content
-                  a(href='#' class='content_link'): img(src='//via.placeholder.com/1200x400' class='content_img')
-              div.slick_content
-                div.inner_content
-                  a(href='#' class='content_link'): img(src='//via.placeholder.com/1200x400' class='content_img')
-  
-  section.test
-    img(src='/storage_uploads/a/1/1_1521605636960_320.jpg' width='200')
+  //- 輪播
+  if carousels.length > 0
+    section.slick_slider_sec
+      div.container
+        div.row
+          div.col
+            div.slick_slider_container
+              div.slick_slider
+                each carousel_item, carousel_index in carousels
+                  div.slick_content
+                    div.inner_content
+                      each file_item, file_index in JSON.parse(carousel_item.file_data)
+                        if file_item.width == 640
+                          a(href=config.appenv.domain + '/f/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
     
   section.common_sec
     div.container
