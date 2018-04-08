@@ -1,6 +1,12 @@
 p.no_file, p.no_prievelege{
   color: red;
 }
+h1.title1{
+  font-size: 24px;
+  &.update_data{
+    margin-top: 20px;
+  }
+}
 div.crop_block{
   div.left_b{
     display: inline-block;

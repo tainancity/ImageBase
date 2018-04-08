@@ -39,12 +39,63 @@ paths:
           description: 未提供 API Key、未經授權的 API Key、沒有相關資料、無權取得該檔案資料
         404:
           description: 找不到該檔案
+    put:
+      tags:
+        - 圖片
+      summary: 更新檔案資料
+      description: 更新檔案資料
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: u_id
+          in: path
+          description: 短網址 id
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: 檔案標題
+          required: false
+          type: string
+        - name: permissions
+          in: formData
+          default: "1"
+          enum:
+            - "1"
+            - "2"
+            - "3"
+          description: |-
+            檔案權限：
+            1 公開(此為預設，代表前台看得到)；
+            2 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)；
+            3 共用(前台看不到，知道短網址的人，皆可看到)
+          required: true
+          type: string
+        - name: category
+          in: formData
+          description: |-
+            分類：1其它
+          default: "1"
+          enum:
+            - "1"
+          required: true
+          type: string
+        - name: tags
+          in: formData
+          description: 以半形逗號(,)做分隔
+          required: false
+          type: string
+      responses:
+        200:
+          description: 回傳圖片網址及相關資料
+        403:
+          description: 未提供 API Key 或 未經授權的 API Key
   "/api/v1.0/image":
     post:
       tags:
         - 圖片
       summary: 上傳檔案
-      description: 這裡是上傳檔案的敘述
+      description: 上傳檔案
       consumes:
         - multipart/form-data
       parameters:

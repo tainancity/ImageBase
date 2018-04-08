@@ -111,6 +111,10 @@ module.exports = function(app){
 
     // 檔案列表
     app.get('/file/list', AdminFileManage.file_list(options))
+    // 首頁輪播列表
+    app.get('/file/carousel', AdminFileManage.file_carousel_list(options))
+    app.post('/file/carousel_sort_update', AdminFileManage.file_carousel_sort_update(options))
+
     // 垃圾桶
     app.get('/file/trash', AdminFileManage.file_list_trash(options))
 

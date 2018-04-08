@@ -87,3 +87,13 @@ exports.deleteWhere = function(table_name, u_id_col, u_id, cb) {
   })
   //console.log(query.sql)
 }
+
+// u_id_col
+// u_id
+exports.delete2Where = function(table_name, u_id_col, u_id, u_id_col_2, u_id_2, cb) {
+  var query = conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? AND `' + u_id_col_2 + '` = ?', [u_id, u_id_2], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  console.log(query.sql)
+}

@@ -1,0 +1,24 @@
+table.custom_table{
+  thead{
+    tr{
+      th{
+        &:first-child{
+          width: 20px;
+        }
+      }
+    }
+  }
+  tbody{
+    tr{
+      td{
+        img.w_32{
+          width: 32px;
+        }
+        span.icon_move{
+          color: blue;
+          cursor: move;
+        }
+      }
+    }
+  }
+}

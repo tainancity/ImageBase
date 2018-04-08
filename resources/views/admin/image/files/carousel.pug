@@ -1,0 +1,103 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 首頁輪播列表
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_carousel.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 首頁輪播列表
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table(id='sortable_table')
+                  thead
+                    tr
+                      th #
+                      th: i.fas.fa-arrows-alt
+                      th 檔案
+                      th 短網址
+                      th 標題
+                      th 首頁輪播(限公開)
+                  tbody(id='sortable_table_tbody')
+                    each item, index in carousels
+                      tr
+                        td= index+1
+                        td: span.icon_move(data-id=item.id): i.fas.fa-arrows-alt
+                        each file, f_index in JSON.parse(item.file_data)
+                          if file.width == 320
+                            td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
+                        td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank')= config.appenv.domain + '/f/' + item.u_id
+                        td= item.title
+                        td
+                          input.save_carousel(type='checkbox' data-u-id=item.u_id checked)        
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+              
+block append body_end_others_sl
+  script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script.
+    $(function(){
+      
+      // 排序
+      var custom_table = document.getElementById("sortable_table_tbody");
+      Sortable.create(custom_table, {
+          animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
+          handle: ".icon_move", // Restricts sort start click/touch to the specified element
+          //draggable: ".tile", // Specifies which items inside the element should be sortable
+          onUpdate: function (evt/**Event*/){
+              //var item = evt.item; // the current dragged HTMLElement
+              var item_sort = [];
+              $("#sortable_table").children("tbody").find("tr").each(function(index, item){
+                  var data_id = $(item).find("span.icon_move").attr("data-id");
+                  item_sort.push(data_id);
+                  $(this).children("td").eq(0).html(index+1);
+              });
+              //console.log(item_sort)
+              
+              $.ajax({
+                  url: '/admin/management/file/carousel_sort_update',
+                  type: 'POST',
+                  data: "send_data=" + JSON.stringify(item_sort),
+                  dataType: 'json',
+                  headers: {
+                      "X-CSRF-Token": '#{csrfToken}'
+                  },
+                  success: function(data){
+                    //console.log(data)
+                    location.reload()
+                  }
+              });
+
+          }
+      });
+      
+      $('input.save_carousel').on('click', function(){
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api-ajax/v1.0/save-carousel',
+          type: 'post',
+          data: 'checked=' + $(this).prop('checked') + '&u_id=' + $(this).attr('data-u-id'),
+          dataType: 'json',
+          headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+          },
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            //console.log(r_data)
+            location.reload()
+          }
+        });
+      });
+      
+    });

@@ -4,15 +4,13 @@ var baseModel = require(CONFIG.path.models + '/base.js')
 const table_name = 'file_carousel'
 const table_columns = ['file_id', 'sort_index']
 
-/*exports.save = function(insert_obj, has_time, cb) {
+exports.save = function(insert_obj, has_time, cb) {
   baseModel.save(table_name, table_columns, insert_obj, has_time, cb)
-}*/
+}
 
-/*
 exports.update = function(update_obj, where_obj, has_time, cb) {
   baseModel.update(table_name, update_obj, where_obj, has_time, cb)
 }
-*/
 
 /*exports.getOne = function(u_id_col, u_id, cb) {
   baseModel.getOne(table_name, u_id_col, u_id, cb)
@@ -41,10 +39,9 @@ exports.update = function(update_obj, where_obj, has_time, cb) {
  * sort_obj = { "column": "created_at", "sort_type": "DESC" }
  *
  */
-/*exports.getAll = function(sort_obj, cb) {
+exports.getAll = function(sort_obj, cb) {
   baseModel.getAll(table_name, sort_obj, cb)
 }
-*/
 
 exports.deleteWhere = function(u_id_col, u_id, cb){
   baseModel.deleteWhere(table_name, u_id_col, u_id, cb)

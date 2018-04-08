@@ -16,6 +16,8 @@ var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var organizationModel = require(CONFIG.path.models + '/organization.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 
+var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
+
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
 var Client = require('scp2').Client
@@ -57,6 +59,7 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
     if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
       save_tags((fields.tags).trim(), save_results.insertId)
     }
+    redisFileDataModel.import_to_redis()
     //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
     res.status(200).json({
       code: 200,
@@ -72,33 +75,51 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
 
 // save tags
 var save_tags = function(tags_str, fileid){
+
   var tags_array = tags_str.split(',')
-  tags_array.forEach(function(tag_item, tag_index, tag_arr){
-    tagModel.getOne("tag_name", tag_item, function(find_tags_result){
-      if(find_tags_result.length > 0){
-        var sort_obj = { "column": "id", "sort_type": "DESC" }
-        var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
-        var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": find_tags_result[0].id }
-        fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
-          if(file_tag_result.length == 0){
-            fileTagModel.save({"file_id": fileid, "tag_id": find_tags_result[0].id}, false, function(){})
+
+  // 刪除 tag
+  var prepare_del_sort_obj = { column: 'id', sort_type: 'DESC' }
+  var prepare_del_where_obj = { column_name: 'file_id', operator: '=', column_value: fileid }
+  fileTagModel.getAllWhere(prepare_del_sort_obj, prepare_del_where_obj, function(all_file_tags_result){
+    if(all_file_tags_result.length > 0){
+      all_file_tags_result.forEach(function(prepare_del_tag_item, prepare_del_tag_index){
+        tagModel.getOne("id", prepare_del_tag_item.tag_id, function(the_tag_result){
+          if(!tags_array.includes(the_tag_result[0].tag_name)){
+            fileTagModel.delete2Where('file_id', fileid, 'tag_id', prepare_del_tag_item.tag_id, function(del_result){})
           }
         })
-      }else{
-        tagModel.save({tag_name: tag_item}, false, function(tag_result){
+      })
+    }
+  })
+
+  tags_array.forEach(function(tag_item, tag_index, tag_arr){
+    if(tag_item != ''){
+      tagModel.getOne("tag_name", tag_item, function(find_tags_result){
+        if(find_tags_result.length > 0){
           var sort_obj = { "column": "id", "sort_type": "DESC" }
           var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
-          var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": tag_result.insertId }
+          var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": find_tags_result[0].id }
           fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
             if(file_tag_result.length == 0){
-              fileTagModel.save({"file_id": fileid, "tag_id": tag_result.insertId}, false, function(){})
+              fileTagModel.save({"file_id": fileid, "tag_id": find_tags_result[0].id}, false, function(){})
             }
           })
+        }else{
+          tagModel.save({tag_name: tag_item}, false, function(tag_result){
+            var sort_obj = { "column": "id", "sort_type": "DESC" }
+            var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
+            var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": tag_result.insertId }
+            fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
+              if(file_tag_result.length == 0){
+                fileTagModel.save({"file_id": fileid, "tag_id": tag_result.insertId}, false, function(){})
+              }
+            })
 
-        })
-      }
-    })
-
+          })
+        }
+      })
+    }
   })
 }
 
@@ -757,6 +778,7 @@ exports.image_soft_delete = function(options){
                 var update_obj = { deleted_at: time_now }
                 var where_obj = { u_id: req.params.u_id }
                 fileModel.update(update_obj, where_obj, false, function(delete_results){
+                  redisFileDataModel.import_to_redis()
                   return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, deleted_at: time_now } })
                 })
               }else{
@@ -814,6 +836,7 @@ exports.image_soft_delete_undo = function(options){
                 var update_obj = { deleted_at: null }
                 var where_obj = { u_id: req.params.u_id }
                 fileModel.update(update_obj, where_obj, false, function(delete_results){
+                  redisFileDataModel.import_to_redis()
                   return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, message: '已復原' } })
                 })
               }
@@ -890,6 +913,7 @@ exports.image_hard_delete = function(options){
                         if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                           // step 5: 刪除 資料表 files
                           fileModel.deleteWhere('id', files[0].id, function(){
+                            redisFileDataModel.import_to_redis()
                             return res.status(200).json({code: 200, msg:'刪除成功'})
                           })
                         }
@@ -922,6 +946,7 @@ exports.image_hard_delete = function(options){
                           if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
+                              redisFileDataModel.import_to_redis()
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
                           }
@@ -1062,6 +1087,9 @@ exports.image_crop = function(options){
                 var update_obj = {file_data: JSON.stringify(new_file_data)}
                 var where_obj = {u_id: file_result[0].u_id}
                 fileModel.update(update_obj, where_obj, true, function(file_update_result){
+
+                  redisFileDataModel.import_to_redis()
+
                   if (fs.existsSync(savePath)) {
                     fs.unlinkSync(savePath)
                   }
@@ -1093,9 +1121,64 @@ exports.image_crop = function(options){
     })
 
 
+  }
+}
+
+// 更新資料
+exports.image_put_data = function(options){
+  return function(req, res){
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
+        }
+
+        var form = new formidable.IncomingForm()
+        form.encoding = 'utf-8'
+        form.keepExtensions = true
+
+        form.parse(req, function(err, fields, files) {
+
+          fileModel.getOne('u_id', req.params.u_id, function(file_result){
+            if(file_result.length == 0){
+              return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+            }
+            // 儲存 tags
+            if(fields.tags == undefined){
+              var change_tags = ''
+            }else{
+              var change_tags = fields.tags
+            }
+            save_tags((change_tags).trim(), file_result[0].id)
+
+            if(fields.title == undefined){
+              var modify_title = ''
+            }else{
+              var modify_title = fields.title
+            }
+            var update_obj = { title: modify_title, category_id: fields.category, permissions: fields.permissions }
+            var where_obj = { u_id: req.params.u_id }
+            fileModel.update(update_obj, where_obj, true, function(update_results){
+              redisFileDataModel.import_to_redis()
+              return res.status(200).json({code: 200, msg:'更新成功'})
+            })
+
+          })
+
+        })
 
 
-
-
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
   }
 }

@@ -15,12 +15,11 @@ module.exports = function(app){
 
   app.group('/api/v1.0/image', (app) => {
     app.get('/:u_id', apiImage.image_get(options))
+    app.put('/:u_id', apiImage.image_put_data(options))
     app.post('/', apiImage.image_post(options))
-    //app.put('/', )
     app.delete('/trash/:u_id', apiImage.image_soft_delete(options))
     app.delete('/trash/:u_id/undo', apiImage.image_soft_delete_undo(options))
     app.delete('/delete/:u_id', apiImage.image_hard_delete(options))
-    //app.delete('/:u_id', apiImage.image_hard_delete(options))
 
     // 未進 api
     app.post('/crop', apiImage.image_crop(options))
