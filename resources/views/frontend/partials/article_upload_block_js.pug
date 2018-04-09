@@ -15,6 +15,92 @@ script.
       
     }
   };
+  
+  var loop_files = function(article_upload_block, files_arr){
+    var accepted_ext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+    filenames = [];
+    
+    for (var i = 0; i < files_arr.length; ++i) {
+      var html = '';
+      var file_ext = ((files_arr[i].name).split('.').pop()).toLowerCase();
+      filenames.push(files_arr[i].name);
+      //var file_item_li = files_arr[i].name;
+      
+      
+      html += "<li data-original-filename='" + files_arr[i].name + "'>";
+      html +=   "<div class='progress_block' style='width:0%'>";
+      html +=     "<span class='percentag_text -transmitting'>傳輸中...<i class='fas fa-spinner fa-spin'></i></span>";
+      html +=     "<span class='percentag_text -processing'>處理中...<i class='fas fa-spinner fa-spin'></i></span>";
+      html +=   "</div>";
+      html +=   "<div class='info_block'>";
+      html +=     "<span class='icon_type'><i class='fas fa-file-image'></i></span>";
+      html +=     "<span class='file_text'>" + files_arr[i].name + "</span>";
+      html +=     "<a class='info_success display_none' href='#' target='_blank'><i class='fas fa-link'></i></a>";
+      if(!accepted_ext.includes(file_ext)){
+        html +=   "<span class='info_file'>格式不符，限圖檔及PDF檔</span>";
+      }
+      html +=   "</div>";
+      html += "</li>";
+      
+      $(article_upload_block).find("ul.pic_list").append(html);
+      
+      if(accepted_ext.includes(file_ext)){
+        var data = new FormData();
+        data.append('upload', files_arr[i])
+        data.append('permissions', '1')
+        data.append('category', 1)
+        
+        // 圖片上傳
+        $.ajax({
+          url: "#{config.appenv.domain}/api/v1.0/image?api_key=#{config.appenv.full_api_key}",
+          type: "POST",
+          data: data,
+          contentType: false,
+          cache: false,
+          processData:false,
+          xhr: function() {
+            var myXhr = $.ajaxSettings.xhr();
+            var file_item_li = filenames[i];
+            if(myXhr.upload){
+              myXhr.upload.addEventListener('progress', function(e) {
+                uploadProgress(e, file_item_li);
+              }, false);
+            }
+            return myXhr;
+          },
+          statusCode: {
+            403: function(data_obj) {
+              $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+                if(data_obj.responseJSON.error.original_filename == $(this).attr("data-original-filename")){
+                  $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                  $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
+                  $(this).find("div.info_block").append("<span class='info_file'>" + data_obj.responseJSON.error.message + "</span>");
+                  $(this).removeAttr("data-original-filename");
+                }
+              });
+            }
+          },
+          success: function(data_obj) {
+            
+            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+              if(data_obj.data.original_filename == $(this).attr("data-original-filename")){
+                $(this).find("div.info_block").find("a.info_success").removeClass("display_none").attr("href", data_obj.data.short_url);
+                $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                $(this).removeAttr("data-original-filename");
+              }
+            })
+            
+          },
+          complete: function(r){
+          }
+        });
+
+
+
+      }
+    }
+    $(article_upload_block).find("span.hint").addClass("display_none");
+  };
 
   $(function(){
     $("article.upload_block").find("button.choose_file").on("click", function(){
@@ -24,91 +110,45 @@ script.
     $("article.upload_block").find("input.select_file").on("change", function(){
       var article_upload_block = $(this).closest("article");
       
-      var accepted_ext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
-      filenames = [];
-      for (var i = 0; i < $(this).get(0).files.length; ++i) {
-        var html = '';
-        var file_ext = (($(this).get(0).files[i].name).split('.').pop()).toLowerCase();
-        filenames.push($(this).get(0).files[i].name);
-        //var file_item_li = $(this).get(0).files[i].name;
-        
-        
-        html += "<li data-original-filename='" + $(this).get(0).files[i].name + "'>";
-        html +=   "<div class='progress_block' style='width:0%'>";
-        html +=     "<span class='percentag_text -transmitting'>傳輸中...<i class='fas fa-spinner fa-spin'></i></span>";
-        html +=     "<span class='percentag_text -processing'>處理中...<i class='fas fa-spinner fa-spin'></i></span>";
-        html +=   "</div>";
-        html +=   "<div class='info_block'>";
-        html +=     "<span class='icon_type'><i class='fas fa-file-image'></i></span>";
-        html +=     "<span class='file_text'>" + $(this).get(0).files[i].name + "</span>";
-        html +=     "<a class='info_success display_none' href='#' target='_blank'><i class='fas fa-link'></i></a>";
-        if(!accepted_ext.includes(file_ext)){
-          html +=   "<span class='info_file'>格式不符，限圖檔及PDF檔</span>";
-        }
-        html +=   "</div>";
-        html += "</li>";
-        
-        $(article_upload_block).find("ul.pic_list").append(html);
-        
-        if(accepted_ext.includes(file_ext)){
-          var data = new FormData();
-          data.append('upload', $(this).get(0).files[i])
-          data.append('permissions', '1')
-          data.append('category', 1)
-          
-          // 圖片上傳
-          $.ajax({
-            url: "#{config.appenv.domain}/api/v1.0/image?api_key=#{config.appenv.full_api_key}",
-            type: "POST",
-            data: data,
-            contentType: false,
-            cache: false,
-            processData:false,
-            xhr: function() {
-              var myXhr = $.ajaxSettings.xhr();
-              var file_item_li = filenames[i];
-              if(myXhr.upload){
-                myXhr.upload.addEventListener('progress', function(e) {
-                  uploadProgress(e, file_item_li);
-                }, false);
-              }
-              return myXhr;
-            },
-            statusCode: {
-              403: function(data_obj) {
-                $(article_upload_block).find("ul.pic_list").children("li").each(function(){
-                  if(data_obj.responseJSON.error.original_filename == $(this).attr("data-original-filename")){
-                    $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
-                    $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
-                    $(this).find("div.info_block").append("<span class='info_file'>" + data_obj.responseJSON.error.message + "</span>");
-                    $(this).removeAttr("data-original-filename");
-                  }
-                });
-              }
-            },
-            success: function(data_obj) {
-              
-              $(article_upload_block).find("ul.pic_list").children("li").each(function(){
-                if(data_obj.data.original_filename == $(this).attr("data-original-filename")){
-                  $(this).find("div.info_block").find("a.info_success").removeClass("display_none").attr("href", data_obj.data.short_url);
-                  $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
-                  $(this).removeAttr("data-original-filename");
-                }
-              })
-              
-            },
-            complete: function(r){
-            }
-          });
-
-
-
+      loop_files(article_upload_block, $(this).get(0).files);
+      
+    });
+    
+    // Drag & Drop
+    $('#holder').on({
+      'dragover dragenter': function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).addClass('-on');
+      },
+      'dragleave': function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          $(this).removeClass('-on');
+      },
+      'drop': function(e) {
+        $(this).removeClass('-on');
+        var dataTransfer =  e.originalEvent.dataTransfer;
+        if( dataTransfer && dataTransfer.files.length > 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var article_upload_block = $(this).closest("article");
+            
+            loop_files(article_upload_block, dataTransfer.files);
+            
+            /*
+            $.each( dataTransfer.files, function(i, file) {
+              var reader = new FileReader();
+              reader.onload = $.proxy(function(file, $file_list, event) {
+                var img = file.type.match('image.*') ? "<img src='" + event.target.result + "' /> " : "";
+                $file_list.append( $("<li>").append( img + file.name ) );
+              }, this, file, $("#file_list"));
+              reader.readAsDataURL(file);
+            });
+            */
         }
       }
-      
-      $(article_upload_block).find("span.hint").addClass("display_none");
-
-
     });
 
   });

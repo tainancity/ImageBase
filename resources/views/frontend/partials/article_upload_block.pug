@@ -2,8 +2,8 @@ article.upload_block
   p.upload_desc 圖檔上傳，會另外產生寬度分別為 320px、640px、960px 的檔案，高度依原比例。
   div.file_zone_parent
     span.hint 將檔案拖曳進來即可上傳
-    div.file_zone
-      ul.pic_list
+    div#holder.file_zone
+      ul#file_list.pic_list
         //-
           each val in [0, 1, 2]
             li
