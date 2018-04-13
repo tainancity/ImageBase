@@ -85,7 +85,6 @@ app.use(require(CONFIG.path.middlewares + '/get_logo_path').get_logo_path(app))
 // ========== Routes ========== //
 require(CONFIG.path.routes + '/api-ajax')(app)
 require(CONFIG.path.routes + '/web')(app)
-
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
   console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain)

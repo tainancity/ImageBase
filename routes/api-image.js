@@ -1,4 +1,5 @@
 var CONFIG = require('../app/config/global.js')
+var cors = require('cors')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var logLoginModel = require(CONFIG.path.models + '/log_login.js')
 
@@ -12,10 +13,11 @@ if( CONFIG.appenv.env == 'staging' ){
 module.exports = function(app){
 
   var options = {}
-
+  app.use(cors()) // allow cors
   app.group('/api/v1.0/image', (app) => {
     app.get('/:u_id', apiImage.image_get(options))
     app.put('/:u_id', apiImage.image_put_data(options))
+    app.get('/', apiImage.image_get_by_data(options))
     app.post('/', apiImage.image_post(options))
     app.delete('/trash/:u_id', apiImage.image_soft_delete(options))
     app.delete('/trash/:u_id/undo', apiImage.image_soft_delete_undo(options))

@@ -19,6 +19,7 @@ var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
+var static = require(CONFIG.path.helpers + '/static.js')
 
 var Client = require('scp2').Client
 var client_scp2 = new Client({
@@ -590,6 +591,12 @@ exports.image_get = function(options){
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
+
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
           if(results.length > 0){
@@ -702,6 +709,180 @@ exports.image_get = function(options){
   }
 }
 
+exports.image_get_by_data = function(options){
+  return function(req, res){
+    if(req.query.api_key == undefined){
+      return res.status(403).json({code: 403, msg:'未提供 API Key'})
+    }
+    apiKeyModel.getOne('api_key', req.query.api_key, function(results){
+      if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
+
+        // 若是 full_api_key 的話，不需要將 request_times 加 1
+        if(req.query.api_key != CONFIG.appenv.full_api_key){
+          if(results.length > 0){
+            // 將此 api_key 的 request_times 次數加 1
+            apiKeyModel.update({'request_times': results[0].request_times + 1}, {'api_key': req.query.api_key}, true, function(){})
+          }
+        }
+
+        //req.query.title
+
+        organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
+          //console.log(all_organs)
+          userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
+            //console.log(all_users)
+            fileCategoryModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_categories){
+              //console.log(all_categories)
+              tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
+                //console.log(all_tags)
+                fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_file_tags){
+                  //console.log(all_file_tags)
+
+                  fileModel.getAll2Where({ column: 'id', sort_type: 'DESC' }, { column_name: 'permissions', operator: '=', column_value: '1' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(all_files){
+                    if(all_files.length == 0){
+                      return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+                    }else{
+
+                      var data_files = []
+
+                      // 標題(title)的 filter
+                      all_files.forEach(function(file_item, file_index){
+                        if(req.query.title == '' || req.query.title == undefined){ // 如果 title 是空的，或 undefined
+                          data_files.push(file_item)
+                        }else{
+                          if( file_item.title != null && (file_item.title).includes(req.query.title) ){
+                            data_files.push(file_item)
+                          }
+                        }
+                      })
+
+                      data_files.forEach(function(file_item, file_index){
+                        // 找出使用者名稱
+                        all_users.forEach(function(the_user, user_index){
+                          if(file_item.user_id == the_user.id){
+                            data_files[file_index].user_name = static.decrypt(the_user.name)
+                          }
+                        })
+
+                        // 找出分類名稱
+                        all_categories.forEach(function(the_category, category_index){
+                          if(file_item.category_id == the_category.id){
+                            data_files[file_index].category_name = the_category.category_name
+                          }
+                        })
+
+                        // 找出所屬組織名稱
+                        all_organs.forEach(function(the_organ, organ_index){
+                          if(file_item.organ_id == the_organ.organ_id){
+                            data_files[file_index].organ_name = the_organ.organ_name
+                          }
+                        })
+
+                        // 將 url 前面加上 storage domain
+                        var new_file_data = JSON.parse(file_item.file_data)
+                        new_file_data.forEach(function(file_data_item, file_data_index){
+                          new_file_data[file_data_index].url = CONFIG.appenv.storage.domain + file_data_item.url
+                        })
+                        data_files[file_index].file_data = new_file_data
+
+                        // tags
+                        data_files[file_index].tags = []
+                        all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
+                          if(file_tag_item.file_id == file_item.id){
+                            all_tags.forEach(function(the_tag, tag_index){
+                              if(file_tag_item.tag_id == the_tag.id){
+                                data_files[file_index].tags.push(the_tag.tag_name)
+                              }
+                            })
+                          }
+                        })
+
+                        // short url
+                        data_files[file_index].short_url = CONFIG.appenv.domain + '/f/' + file_item.u_id
+                      })
+
+                      // 不回傳 id
+                      data_files.forEach(function(file_item, file_index){
+                        delete file_item.id
+                      })
+
+                      // tags filter
+                      var new_data_files = []
+                      if(req.query.tag == '' || req.query.tag == undefined){
+                      }else{
+                        data_files.forEach(function(file_item, file_index){
+                          if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
+                            new_data_files.push(file_item)
+                          }
+                        })
+                        data_files = new_data_files;
+                      }
+
+                      // 分類(category_id)的 filter
+                      new_data_files = []
+                      if(req.query.category_id == '' || req.query.category_id == undefined){
+                      }else{
+                        data_files.forEach(function(file_item, file_index){
+                          if( file_item.category_id != null && file_item.category_id == req.query.category_id ){
+                            new_data_files.push(file_item)
+                          }
+                        })
+                        data_files = new_data_files;
+                      }
+
+                      // 組織名稱(organ_id)的 filter
+                      new_data_files = []
+                      if(req.query.organ_id == '' || req.query.organ_id == undefined){
+                      }else{
+                        data_files.forEach(function(file_item, file_index){
+                          if( file_item.organ_id != null && file_item.organ_id == req.query.organ_id ){
+                            new_data_files.push(file_item)
+                          }
+                        })
+                        data_files = new_data_files;
+                      }
+
+                      // 瀏覽量(pageviews)的 filter
+                      new_data_files = []
+                      if(req.query.pageviews == '' || req.query.pageviews == undefined){
+                      }else{
+                        data_files.forEach(function(file_item, file_index){
+                          if(file_item.pageviews >= parseInt(req.query.pageviews)){
+                            new_data_files.push(file_item)
+                          }
+                        })
+                        data_files = new_data_files;
+                      }
+
+                      return res.status(200).json({ code: 200, files: data_files})
+
+                    }
+                  })
+
+                })
+              })
+
+            })
+          })
+        })
+
+
+
+      }else{
+        return res.status(403).json({code: 403, msg:'未經授權的 API Key'})
+      }
+    })
+
+
+  }
+}
+
 /* 儲存圖片及其資料 */
 exports.image_post = function(options){
 
@@ -716,6 +897,12 @@ exports.image_post = function(options){
 
       apiKeyModel.getOne('api_key', req.query.api_key, function(results){
         if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+          if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+            if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+              return res.status(403).json({code: 403, msg:'無效存取！'})
+            }
+          }
 
           // 若是 full_api_key 的話，不需要將 request_times 加 1
           if(req.query.api_key != CONFIG.appenv.full_api_key){
@@ -755,6 +942,12 @@ exports.image_soft_delete = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
@@ -813,6 +1006,12 @@ exports.image_soft_delete_undo = function(options){
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
+
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
           if(results.length > 0){
@@ -866,6 +1065,12 @@ exports.image_hard_delete = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
@@ -1132,6 +1337,12 @@ exports.image_put_data = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){

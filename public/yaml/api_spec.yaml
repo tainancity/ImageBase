@@ -24,7 +24,7 @@ paths:
     get:
       tags:
         - 圖片
-      summary: 取得檔案
+      summary: 透過短網址 id，取得檔案資料
       description: 透過短網址 id，取得檔案資料
       parameters:
         - name: u_id
@@ -91,6 +91,51 @@ paths:
         403:
           description: 未提供 API Key 或 未經授權的 API Key
   "/api/v1.0/image":
+    get:
+      tags:
+        - 圖片
+      summary: 透過參數資料，來取得檔案
+      description: 透過標題、標籤、分類、局處、瀏覽量，取得檔案資料
+      parameters:
+        - name: title
+          in: query
+          description: 檔案標題
+          required: false
+          type: string
+        - name: tag
+          in: query
+          description: Tag
+          required: false
+          type: string
+        - name: category_id
+          in: query
+          description: |-
+            分類：1其它
+          enum:
+            - "1"
+          required: false
+          type: string
+        - name: organ_id
+          in: query
+          description: |-
+            分類：臺南市政府智慧發展中心駐府人員(395000331-)
+          enum:
+            - "395000331-"
+          required: false
+          type: string
+        - name: pageviews
+          in: query
+          description: 瀏覽量，例否輸入100，會篩選出瀏覽量大於等於100的檔案
+          default: 0
+          required: false
+          type: integer
+      responses:
+        200:
+          description: 回傳檔案網址及相關資料
+        403:
+          description: 未提供 API Key、未經授權的 API Key、沒有相關資料、無權取得該檔案資料
+        404:
+          description: 找不到該檔案
     post:
       tags:
         - 圖片

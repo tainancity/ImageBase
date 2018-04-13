@@ -561,6 +561,12 @@ exports.image_get = function(options){
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
+
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
           if(results.length > 0){
@@ -688,6 +694,12 @@ exports.image_post = function(options){
       apiKeyModel.getOne('api_key', req.query.api_key, function(results){
         if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
+          if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+            if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+              return res.status(403).json({code: 403, msg:'無效存取！'})
+            }
+          }
+
           // 若是 full_api_key 的話，不需要將 request_times 加 1
           if(req.query.api_key != CONFIG.appenv.full_api_key){
             if(results.length > 0){
@@ -726,6 +738,12 @@ exports.image_soft_delete = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
@@ -784,6 +802,12 @@ exports.image_soft_delete_undo = function(options){
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
+
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
           if(results.length > 0){
@@ -837,6 +861,12 @@ exports.image_hard_delete = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
@@ -1069,7 +1099,7 @@ exports.image_crop = function(options){
                   fileModel.update(update_obj, where_obj, true, function(file_update_result){
 
                     redisFileDataModel.import_to_redis()
-                    
+
                     if (fs.existsSync(savePath)) {
                       fs.unlinkSync(savePath)
                     }
@@ -1117,6 +1147,12 @@ exports.image_put_data = function(options){
     }
     apiKeyModel.getOne('api_key', req.query.api_key, function(results){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
+
+        if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
+          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+            return res.status(403).json({code: 403, msg:'無效存取！'})
+          }
+        }
 
         // 若是 full_api_key 的話，不需要將 request_times 加 1
         if(req.query.api_key != CONFIG.appenv.full_api_key){
