@@ -21,6 +21,11 @@ ul.category_list{
         color: blue;
         cursor: move;
       }
+      span.show_on_home{
+        display: inline-block;
+        margin-left: 5px;
+        font-size: .875rem;
+      }
       a.btn_action{
         padding:3px 6px;
         cursor: pointer;

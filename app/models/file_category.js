@@ -2,7 +2,7 @@ var CONFIG = require('../config/global.js')
 var baseModel = require(CONFIG.path.models + '/base.js')
 
 const table_name = 'file_categories'
-const table_columns = ['category_name', 'level', 'parent_category_id', 'sort_index']
+const table_columns = ['category_name', 'level', 'parent_category_id', 'sort_index', 'show_index']
 
 
 exports.save = function(insert_obj, has_time, cb) {

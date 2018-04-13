@@ -25,8 +25,9 @@ exports.up = function(db) {
     organ_name: { type: 'string' },                // 單位全銜
     organ_name_abbr: { type: 'string' },           // 單位縮寫
     level: { type: 'int' },                        // 階層深度
-    parent_organ_id: { type: 'string' },              // 上層單位代碼
-    sort_index: { type: 'int', defaultValue: 0 },   // 同階層中的排序
+    parent_organ_id: { type: 'string' },           // 上層單位代碼
+    sort_index: { type: 'int', defaultValue: 0 },  // 同階層中的排序
+    show_index: { type: 'int', defaultValue: 0 },  // 該組織是否在首頁中出現
     created_at: { type: 'int' },
     updated_at: { type: 'int' },
     deleted_at: { type: 'int' }

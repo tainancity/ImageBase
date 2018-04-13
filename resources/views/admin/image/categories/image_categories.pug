@@ -21,6 +21,8 @@ mixin category_item(category, level)
       span(data-id=category.id class='icon_move icon_move_'+level): i.fas.fa-arrows-alt
       = category.category_name
       if category.category_name != '其它'
+        if category.show_index == 1
+          span.show_on_home(title='該分類會於首頁中出現'): i.fas.fa-home
         a.btn.btn-secondary.btn-sm.btn_action(href='/admin/management/image_categories/edit/'+category.id data-id=category.id): i.fas.fa-pencil-alt
         a.btn.btn-secondary.btn-sm.btn_action.btn_delete_cat(href='/admin/management/image_categories/delete/'+category.id): i.fas.fa-trash-alt
       ul.sub_category_list.sortable_ul(data-level=(parseInt(level)+1))

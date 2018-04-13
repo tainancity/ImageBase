@@ -41,6 +41,14 @@ block append content_sl
                             option(value=val.id selected='selected')= val.category_name
                           else
                             option(value=val.id)= val.category_name
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 於首頁中呈現
+                    .col-lg-10
+                      if category.show_index == 1
+                        input.form-control(type='checkbox' name='show_index' checked)
+                      else
+                        input.form-control(type='checkbox' name='show_index')
                 
                 fieldset
                   .form-group.row

@@ -92,7 +92,8 @@ exports.image_categories_create_post = function(options) {
         category_name: req.body.category_name,
         level: category_level,
         parent_category_id: req.body.parent_category_id,
-        sort_index: 0
+        sort_index: 0,
+        show_index: req.body.show_index ? 1 : 0
       }
       fileCategoryModel.save(insert_obj, false, function(results){
         res.redirect('/admin/management/image_categories')
@@ -127,7 +128,8 @@ exports.image_categories_edit_post = function(options) {
       var update_obj = {
         category_name: req.body.category_name,
         level: category_level,
-        parent_category_id: req.body.parent_category_id
+        parent_category_id: req.body.parent_category_id,
+        show_index: req.body.show_index ? 1 : 0
       }
       var where_obj = {
         id: req.body.category_id

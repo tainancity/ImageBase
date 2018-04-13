@@ -196,7 +196,23 @@ section.common_sec{
         }
       }
     }
-
+    div.each_file{
+      div.top_block{
+        position: relative;
+        height: 170px;
+        overflow: hidden;
+        border: 1px solid hsl(0, 0%, 40%);
+        border-radius: 5px;
+        > a{
+          position: absolute;
+          display: block;
+          width: 100%;
+          top:50%;
+          left: 0;
+          transform: translateY(-50%);
+        }
+      }
+    }
   }
 }
 

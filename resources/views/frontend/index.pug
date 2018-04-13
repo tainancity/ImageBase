@@ -7,6 +7,7 @@ block append head_end_tag
   link(href=asset_path('css/frontend/index.css') rel='stylesheet')
 
 include ./partials/btn_like_box.pug
+include ./partials/each_files.pug
 
 block append content
   //- 公告
@@ -83,48 +84,23 @@ block append content
                     +btn_like_box(true, true, '999+')
                     a(href='#' class='title_link') 圖片標題
   
-  section.common_sec
-    div.container
-      div.row
-        div.col
-          div.title_block
-            a.more_items(href='#')
-              i.fas.fa-plus
-              |
-              | 看更多最新圖片
-            h2.title2
-              i.fas.fa-clock
-              span.title_text 最新圖片
-          div.pic_block
-            div.row
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(true, false, 111)
-                    a(href='#' class='title_link') 圖片標題22
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(false, false, 0)
-                    a(href='#' class='title_link') 圖片標題圖片標題圖片標題圖片標題圖片標題圖片標題片標題片標題
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(false, true, '999+')
-                    a(href='#' class='title_link') 圖片標題
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(true, true, '999+')
-                    a(href='#' class='title_link') 圖片標題
+  //- 最新圖片
+  if newest_files.length > 0
+    section.common_sec
+      div.container
+        div.row
+          div.col
+            div.title_block
+              a.more_items(href='#')
+                i.fas.fa-plus
+                |
+                | 看更多最新圖片
+              h2.title2
+                i.fas.fa-clock
+                span.title_text 最新圖片
+            div.pic_block
+              div.row
+                +each_files(newest_files)
   
   section.common_sec
     div.container
@@ -169,65 +145,29 @@ block append content
                     +btn_like_box(true, true, '999+')
                     a(href='#' class='title_link') 圖片標題
   
-  section.common_sec
-    div.container
-      div.row
-        div.col
-          div.title_block
-            a.more_items(href='#')
-              i.fas.fa-plus
-              |
-              | 看更多某某分類圖片
-            h2.title2
-              i.fas.fa-th-large
-              span.title_text 某某分類圖片
-          div.pic_block
-            div.row
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(true, false, 111)
-                    a(href='#' class='title_link') 圖片標題
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(false, false, 0)
-                    a(href='#' class='title_link') 圖片標題圖片標題圖片標題圖片標題圖片標題圖片標題片標題片標題
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(false, true, '999+')
-                    a(href='#' class='title_link') 圖片標題
-              div.col-12.col-sm-6.col-md-3
-                div.each_block.each_file
-                  div.top_block
-                    a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                  div.bottom_block
-                    +btn_like_box(true, true, '999+')
-                    a(href='#' class='title_link') 圖片標題
+  //- 分類圖片
+  each item, index in categories
+    if item.files.length > 0
+      section.common_sec
+        div.container
+          div.row
+            div.col
+              div.title_block
+                a.more_items(href='#')
+                  i.fas.fa-plus
+                  |
+                  = ' 看更多「' + item.category_name + '」分類圖片'
+                h2.title2
+                  i.fas.fa-th-large
+                  span.title_text= '「' + item.category_name + '」分類圖片'
+              div.pic_block
+                div.row
+                  +each_files(item.files)
+                
             
   
   section.more_pic_sec
     button.btn_more_pics(type='button') 看更多隨選圖片
-  //-
-    p= testVar
-  
-  //-
-    img(src=config.appenv.storage.domain + config.appenv.storage.path + '/abc.png')
-  //-
-    form(action='/image-upload?_csrf=' + csrfToken method='post' enctype='multipart/form-data')
-      input(type='text' name='this_image_text')
-      
-      input(type='file' name='this_image')
-      br
-      i.far.fa-address-book
-      input(type='submit' value='送出')
 
 block append body_end_others
   script(src=asset_path('vendors/plugins/slick/slick.min.js'))
