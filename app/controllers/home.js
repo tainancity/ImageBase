@@ -7,6 +7,8 @@ var announcementModel = require(CONFIG.path.models + '/announcement.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
+var organizationModel = require(CONFIG.path.models + '/organization.js')
+var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 
@@ -23,40 +25,106 @@ exports.index = function(options) {
 
           fileCategoryModel.getAllWhere({ column: 'level', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(categories){
 
-            // 輪播
-            carousel_files_array = []
-            files_carousel_result.forEach(function(carousel_item, carousel_index){
-              files.forEach(function(file_item, file_index){
-                if(carousel_item.file_id == file_item.id){
-                  carousel_files_array.push(file_item)
-                }
+            organizationModel.getAllWhere({ column: 'sort_index', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(organizations){
+
+              fileModel.getAllWhere({ column: 'pageviews', sort_type: 'ASC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(files_pageviews){
+
+                fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(files_like){
+
+                  // 輪播
+                  carousel_files_array = []
+                  files_carousel_result.forEach(function(carousel_item, carousel_index){
+                    files.forEach(function(file_item, file_index){
+                      if(carousel_item.file_id == file_item.id){
+                        carousel_files_array.push(file_item)
+                      }
+                    })
+                  })
+
+
+                  // 最新圖片的前 4 個
+                  var newest_files = []
+                  files.forEach(function(file_item, file_index){
+                    if(newest_files.length < 4){
+                      if(file_item.permissions == '1' && file_item.file_type == '1'){
+                        newest_files.push(file_item)
+                      }
+                    }
+                  })
+
+                  // 瀏覽量最高前 4 個
+                  var pageviews_highest_files = []
+                  files_pageviews.forEach(function(file_item, file_index){
+                    if(pageviews_highest_files.length < 4){
+                      if(file_item.permissions == '1' && file_item.file_type == '1'){
+                        pageviews_highest_files.push(file_item)
+                      }
+                    }
+                  })
+
+                  // 按讚最高 files_like
+                  var files_like_total = []
+                  files_like.forEach(function(file_like_item, file_like_index){
+                    files.forEach(function(file_item, file_index){
+                      if(file_like_item.file_id == file_item.id){
+                        if(file_item.permissions == '1' && file_item.file_type == '1'){
+                          if(files_like_total.length < 4){
+                            files_like_total.push(file_item)
+                          }
+                        }
+                      }
+                    })
+                  })
+
+                  // 分類圖片
+                  //console.log(categories)
+                  categories.forEach(function(category_item, category_index){
+                    categories[category_index].files = []
+                  })
+                  files.forEach(function(file_item, file_index){
+                    if(file_item.permissions == '1' && file_item.file_type == '1'){
+                      categories.forEach(function(category_item, category_index){
+                        if(category_item.id == file_item.category_id){
+                          if(categories[category_index].files.length < 4){
+                            categories[category_index].files.push(file_item)
+                          }
+                        }
+                      })
+                    }
+                  })
+
+                  // 局處圖片
+                  //console.log(organizations)
+                  organizations.forEach(function(organization_item, organization_index){
+                    organizations[organization_index].files = []
+                  })
+                  files.forEach(function(file_item, file_index){
+                    if(file_item.permissions == '1' && file_item.file_type == '1'){
+                      organizations.forEach(function(organization_item, organization_index){
+                        if(organization_item.organ_id == file_item.organ_id){
+                          if(organizations[organization_index].files.length < 4){
+                            organizations[organization_index].files.push(file_item)
+                          }
+                        }
+                      })
+                    }
+                  })
+
+                  res.render('frontend/index', {
+                    announcement_results: announcement_results,
+                    carousels: carousel_files_array,
+                    newest_files: newest_files,
+                    categories: categories,
+                    organizations: organizations,
+                    pageviews_highest_files: pageviews_highest_files,
+                    files_like_total: files_like_total
+                  })
+
+                })
+
               })
-            })
 
-            // 最新圖片
-            var newest_files = []
-            files.forEach(function(file_item, file_index){
-              if(file_index <= 3){
-                if(file_item.permissions == '1' && file_item.file_type == '1'){
-                  newest_files.push(file_item)
-                }
-              }
             })
-
-            // 分類圖片
-            //console.log(categories)
-            categories.forEach(function(category_item, category_index){
-              categories[category_index].files = []
-            })
-            files.forEach(function(file_item, file_index){
-              categories.forEach(function(category_item, category_index){
-                if(category_item.id == file_item.category_id){
-                  categories[category_index].files.push(file_item)
-                }
-              })
-            })
-
-            res.render('frontend/index', {announcement_results: announcement_results, carousels: carousel_files_array, newest_files: newest_files, categories: categories})
 
           })
 

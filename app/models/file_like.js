@@ -49,3 +49,7 @@ exports.update = function(update_obj, where_obj, has_time, cb) {
 exports.deleteWhere = function(u_id_col, u_id, cb){
   baseModel.deleteWhere(table_name, u_id_col, u_id, cb)
 }
+
+exports.count_column = function(column_obj, cb){
+  baseModel.count_column(table_name, column_obj, cb)
+}

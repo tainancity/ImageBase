@@ -149,6 +149,7 @@ module.exports = function(app){
     // 組織部門匯入
     app.get('/organization/import_data', AdminOrganization.import_data(options))
     app.post('/organization/import_data_post', AdminOrganization.import_data_post(options))
+    app.put('/organization/show_index_status', AdminOrganization.show_index_status(options))
 
     // 其他設定
     app.get('/settings', Settings.index(options))

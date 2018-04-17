@@ -8,7 +8,26 @@ var organizationModel = require(CONFIG.path.models + '/organization.js')
 
 exports.import_data = function(options) {
   return function(req, res) {
-    res.render('admin/organization/import_data', { csrfToken: req.csrfToken() })
+    organizationModel.getAll({ column: 'id', sort_type: 'ASC' }, function(organs_result){
+      //console.log(organs_result)
+      res.render('admin/organization/import_data', { organizations: organs_result, csrfToken: req.csrfToken() })
+    })
+  }
+}
+
+exports.show_index_status = function(options) {
+  return function(req, res) {
+
+    if(req.body.checked == "true"){
+      organizationModel.update({ show_index: 1 }, {id: req.body.id}, false, function(show_index_result){
+        res.json({result: true})
+      })
+    }else{
+      organizationModel.update({ show_index: 0 }, {id: req.body.id}, false, function(show_index_result){
+        res.json({result: true})
+      })
+    }
+
   }
 }
 
