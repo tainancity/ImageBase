@@ -830,7 +830,37 @@ exports.image_get_by_data = function(options){
                         data_files = new_data_files;
                       }
 
-                      return res.status(200).json({ code: 200, files: data_files})
+                      // 計算頁碼
+                      var items_per_page = 10 // 預設每頁幾筆資料
+                      var total_page = Math.ceil(data_files.length / items_per_page)
+                      if(req.query.page == undefined || req.query.page < 1){
+                        var current_page = 1
+                      }else{
+                        var current_page = parseInt(req.query.page)
+                      }
+                      if(current_page > total_page){
+                        return res.status(404).json({ code: 404, error: { 'message': '找不到檔案'} })
+                      }
+
+                      if(current_page == 1){
+                        var p_page = ''
+                        if(total_page == 1){
+                          var n_page = ''
+                        }else{
+                          var n_page = current_page + 1
+                        }
+                      }else{
+                        var p_page = current_page - 1
+                        if(current_page == total_page){
+                          var n_page = ''
+                        }else{
+                          var n_page = current_page + 1
+                        }
+                      }
+                      // 取得該頁碼的資料
+                      data_files = data_files.slice( (current_page-1)*items_per_page, (current_page * items_per_page) )
+
+                      return res.status(200).json({ code: 200, files: data_files, previous_page: p_page, next_page: n_page})
 
                     }
                   })

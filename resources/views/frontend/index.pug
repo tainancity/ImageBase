@@ -129,11 +129,14 @@ block append content
               div.pic_block
                 div.row
                   +each_files(item.files)
-                
-            
   
   section.more_pic_sec
-    button.btn_more_pics(type='button') 看更多隨選圖片
+    div.container
+      div.row
+        div.col
+          ul.more_list
+    div.btn_action_block
+      button.btn_more_pics(type='button' data-next-page='1') 看更多圖片 <span class='icon_spin'><i class='fas fa-spinner fa-spin'></i></span>
 
 block append body_end_others
   script(src=asset_path('vendors/plugins/slick/slick.min.js'))
@@ -155,4 +158,63 @@ block append body_end_others
           }
         ]
       });
+      
+      $('button.btn_more_pics').on('click', function(){
+        $(this).addClass('-disabled').attr('disabled');
+        var next_page = $(this).attr('data-next-page');
+        var that = this;
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api/v1.0/image?page=' + next_page + '&api_key=#{config.appenv.full_api_key}',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            
+            //console.log(r_data)
+            
+            $(that).removeClass('-disabled').removeAttr('disabled');
+            if(r_data.next_page == ''){
+              $(that).addClass('-none');
+            }else{
+              $(that).attr('data-next-page', r_data.next_page);
+            }
+            
+            var html = '';
+            $(r_data.files).each(function(index, item){
+              console.log(item)
+              html += '<li>';
+              html +=   '<div class="each_block each_file">';
+              html +=     '<div class="top_block">';
+              html +=       '<a href="' + item.short_url + '">';
+              $(item.file_data).each(function(file_item_index, file_item_obj){
+                if(file_item_obj.width == 320){
+                  html +=         '<img src="' + file_item_obj.url + '">';
+                }
+              });
+              html +=       '</a>';
+              html +=     '</div>';
+              html +=     '<div class="bottom_block">';
+              html +=       '<button class="btn_like_box -have_like" type="button">';
+              html +=         '<span class="span_like"><i class="fas fa-thumbs-up"></i></span>';
+              html +=         '<span class="like_num">111</span>';
+              html +=       '</button>';
+              html +=       '<a class="title_link" href="' + item.short_url + '">' + (item.title == null ? '' : item.title) + '</a>';
+              html +=     '</div>';
+              html +=   '</div>';
+              html += '</li>';
+            });
+            
+            $('ul.more_list').append(html);
+            
+          }
+        });
+        
+      });
+      
     });
