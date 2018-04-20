@@ -17,6 +17,7 @@ var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
+var static = require(CONFIG.path.helpers + '/static.js')
 
 var Client = require('scp2').Client
 var client_scp2 = new Client({
