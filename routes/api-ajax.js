@@ -88,6 +88,20 @@ module.exports = function(app){
               })
 
             })
+          }else{
+            fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+              file_like_result.forEach(function(like_item, like_index){
+                if(like_item.file_id == req.body.id){
+                  res.json({
+                    id: req.body.id,
+                    like_num: like_item.file_id_total
+                    //file_id: req.body.id,
+                    //ip: req.headers['x-forwarded-for'] || req.ip
+                  })
+                }
+              })
+
+            })
           }
         })
 
@@ -114,7 +128,7 @@ module.exports = function(app){
         })
       }
 
-      
+
     })
 
   })
