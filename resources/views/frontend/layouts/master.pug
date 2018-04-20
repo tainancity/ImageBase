@@ -34,7 +34,33 @@ html(lang='zh-hant')
     include ../partials/article_upload_block_js.pug
     block body_end_others
     script.
+      var check_like = function(){
+        $.ajax({
+          url: '#{config.appenv.domain}/api-ajax/v1.0/like-ip',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            $("div.each_file").each(function(index, item){
+              var that = this;
+              $(r_data.result).each(function(like_index, like_item){
+                if(like_item.file_id == $(that).attr("data-id") && like_item.ip == client_ip){
+                  $(that).find("button.btn_like_box").addClass("-have_like")
+                }
+              })
+            })
+            
+          }
+        });
+      };
+      
       $(function(){
+        
         $('button.toggle_nav').on('click', function(){
           $(this).closest('header.header').find('div.mobile_nav').slideToggle();
         });
@@ -44,6 +70,36 @@ html(lang='zh-hant')
         $('button.close_upload').on('click', function(){
           $(this).closest('div.upload_pics_modal').addClass('display_none');
         });
+        
+        $(document).on("click", "button.btn_like_box", function(){
+          var that = this;
+          var item_id = $(this).closest("div.each_file").attr("data-id");
+          $.ajax({
+            url: '#{config.appenv.domain}/api-ajax/v1.0/update-like',
+            type: 'POST',
+            data: {like: !$(this).hasClass('-have_like'), id: item_id},
+            dataType: 'json',
+            headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+            },
+            statusCode: {
+              200: function (response) {
+              }
+            },
+            success: function(r_data){
+              if($(that).hasClass('-have_like')){
+                $(that).removeClass("-have_like");
+              }else{
+                $(that).addClass("-have_like");
+              }
+              if(r_data.like_num > 999){
+                $(that).find("span.like_num").html("999+");
+              }else{
+                $(that).find("span.like_num").html(r_data.like_num);
+              }
+            }
+          });
+        })
       });
       $(window).on('resize', function(){
         if($(window).width() >= 768){

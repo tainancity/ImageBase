@@ -1,21 +1,17 @@
-mixin btn_like_box(bool_have_like, bool_small, like_num)
-  if (bool_have_like && bool_small)
-    button.btn_like_box.-have_like.-small(type='button')
-      span.span_like
-        i.fas.fa-thumbs-up
-      span.like_num= like_num
-  else if (bool_have_like && !bool_small)
+mixin btn_like_box(bool_have_like, like_num)
+  if (bool_have_like)
     button.btn_like_box.-have_like(type='button')
       span.span_like
         i.fas.fa-thumbs-up
-      span.like_num= like_num
-  else if (!bool_have_like && bool_small)
-    button.btn_like_box.-small(type='button')
-      span.span_like
-        i.fas.fa-thumbs-up
-      span.like_num= like_num
+      if like_num > 999
+        span.like_num 999+
+      else
+        span.like_num= like_num
   else
     button.btn_like_box(type='button')
       span.span_like
         i.fas.fa-thumbs-up
-      span.like_num= like_num
+      if like_num > 999
+        span.like_num 999+
+      else
+        span.like_num= like_num

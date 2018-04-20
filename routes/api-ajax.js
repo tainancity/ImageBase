@@ -3,6 +3,7 @@ var userModel = require(CONFIG.path.models + '/user.js')
 var logLoginModel = require(CONFIG.path.models + '/log_login.js')
 var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
+var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 
 module.exports = function(app){
 
@@ -55,14 +56,65 @@ module.exports = function(app){
         }
       })
 
-      /*
-      var update_obj = {"role_id": req.query.role}
-      var where_obj = {"u_id": req.query.u_id}
-      userModel.update(update_obj, where_obj, function(result){
-        //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
-        res.json(result)
-      });
-      */
+    })
+
+    // 取得按讚的 ip
+    app.get('/like-ip', function(req, res){
+      fileLikeModel.getAll({ column: 'id', sort_type: 'ASC' }, function(files_like){
+        res.json({result: files_like})
+      })
+    })
+
+    // 更新按讚的 ip
+    app.post('/update-like', function(req, res){
+      var client_ip = req.headers['x-forwarded-for'] || req.ip;
+      if(req.body.like == 'true'){ // like
+        fileLikeModel.getAll2Where({ column: 'id', sort_type: 'DESC' }, { column_name: 'file_id', operator: '=', column_value: req.body.id  }, { column_name: 'ip', operator: '=', column_value: '\'' + client_ip + '\'' }, function(result){
+          if(result.length == 0){
+            fileLikeModel.save({file_id: req.body.id, ip: client_ip}, false, function(result){
+
+              fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+                file_like_result.forEach(function(like_item, like_index){
+                  if(like_item.file_id == req.body.id){
+                    res.json({
+                      id: req.body.id,
+                      like_num: like_item.file_id_total
+                      //file_id: req.body.id,
+                      //ip: req.headers['x-forwarded-for'] || req.ip
+                    })
+                  }
+                })
+
+              })
+
+            })
+          }
+        })
+
+      }else{ // cancel like
+        fileLikeModel.delete2Where('file_id', req.body.id, 'ip', client_ip, function(){
+
+          fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+            var like_num = 0
+            file_like_result.forEach(function(like_item, like_index){
+              if(like_item.file_id == req.body.id){
+                like_num = like_item.file_id_total
+              }
+            })
+
+            res.json({
+              id: req.body.id,
+              like_num: like_num
+              //file_id: req.body.id,
+              //ip: req.headers['x-forwarded-for'] || req.ip
+            })
+
+          })
+
+        })
+      }
+
+      
     })
 
   })

@@ -5,6 +5,9 @@ block append page_title
 
 block append head_end_tag
   link(href=asset_path('css/frontend/index.css') rel='stylesheet')
+  script.
+    var client_ip = "#{client_ip}";
+    //var files_like = JSON.parse(("#{files_like}").replace(/&quot;/g,'"'));
 
 include ./partials/btn_like_box.pug
 include ./partials/each_files.pug
@@ -142,6 +145,9 @@ block append body_end_others
   script(src=asset_path('vendors/plugins/slick/slick.min.js'))
   script.
     $(function(){
+      
+      check_like();
+      
       $('.slick_slider').slick({
         arrows: true,
         dots: true,
@@ -187,9 +193,9 @@ block append body_end_others
             
             var html = '';
             $(r_data.files).each(function(index, item){
-              console.log(item)
+              //console.log(item)
               html += '<li>';
-              html +=   '<div class="each_block each_file">';
+              html +=   '<div class="each_block each_file" data-id="' + item.id + '">';
               html +=     '<div class="top_block">';
               html +=       '<a href="' + item.short_url + '">';
               $(item.file_data).each(function(file_item_index, file_item_obj){
@@ -200,9 +206,13 @@ block append body_end_others
               html +=       '</a>';
               html +=     '</div>';
               html +=     '<div class="bottom_block">';
-              html +=       '<button class="btn_like_box -have_like" type="button">';
+              html +=       '<button class="btn_like_box" type="button">';
               html +=         '<span class="span_like"><i class="fas fa-thumbs-up"></i></span>';
-              html +=         '<span class="like_num">111</span>';
+              if(item.like_num > 999){
+                html +=         '<span class="like_num">999+</span>';
+              }else{
+                html +=         '<span class="like_num">' + item.like_num + '</span>';
+              }
               html +=       '</button>';
               html +=       '<a class="title_link" href="' + item.short_url + '">' + (item.title == null ? '' : item.title) + '</a>';
               html +=     '</div>';
@@ -211,6 +221,7 @@ block append body_end_others
             });
             
             $('ul.more_list').append(html);
+            check_like();
             
           }
         });

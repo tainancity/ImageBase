@@ -41,6 +41,23 @@ exports.index = function(options) {
                     })
                   })
 
+                  // 為每個檔案加上按讚數
+                  files.forEach(function(file_item, file_index){
+                    files[file_index].like_num = 0
+                    files_like.forEach(function(like_item, like_index){
+                      if(file_item.id == like_item.file_id){
+                        files[file_index].like_num = like_item.file_id_total
+                      }
+                    })
+                  })
+                  files_pageviews.forEach(function(file_item, file_index){
+                    files_pageviews[file_index].like_num = 0
+                    files_like.forEach(function(like_item, like_index){
+                      if(file_item.id == like_item.file_id){
+                        files_pageviews[file_index].like_num = like_item.file_id_total
+                      }
+                    })
+                  })
 
                   // 最新圖片的前 4 個
                   var newest_files = []
@@ -52,6 +69,7 @@ exports.index = function(options) {
                     }
                   })
 
+
                   // 瀏覽量最高前 4 個
                   var pageviews_highest_files = []
                   files_pageviews.forEach(function(file_item, file_index){
@@ -61,6 +79,7 @@ exports.index = function(options) {
                       }
                     }
                   })
+
 
                   // 按讚最高 files_like
                   var files_like_total = []
@@ -75,6 +94,7 @@ exports.index = function(options) {
                       }
                     })
                   })
+
 
                   // 分類圖片
                   //console.log(categories)
@@ -111,13 +131,16 @@ exports.index = function(options) {
                   })
 
                   res.render('frontend/index', {
+                    csrfToken: req.csrfToken(),
                     announcement_results: announcement_results,
                     carousels: carousel_files_array,
                     newest_files: newest_files,
                     categories: categories,
                     organizations: organizations,
                     pageviews_highest_files: pageviews_highest_files,
-                    files_like_total: files_like_total
+                    files_like_total: files_like_total,
+                    //client_ip: '1.1.1.1'
+                    client_ip: req.headers['x-forwarded-for'] || req.ip
                   })
 
                 })

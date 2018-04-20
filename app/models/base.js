@@ -63,10 +63,11 @@ exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
 }
 
 exports.getAll2Where = function(table_name, sort_obj, where_obj1, where_obj2, cb){
-  conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj1.column_name + ' ' + where_obj1.operator + ' ' + where_obj1.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+  var query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj1.column_name + ' ' + where_obj1.operator + ' ' + where_obj1.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
     if (error) throw error
     cb(results)
   })
+  console.log(query.sql)
 }
 
 // ========== 刪除相關 ========== //
@@ -91,11 +92,11 @@ exports.deleteWhere = function(table_name, u_id_col, u_id, cb) {
 // u_id_col
 // u_id
 exports.delete2Where = function(table_name, u_id_col, u_id, u_id_col_2, u_id_2, cb) {
-  var query = conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? AND `' + u_id_col_2 + '` = ?', [u_id, u_id_2], function (error, results, fields) {
+  conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? AND `' + u_id_col_2 + '` = ?', [u_id, u_id_2], function (error, results, fields) {
     if (error) throw error
     cb(results)
   })
-  console.log(query.sql)
+  //console.log(query.sql)
 }
 
 // 計算某欄位的數量出現幾次
