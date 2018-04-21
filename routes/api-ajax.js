@@ -73,7 +73,7 @@ module.exports = function(app){
           if(result.length == 0){
             fileLikeModel.save({file_id: req.body.id, ip: client_ip}, false, function(result){
 
-              fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+              fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(file_like_result){
                 file_like_result.forEach(function(like_item, like_index){
                   if(like_item.file_id == req.body.id){
                     res.json({
@@ -89,7 +89,7 @@ module.exports = function(app){
 
             })
           }else{
-            fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+            fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(file_like_result){
               file_like_result.forEach(function(like_item, like_index){
                 if(like_item.file_id == req.body.id){
                   res.json({
@@ -108,7 +108,7 @@ module.exports = function(app){
       }else{ // cancel like
         fileLikeModel.delete2Where('file_id', req.body.id, 'ip', client_ip, function(){
 
-          fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(file_like_result){
+          fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(file_like_result){
             var like_num = 0
             file_like_result.forEach(function(like_item, like_index){
               if(like_item.file_id == req.body.id){

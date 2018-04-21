@@ -5,8 +5,11 @@ block append page_title
 
 block append head_end_tag
   link(href=asset_path('css/frontend/search/index.css') rel='stylesheet')
+  script.
+    var client_ip = "#{client_ip}";
 
 include ../partials/btn_like_box.pug
+include ../partials/each_files.pug
 
 block append content
   section.search_sec
@@ -24,40 +27,42 @@ block append content
                   span.icon_span
                     i.fas.fa-font
                   span.span_text 輸入標題
-                  input.form_group(type='text' class='search_field' name='')
+                  input.form_group(type='text' class='search_field' name='title')
                 div.item_group
                   span.icon_span
                     i.fas.fa-th-large
                   span.span_text 主題分類
-                  select.select_option
-                    option 分類一
-                    option 分類二
+                  select.select_option(name='category_id')
+                    option(value='0') (無)
+                    each item, index in categories
+                      option(value=item.id)= item.category_name
               div.bottom_block
                 div.item_group
                   span.icon_span
                     i.fas.fa-sitemap
                   span.span_text 單位組織
-                  select.select_option
-                    option 單位一
-                    option 單位二
+                  select.select_option(name='organ_id')
+                    option(value='0') (無)
+                    each item, index in organs
+                      option(value=item.organ_id)= item.organ_name
                 div.item_group
                   span.icon_span
                     i.fas.fa-tags
                   span.span_text 選擇標籤
-                  select.select_option
-                    option 標籤一
-                    option 標籤二
+                  select.select_option(name='tag')
+                    option(value='0') (無)
+                    each item, index in tags
+                      option(value=item.tag_name)= item.tag_name
             div.action_block
               button.btn_submit(type='submit') 開始搜尋
   
-  //-
-    section.no_result
-      div.container
-        div.row
-          div.col
-            p.para_desc 沒有符合此條件的檔案！
+  section.no_result.-none
+    div.container
+      div.row
+        div.col
+          p.para_desc 沒有符合此條件的檔案！
   
-  section.search_result
+  section.search_result.-none
     div.container
       div.row
         div.col
@@ -65,48 +70,24 @@ block append content
             span.sort_text_span 排序：
             ul.sort_list
               li
-                a.on(href='#')
+                a.sort_type(data-sort-type='created_at' data-sort-value='' href='#')
                   span.sort_text 建立時間
-                  span.icon_span: i.fas.fa-sort-down
+                  span.icon_span
               li
-                a(href='#')
+                a.sort_type(data-sort-type='pageviews' data-sort-value='' href='#')
                   span.sort_text 瀏覽人次
-                  span.icon_span: i.fas.fa-sort
+                  span.icon_span
               li
-                a(href='#')
+                a.sort_type(data-sort-type='like' data-sort-value='' href='#')
                   span.sort_text 按讚數
-                  span.icon_span: i.fas.fa-sort
+                  span.icon_span
             
       div.row
         div.col
           div.pic_block
-            each i in [0, 1, 2, 3, 4]
-              div.row
-                div.col-12.col-sm-6.col-md-3
-                  include ../partials/file.pug
-                div.col-12.col-sm-6.col-md-3
-                  div.each_block.each_file
-                    div.top_block
-                      a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                    div.bottom_block
-                      +btn_like_box(false, false, 0)
-                      a(href='#' class='title_link') 圖片標題圖片標題圖片標題圖片標題圖片標題圖片標題片標題片標題
-                div.col-12.col-sm-6.col-md-3
-                  div.each_block.each_file
-                    div.top_block
-                      a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                    div.bottom_block
-                      +btn_like_box(false, true, '999+')
-                      a(href='#' class='title_link') 圖片標題
-                div.col-12.col-sm-6.col-md-3
-                  div.each_block.each_file
-                    div.top_block
-                      a(href='#'): img(src='//via.placeholder.com/255x170' alt='圖片標題' title='圖片標題')
-                    div.bottom_block
-                      +btn_like_box(true, true, '999+')
-                      a(href='#' class='title_link') 圖片標題
+            ul.more_list
   
-  section.paginator_sec
+  section.paginator_sec.-none
     div.container
       div.row
         div.col
@@ -115,31 +96,269 @@ block append content
               div.left_block
                 span.page_num 每頁顯示上限
                 select.each_page_number
-                  option 10
-                  option 20
-                  option 30
-                  option 40
-                  option 50
+                  option(value=5) 5
+                  option(value=10) 10
+                  option(value=15) 15
+                  option(value=20) 20
+                  option(value=25) 25
+                  option(value=30) 30
               div.right_block
                 ul.page_list
-                  each i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    li
-                      if i == 0
-                        a.on(href='#')
-                          span.num_text= i+1
-                      else
-                        a(href='#')
-                          span.num_text= i+1
-              
-              
-  
-          
-              
-    
-
 
 block append body_end_others
+  script(src=asset_path('vendors/plugins/jsurl/url.min.js'))
   script.
+    function objectToQuerystring (obj) {
+      return Object.keys(obj).reduce(function (str, key, i) {
+        var delimiter, val;
+        delimiter = (i === 0) ? '?' : '&';
+        key = encodeURIComponent(key);
+        val = encodeURIComponent(obj[key]);
+        return [str, delimiter, key, '=', val].join('');
+      }, '');
+    }
     $(function(){
+      var query_obj = url('?');
+      if(query_obj == undefined){
+        query_obj = {page:1, items_per_page: 20};
+      }
+      if(query_obj.title != undefined){
+        $("input[name=title]").val(query_obj.title);
+      }
+      if(query_obj.category_id != undefined){
+        $("select[name=category_id]").val(query_obj.category_id);
+      }
+      if(query_obj.organ_id != undefined){
+        $("select[name=organ_id]").val(query_obj.organ_id);
+      }
+      if(query_obj.tag != undefined){
+        $("select[name=tag]").val(query_obj.tag);
+      }
+      
+      $.ajax({
+        url: '#{config.appenv.domain}' + '/api/v1.0/image' + objectToQuerystring(query_obj) + '&api_key=#{config.appenv.full_api_key}',
+        type: 'GET',
+        //data: data,
+        dataType: 'json',
+        statusCode: {
+          200: function (response) {
+            //console.log(response);
+          },
+          404: function(response){
+            $("section.no_result").removeClass("-none");
+          }
+        },
+        success: function(r_data){
+          //console.log(query_obj)
+          //console.log(r_data)
+          $("select.each_page_number").find("option[value=" + query_obj.items_per_page + "]").attr("selected", "selected");
+          if(r_data.files.length > 0){
+            $("section.paginator_sec, section.search_result").removeClass("-none");
+          }
+          
+          var html = '';
+          $(r_data.files).each(function(index, item){
+            //console.log(item)
+            html += '<li>';
+            html +=   '<div class="each_block each_file" data-id="' + item.id + '">';
+            html +=     '<div class="top_block">';
+            html +=       '<a href="' + item.short_url + '">';
+            $(item.file_data).each(function(file_item_index, file_item_obj){
+              if(file_item_obj.width == 320){
+                html +=         '<img src="' + file_item_obj.url + '">';
+              }
+            });
+            html +=       '</a>';
+            html +=     '</div>';
+            html +=     '<div class="bottom_block">';
+            html +=       '<button class="btn_like_box" type="button">';
+            html +=         '<span class="span_like"><i class="fas fa-thumbs-up"></i></span>';
+            if(item.like_num > 999){
+              html +=         '<span class="like_num">999+</span>';
+            }else{
+              html +=         '<span class="like_num">' + item.like_num + '</span>';
+            }
+            html +=       '</button>';
+            html +=       '<a class="title_link" href="' + item.short_url + '">' + (item.title == null ? '' : item.title) + '</a>';
+            html +=     '</div>';
+            html +=   '</div>';
+            html += '</li>';
+          });
+          
+          $('ul.more_list').append(html);
+          check_like();
+          
+          
+          var total_page = Math.ceil(r_data.total_files_count / query_obj.items_per_page);
+          var page_html = '';
+          
+          for(var i = 0; i < total_page; i++){
+            var query_obj_copy = Object.assign({}, query_obj);
+            query_obj_copy.page = (i+1);
+            page_html += '<li><a class="' + (query_obj.page == (i+1) ? "on": "") + '" href="' + objectToQuerystring(query_obj_copy) + '"><span class="num_text">' + (i+1) + '</span></a></li>';
+          }
+          $("ul.page_list").html(page_html);
+        }
+      });
+      
+      $("select.each_page_number").on("change", function(){
+        query_obj.items_per_page = $(this).val()
+        location.href = '#{config.appenv.domain}/search' + objectToQuerystring(query_obj)
+      });
+      
+      $("button.btn_submit").on("click", function(e){
+        e.preventDefault();
+        var form_obj = {};
+        
+        var title = ($(this).closest("form").find("input[name=title]").val()).trim();
+        if(title != ""){
+          form_obj.title = title;
+        }
+        
+        var category_id = $(this).closest("form").find("select[name=category_id]").val();
+        if(parseInt(category_id) != 0){
+          form_obj.category_id = category_id;
+        }
+        
+        var organ_id = $(this).closest("form").find("select[name=organ_id]").val();
+        if(parseInt(organ_id) != 0){
+          form_obj.organ_id = organ_id;
+        }
+        
+        var tag = $(this).closest("form").find("select[name=tag]").val();
+        if(parseInt(tag) != 0){
+          form_obj.tag = tag;
+        }
+        
+        form_obj.page = 1;
+        form_obj.items_per_page = query_obj.items_per_page;
+        
+        location.href = '#{config.appenv.domain}/search' + objectToQuerystring(form_obj)
+      });
+      var original_query_obj_sort_type = query_obj.sort_type;
+      var original_query_obj_sort_value = query_obj.sort_value;
+      $("a.sort_type").each(function(){
+        
+        if(query_obj.sort_type == undefined && $(this).attr("data-sort-type") == 'created_at'){
+          $(this).addClass("on");
+          $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+          query_obj.sort_type = 'created_at';
+          query_obj.sort_value = 'ASC';
+          $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+        }else{
+          if(original_query_obj_sort_type == undefined){
+            if($(this).attr("data-sort-type") == 'pageviews'){
+              query_obj.sort_type = 'pageviews';
+            }
+            if($(this).attr("data-sort-type") == 'like'){
+              query_obj.sort_type = 'like';
+            }
+            query_obj.sort_value = 'DESC';
+            $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+            $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+          }else{
+            switch(original_query_obj_sort_type){
+              case 'created_at':
+                if($(this).attr("data-sort-type") == 'created_at'){
+                  $(this).addClass("on");
+                  if(query_obj.sort_value == undefined){
+                    query_obj.sort_value = 'ASC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                  }else{
+                    if(query_obj.sort_value == 'DESC'){
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                      query_obj.sort_value = 'ASC';
+                    }else{
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-up'></i>");
+                      query_obj.sort_value = 'DESC';
+                    }
+                  }
+                  $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                }else{
+                  if($(this).attr("data-sort-type") == 'pageviews'){
+                    query_obj.sort_type = 'pageviews';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                  if($(this).attr("data-sort-type") == 'like'){
+                    query_obj.sort_type = 'like';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                }
+                break;
+              case 'pageviews':
+                if($(this).attr("data-sort-type") == 'pageviews'){
+                  query_obj.sort_type = 'pageviews';
+                  $(this).addClass("on");
+                  if(original_query_obj_sort_value == undefined){
+                    query_obj.sort_value = 'ASC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                  }else{
+                    if(original_query_obj_sort_value == 'DESC'){
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                      query_obj.sort_value = 'ASC';
+                    }else{
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-up'></i>");
+                      query_obj.sort_value = 'DESC';
+                    }
+                  }
+                  $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                }else{
+                  if($(this).attr("data-sort-type") == 'created_at'){
+                    query_obj.sort_type = 'created_at';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                  if($(this).attr("data-sort-type") == 'like'){
+                    query_obj.sort_type = 'like';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                }
+                break;
+              case 'like':
+                if($(this).attr("data-sort-type") == 'like'){
+                  query_obj.sort_type = 'like';
+                  $(this).addClass("on");
+                  if(original_query_obj_sort_value == undefined){
+                    query_obj.sort_value = 'ASC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                  }else{
+                    if(original_query_obj_sort_value == 'DESC'){
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-down'></i>");
+                      query_obj.sort_value = 'ASC';
+                    }else{
+                      $(this).find("span.icon_span").html("<i class='fas fa-sort-up'></i>");
+                      query_obj.sort_value = 'DESC';
+                    }
+                  }
+                  $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                }else{
+                  if($(this).attr("data-sort-type") == 'created_at'){
+                    query_obj.sort_type = 'created_at';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                  if($(this).attr("data-sort-type") == 'pageviews'){
+                    query_obj.sort_type = 'pageviews';
+                    query_obj.sort_value = 'DESC';
+                    $(this).find("span.icon_span").html("<i class='fas fa-sort'></i>");
+                    $(this).attr("href", '#{config.appenv.domain}/search' + objectToQuerystring(query_obj) );
+                  }
+                }
+                break;
+            }
+          }
+          
+        }
+        
+        
+      });
       
     });

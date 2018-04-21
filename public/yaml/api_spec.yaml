@@ -131,10 +131,35 @@ paths:
           type: integer
         - name: page
           in: query
-          description: 每個 page，取得10筆
+          description: 頁碼
           default: 1
           required: false
           type: integer
+        - name: items_per_page
+          in: query
+          description: 每個 page 取得幾筆，最大為 30。
+          default: 10
+          required: false
+          type: integer
+        - name: sort_type
+          in: query
+          description: created_at：建立的時間；pageviews：瀏覽量；like：按讚數
+          enum:
+            - "created_at"
+            - "pageviews"
+            - "like"
+          default: 'created_at'
+          required: true
+          type: string
+        - name: sort_value
+          in: query
+          description: DESC：降冪；ASC：升冪
+          enum:
+            - "DESC"
+            - "ASC"
+          default: 'DESC'
+          required: true
+          type: string
       responses:
         200:
           description: 回傳檔案網址及相關資料

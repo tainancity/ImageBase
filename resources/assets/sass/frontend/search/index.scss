@@ -124,6 +124,10 @@ section.search_sec{
 }
 
 section.no_result{
+  padding-bottom: 50px;
+  &.-none{
+    display: none;
+  }
   p.para_desc{
     padding-top:20px;
     border-top: 2px solid $white;
@@ -135,6 +139,9 @@ section.no_result{
 
 section.search_result{
   padding-bottom: 30px;
+  &.-none{
+    display: none;
+  }
   div.sort_block{
     border-top: 2px solid $white;
     padding-top:20px;
@@ -180,19 +187,58 @@ section.search_result{
   }
   div.pic_block{
     padding-top: 20px;
+    ul.more_list{
+      margin:0;
+      padding:0;
+      > li{
+        display: inline-block;
+        list-style: none;
+        margin-right: 30px;
+        margin-bottom: 20px;
+        width: calc((100% - 90px)/4);
+        vertical-align: top;
+        &:nth-child(4n){
+          margin-right:0;
+        }
+        @media screen and (max-width: 767px){
+          width: calc((100% - 30px)/2);
+          margin-right: 15px;
+        }
+      }
+    }
     > div.row{
       margin-bottom: 20px;
       > div{
         @media screen and (max-width: 767px){
           margin-bottom: 10px;
         }
+
       }
     }
   }
 }
-
+div.each_file{
+  div.top_block{
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+    border: 1px solid hsl(0, 0%, 40%);
+    border-radius: 5px;
+    > a{
+      position: absolute;
+      display: block;
+      width: 100%;
+      top:50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+  }
+}
 section.paginator_sec{
   padding-bottom: 40px;
+  &.-none{
+    display: none;
+  }
   div.page_content{
     text-align: center;
   }

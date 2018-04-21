@@ -29,7 +29,7 @@ exports.index = function(options) {
 
               fileModel.getAllWhere({ column: 'pageviews', sort_type: 'ASC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(files_pageviews){
 
-                fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(files_like){
+                fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
                   // 輪播
                   carousel_files_array = []

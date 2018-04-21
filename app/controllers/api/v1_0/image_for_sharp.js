@@ -743,10 +743,18 @@ exports.image_get_by_data = function(options){
                 //console.log(all_tags)
                 fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_file_tags){
                   //console.log(all_file_tags)
+                  var sort_type = ''
+                  if(req.query.sort_type == undefined || req.query.sort_type == 'like'){
+                    sort_type = 'created_at'
+                  }else{
+                    sort_type = req.query.sort_type
+                  }
+                  if(req.query.sort_value == undefined){
+                    req.query.sort_value = 'DESC'
+                  }
+                  fileModel.getAll2Where({ column: sort_type, sort_type: req.query.sort_value }, { column_name: 'permissions', operator: '=', column_value: '1' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(all_files){
 
-                  fileModel.getAll2Where({ column: 'id', sort_type: 'DESC' }, { column_name: 'permissions', operator: '=', column_value: '1' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(all_files){
-
-                    fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total' }, function(files_like){
+                    fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: req.query.sort_value }, function(files_like){
 
                       if(all_files.length == 0){
                         return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
@@ -761,6 +769,28 @@ exports.image_get_by_data = function(options){
                             }
                           })
                         })
+
+                        if(req.query.sort_type == 'like'){ // 依讚排序
+                          all_files.sort(function(a, b){
+                            var comparison = 0
+                            if(req.query.sort_value == 'DESC'){
+                              if(a.like_num > b.like_num){
+                                comparison = -1
+                              }else{
+                                comparison = 1
+                              }
+                            }
+                            if(req.query.sort_value == 'ASC'){
+                              if(a.like_num > b.like_num){
+                                comparison = 1
+                              }else{
+                                comparison = -1
+                              }
+                            }
+
+                            return comparison
+                          })
+                        }
 
                         var data_files = []
 
@@ -874,7 +904,7 @@ exports.image_get_by_data = function(options){
                         }
 
                         // 計算頁碼
-                        var items_per_page = 10 // 預設每頁幾筆資料
+                        var items_per_page = (parseInt(req.query.items_per_page) <= 30 ? req.query.items_per_page : 30) // 預設每頁幾筆資料
                         var total_page = Math.ceil(data_files.length / items_per_page)
                         if(req.query.page == undefined || req.query.page < 1){
                           var current_page = 1
@@ -900,11 +930,13 @@ exports.image_get_by_data = function(options){
                             var n_page = current_page + 1
                           }
                         }
+
+                        // total_files_count 取得全部頁面的資料總數
+                        var total_files_count = data_files.length
                         // 取得該頁碼的資料
                         data_files = data_files.slice( (current_page-1)*items_per_page, (current_page * items_per_page) )
 
-                        return res.status(200).json({ code: 200, files: data_files, previous_page: p_page, next_page: n_page})
-
+                        return res.status(200).json({ code: 200, files: data_files, total_files_count: total_files_count, previous_page: p_page, next_page: n_page})
                       }
 
                     })
