@@ -134,7 +134,8 @@ block append body_end_others
       if(query_obj.tag != undefined){
         $("select[name=tag]").val(query_obj.tag);
       }
-      
+      var original_query_obj_sort_type = query_obj.sort_type;
+      var original_query_obj_sort_value = query_obj.sort_value;
       $.ajax({
         url: '#{config.appenv.domain}' + '/api/v1.0/image' + objectToQuerystring(query_obj) + '&api_key=#{config.appenv.full_api_key}',
         type: 'GET',
@@ -191,7 +192,8 @@ block append body_end_others
           
           var total_page = Math.ceil(r_data.total_files_count / query_obj.items_per_page);
           var page_html = '';
-          
+          query_obj.sort_type = original_query_obj_sort_type;
+          query_obj.sort_value = original_query_obj_sort_value;
           for(var i = 0; i < total_page; i++){
             var query_obj_copy = Object.assign({}, query_obj);
             query_obj_copy.page = (i+1);
@@ -235,8 +237,7 @@ block append body_end_others
         
         location.href = '#{config.appenv.domain}/search' + objectToQuerystring(form_obj)
       });
-      var original_query_obj_sort_type = query_obj.sort_type;
-      var original_query_obj_sort_value = query_obj.sort_value;
+      
       $("a.sort_type").each(function(){
         
         if(query_obj.sort_type == undefined && $(this).attr("data-sort-type") == 'created_at'){
