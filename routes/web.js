@@ -44,12 +44,12 @@ module.exports = function(app){
 
   app.group('/f', (app) => {
     // 獨立檔案
-    app.get('/abc', File.item(options))
+    app.get('/:u_id', File.item(options))
   })
 
   app.group('/if', (app) => {
     // iframe
-    app.get('/abc', File.item_iframe(options))
+    app.get('/:u_id', File.item_iframe(options))
   })
 
   app.group('/announcement', (app) => {

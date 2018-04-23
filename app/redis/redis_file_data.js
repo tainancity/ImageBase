@@ -89,7 +89,7 @@ module.exports = {
                   ])
                 })
                 //process.exit()
-                redisClient.quit()
+                //redisClient.quit()
 
               })
             })
@@ -98,6 +98,16 @@ module.exports = {
       })
     })
 
+  },
+
+  get_file: function(u_id, cb){
+    return redisClient.hgetall(u_id, function (err, obj) {
+      if (err) throw err
+      //console.log(obj)
+      cb(obj)
+      //return obj
+      //console.log(obj); // Will print `OK`
+    })
   }
 }
 

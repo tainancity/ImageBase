@@ -5,6 +5,8 @@ var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 
+var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
+
 module.exports = function(app){
 
   var options = {}
@@ -129,6 +131,21 @@ module.exports = function(app){
       }
 
 
+    })
+
+    // 更新瀏覽量
+    app.put('/update-pageviews', function(req, res){
+
+      fileModel.getOne('u_id', req.body.u_id, function(file_resule){
+        var new_pageviews = file_resule[0].pageviews + 1
+        var update_obj = {'pageviews': new_pageviews}
+        var where_obj = {'u_id': req.body.u_id}
+        fileModel.update(update_obj, where_obj, true, function(result){
+          //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
+          redisFileDataModel.import_to_redis()
+          res.json({new_pageviews:new_pageviews})
+        });
+      })
     })
 
   })
