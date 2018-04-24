@@ -4,6 +4,7 @@ block append page_title
   title=  '搜尋' + ' - '+ config.app.sitename
 
 block append head_end_tag
+  link(href=asset_path('vendors/plugins/select2/select2.min.css') rel='stylesheet')
   link(href=asset_path('css/frontend/search/index.css') rel='stylesheet')
   script.
     var client_ip = "#{client_ip}";
@@ -32,7 +33,7 @@ block append content
                   span.icon_span
                     i.fas.fa-th-large
                   span.span_text 主題分類
-                  select.select_option(name='category_id')
+                  select.select_option.custom_select(name='category_id')
                     option(value='0') (無)
                     each item, index in categories
                       option(value=item.id)= item.category_name
@@ -41,7 +42,7 @@ block append content
                   span.icon_span
                     i.fas.fa-sitemap
                   span.span_text 單位組織
-                  select.select_option(name='organ_id')
+                  select.select_option.custom_select(name='organ_id')
                     option(value='0') (無)
                     each item, index in organs
                       option(value=item.organ_id)= item.organ_name
@@ -49,7 +50,7 @@ block append content
                   span.icon_span
                     i.fas.fa-tags
                   span.span_text 選擇標籤
-                  select.select_option(name='tag')
+                  select.select_option.custom_select(name='tag')
                     option(value='0') (無)
                     each item, index in tags
                       option(value=item.tag_name)= item.tag_name
@@ -106,6 +107,7 @@ block append content
                 ul.page_list
 
 block append body_end_others
+  script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
   script(src=asset_path('vendors/plugins/jsurl/url.min.js'))
   script.
     function objectToQuerystring (obj) {
@@ -118,6 +120,9 @@ block append body_end_others
       }, '');
     }
     $(function(){
+      
+      $('.custom_select').select2();
+      
       var query_obj = url('?');
       if(query_obj == undefined){
         query_obj = {page:1, items_per_page: 20};
@@ -126,13 +131,22 @@ block append body_end_others
         $("input[name=title]").val(query_obj.title);
       }
       if(query_obj.category_id != undefined){
-        $("select[name=category_id]").val(query_obj.category_id);
+        //$("select[name=category_id]").val(query_obj.category_id);
+        $("select[name=category_id]").data('select2').trigger('select', {
+            data: {"id": query_obj.category_id }
+        });
       }
       if(query_obj.organ_id != undefined){
-        $("select[name=organ_id]").val(query_obj.organ_id);
+        //$("select[name=organ_id]").val(query_obj.organ_id);
+        $("select[name=organ_id]").data('select2').trigger('select', {
+            data: {"id": query_obj.organ_id }
+        });
       }
       if(query_obj.tag != undefined){
-        $("select[name=tag]").val(query_obj.tag);
+        //$("select[name=tag]").val(query_obj.tag);
+        $("select[name=tag]").data('select2').trigger('select', {
+            data: {"id": query_obj.tag }
+        });
       }
       var original_query_obj_sort_type = query_obj.sort_type;
       var original_query_obj_sort_value = query_obj.sort_value;
