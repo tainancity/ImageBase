@@ -19,7 +19,7 @@ exports.getOne = function(u_id_col, u_id, cb) {
 
 
 /**
- * sort_obj = { "column": "created_at", "sort_type": "DESC" }
+ * sort_obj = { column: 'created_at', sort_type: 'DESC' }
  *
  */
 exports.getAll = function(sort_obj, cb) {

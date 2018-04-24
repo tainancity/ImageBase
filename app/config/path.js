@@ -12,6 +12,7 @@ const PATH = {
   db: path.join(__dirname, '../db'),
   models: path.join(__dirname, '../models'),
   redis: path.join(__dirname, '../redis'),
+  yaml: path.join(__dirname, '../yaml'),
   middlewares: path.join(__dirname, '../middlewares'),
   storage_uploads: path.join(__dirname, '../../storage/uploads'),
   storage_logs: path.join(__dirname, '../../storage/logs')
