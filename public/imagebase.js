@@ -2,6 +2,8 @@ var express = require('express')
 require('express-group-routes')
 var app = express()
 
+var fs = require('fs')
+
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var session = require('express-session')
@@ -17,11 +19,23 @@ var functions = require(CONFIG.path.helpers + '/functions.js')
 var static = require(CONFIG.path.helpers + '/static.js')
 var time = require(CONFIG.path.helpers + '/time.js')
 
+var yamlApiSpec = require(CONFIG.path.yaml + '/api_spec.js')
+
 // ========== Settings ========== //
 
 app.set('view engine', 'pug')
 app.set('views', CONFIG.path.views)
 app.set('port', CONFIG.appenv.port)
+
+// 檢查 public/yaml/api_spec.yaml 是否存在，若不存在，則建立
+fs.access(CONFIG.path.public + '/yaml/api_spec.yaml', (err) => {
+  if(err){
+    if(err.code === 'ENOENT'){
+      //console.log("檔案不存在")
+      yamlApiSpec.generate_api_spec()
+    }
+  }
+});
 
 // ========== View Variables ========== //
 
