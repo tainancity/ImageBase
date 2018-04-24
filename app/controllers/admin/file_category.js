@@ -3,6 +3,7 @@ var userModel = require(CONFIG.path.models + '/user.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
+var yamlApiSpec = require(CONFIG.path.yaml + '/api_spec.js')
 
 exports.image_categories = function(options) {
   return function(req, res) {
@@ -96,6 +97,7 @@ exports.image_categories_create_post = function(options) {
         show_index: req.body.show_index ? 1 : 0
       }
       fileCategoryModel.save(insert_obj, false, function(results){
+        yamlApiSpec.generate_api_spec()
         res.redirect('/admin/management/image_categories')
       })
     })
@@ -135,6 +137,7 @@ exports.image_categories_edit_post = function(options) {
         id: req.body.category_id
       }
       fileCategoryModel.update(update_obj, where_obj, false, function(results){
+        yamlApiSpec.generate_api_spec()
         res.redirect('/admin/management/image_categories')
       })
     })
@@ -157,6 +160,7 @@ exports.image_categories_delete = function(options) {
               res.json({result: 0})
             }else{
               fileCategoryModel.deleteOne('id', result[0].id, function(result){
+                yamlApiSpec.generate_api_spec()
                 // 刪除成功。
                 res.json({result: 1})
               })
