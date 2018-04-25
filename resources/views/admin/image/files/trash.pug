@@ -79,8 +79,9 @@ block append content_sl
                           ul.action_list
                             li
                               button.btn_action.get_pic_more_info(type='button' title='更多資訊' data-toggle='modal' data-target='.picture-modal-lg' data-id=item.u_id data-file-type=item.file_type): i.fas.fa-info-circle
-                            li
-                              button.btn_action(type='button' title='編輯'): i.fas.fa-edit
+                            if !show_uploader_and_organ
+                              li
+                                a.btn_action.btn_update(href='/admin/file/update/'+item.u_id title='編輯'): i.fas.fa-edit
                             li
                               button.btn_action.btn_trash_undo(type='button' title='復原' data-id=item.u_id): i.fas.fa-undo
                             li
