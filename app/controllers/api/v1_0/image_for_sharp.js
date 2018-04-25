@@ -345,86 +345,6 @@ var save_file_related_data = function(req, res, results){
                         })
 
 
-
-                      /*
-                      generated_filename.forEach(function(item, index, arr) {
-                        var split_item = item.split('_')
-                        var setting_width = ((split_item[3]).split('.'))[0] // 寬度
-                        sharp(form.uploadDir + "/" + file_new_name)
-                          .rotate()
-                          .extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
-                          .resize(parseInt(setting_width), null)
-                          .toFile(form.uploadDir + '/' + item, function(err, info){
-                            if (err) throw err
-
-                            //console.log(info)
-                            //{ format: 'jpeg',
-                            //  width: 960,
-                            //  height: 720,
-                            //  channels: 3,
-                            //  premultiplied: false,
-                            //  size: 65616 }
-                            var json_data = {
-                              format: info.format,
-                              width: info.width,
-                              height: info.height,
-                              size: info.size,
-                              origin: false
-                            }
-                            var saved_data = JSON.parse(JSON.stringify(json_data));
-
-                            saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
-                            json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + item
-
-                            data_files_save.push(saved_data)
-                            data_files.push(json_data)
-
-
-                            if(index+1 == generated_filename.length){
-
-                              userModel.getOne('id', results[0].user_id, function(user_results){
-
-                                var saved_obj = {
-                                  //u_id: Math.floor((Math.random() * 10000) + 1),
-                                  user_id: parseInt(user_results[0].id),
-                                  category_id: parseInt(fields.category),
-                                  organ_id: user_results[0].organ_id,
-                                  title: fields.title,
-                                  file_type: file_type_num,
-                                  file_path: file_save_path,
-                                  file_ext: file_ext,
-                                  file_data: JSON.stringify(data_files_save),
-                                  pageviews: 0,
-                                  permissions: fields.permissions
-                                }
-
-                                var data_for_have_the_same_u_id = {
-                                  req: req,
-                                  res: res,
-                                  fields: fields,
-                                  data_files: data_files,
-                                  original_filename: original_filename,
-                                  saved_obj: saved_obj
-                                }
-                                if(CONFIG.appenv.env == 'local'){ // local 端直接儲存
-                                  var unique_id = functions.generate_random_code(code_num)
-                                  have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
-                                    duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
-                                  })
-                                }else{
-                                  scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
-                                }
-
-
-                              })
-
-                            }
-
-                          })
-                      })
-                      */
-
-
                     })
                   })
 
@@ -514,16 +434,7 @@ var save_file_related_data = function(req, res, results){
                     scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
                   }
 
-                  /*
-                  var unique_id = functions.generate_random_code(code_num)
-                  have_the_same_u_id(unique_id, function(){
-                    duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
-                  })
-
-                  if(CONFIG.appenv.env != 'local'){
-                    scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename)
-                  }
-                  */
+                  
 
                 })
 
