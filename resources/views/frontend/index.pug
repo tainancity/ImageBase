@@ -56,7 +56,7 @@ block append content
         div.row
           div.col
             div.title_block
-              a.more_items(href='#')
+              a.more_items(href=config.appenv.domain + '/search')
                 i.fas.fa-plus
                 |
                 | 看更多最新圖片
@@ -74,6 +74,10 @@ block append content
         div.row
           div.col
             div.title_block
+              a.more_items(href=config.appenv.domain + '/search?page=1&items_per_page=20&sort_type=pageviews&sort_value=DESC')
+                i.fas.fa-plus
+                |
+                | 看更多瀏覽量高的圖片
               h2.title2
                 i.fas.fa-fire
                 span.title_text 瀏覽量最高
@@ -88,6 +92,10 @@ block append content
         div.row
           div.col
             div.title_block
+              a.more_items(href=config.appenv.domain + '/search?page=1&items_per_page=20&sort_type=like&sort_value=DESC')
+                i.fas.fa-plus
+                |
+                | 看更多按讚高的圖片
               h2.title2
                 i.fas.fa-thumbs-up
                 span.title_text 按讚最高
@@ -103,7 +111,7 @@ block append content
           div.row
             div.col
               div.title_block
-                a.more_items(href='#')
+                a.more_items(href='/search?organ_id=' + item.organ_id + '&page=1&items_per_page=20')
                   i.fas.fa-plus
                   |
                   = ' 看更多「' + item.organ_name_abbr + '」局處圖片'
@@ -122,7 +130,7 @@ block append content
           div.row
             div.col
               div.title_block
-                a.more_items(href='#')
+                a.more_items(href='/search?category_id=' + item.id + '&page=1&items_per_page=20')
                   i.fas.fa-plus
                   |
                   = ' 看更多「' + item.category_name + '」分類圖片'
