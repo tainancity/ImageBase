@@ -15,6 +15,7 @@ var AdminAnnouncement = require(CONFIG.path.controllers + '/admin/announcement.j
 var AdminPage = require(CONFIG.path.controllers + '/admin/page.js')
 var AdminOrganization = require(CONFIG.path.controllers + '/admin/organization.js')
 var AdminLogLogin = require(CONFIG.path.controllers + '/admin/log_login.js')
+var AdminLogAction = require(CONFIG.path.controllers + '/admin/log_action.js')
 var Settings = require(CONFIG.path.controllers + '/admin/settings.js')
 var AdminFileCategory = require(CONFIG.path.controllers + '/admin/file_category.js')
 var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
@@ -155,6 +156,9 @@ module.exports = function(app){
     app.get('/settings', Settings.index(options))
     app.post('/settings-post', Settings.index_post(options))
     app.post('/settings-logo-file-post', Settings.logo_file_post(options))
+
+    // 平台 log
+    app.get('/action_log', AdminLogAction.log_action(options))
 
     // 維護模式頁面內容
     app.get('/maintenance', AdminPage.maintenance(options))

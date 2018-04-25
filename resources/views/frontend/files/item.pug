@@ -22,7 +22,7 @@ block append content
         div.row
           div.col
             p.no_access 無相關檔案
-  else if file_obj.permissions == '2'
+  else if (!auth.is_auth && file_obj.permissions == '2' || auth.is_auth && file_obj.user_id != auth.user.id && file_obj.permissions == '2')
     section.no_authority
       div.container
         div.row
@@ -49,10 +49,10 @@ block append content
                       span.icon_span: i.fas.fa-share-alt
                       span.icon_text 共用
                   
-                  if auth.is_auth
-                    a.edit_link(href='#')
+                  if (auth.is_auth && file_obj.user_id == auth.user.id)
+                    a.edit_link(href=config.appenv.domain + '/admin/file/update/' + file_u_id target='_blank')
                       i.fas.fa-pencil-alt
-                      span.icon_text 後台編輯
+                      span.icon_text= '後台編輯'
                 
                 h1.title1= (file_obj.title == null ? "" : file_obj.title )
         div.row

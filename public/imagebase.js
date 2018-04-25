@@ -35,7 +35,7 @@ fs.access(CONFIG.path.public + '/yaml/api_spec.yaml', (err) => {
       yamlApiSpec.generate_api_spec()
     }
   }
-});
+})
 
 // ========== View Variables ========== //
 
@@ -95,6 +95,7 @@ app.use(require(CONFIG.path.middlewares + '/global').global(app))               
 app.use(require(CONFIG.path.middlewares + '/auth').setting_locals(app))
 app.use(require(CONFIG.path.middlewares + '/ga').get_ga_code(app))
 app.use(require(CONFIG.path.middlewares + '/get_logo_path').get_logo_path(app))
+app.use(require(CONFIG.path.logger + '/log_action').log_action(app))
 
 // ========== Routes ========== //
 require(CONFIG.path.routes + '/api-ajax')(app)
