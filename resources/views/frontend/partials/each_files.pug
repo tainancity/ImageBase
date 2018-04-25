@@ -8,4 +8,4 @@ mixin each_files(files_array)
               a(href=config.appenv.domain + '/f/' + item.u_id): img(src=config.appenv.storage.domain + item_file_data.url alt=item.title title=item.title)
         div.bottom_block
           +btn_like_box(false, item.like_num)
-          a(href=config.appenv.domain + '/f/' + item.u_id class='title_link')= (item.title == null ? '' : item.title) + '的的的的的得的的的的的的的'
+          a(href=config.appenv.domain + '/f/' + item.u_id class='title_link')= (item.title == null ? '' : item.title)
