@@ -102,7 +102,7 @@ block append content
                 ul.tag_list
                   each item, index in (file_obj.tags).split(",")
                     li
-                      a.tagl_link(href='#')
+                      a.tagl_link(href=config.appenv.domain + '/search?tag=' + item + '&page=1&items_per_page=20')
                         span.icon_span: i.fas.fa-tag
                         span.tag_text= item
           
