@@ -235,6 +235,7 @@ section.more_pic_sec{
       margin-right: 30px;
       margin-bottom: 20px;
       width: calc((100% - 90px)/4);
+      vertical-align: top;
       &:nth-child(4n){
         margin-right:0;
       }
