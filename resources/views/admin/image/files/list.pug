@@ -37,7 +37,7 @@ block append content_sl
                       th 建立時間
                       th 更新時間
                       if show_uploader_and_organ
-                        th 首頁輪播(限公開)
+                        th 首頁輪播(限公開及圖檔)
                       th
                       
                   tbody
@@ -85,7 +85,8 @@ block append content_sl
                               else
                                 input.save_carousel(type='checkbox' data-u-id=item.u_id)
                             else
-                              input(type='checkbox' disabled)
+                              i.fas.fa-ban
+                              //- input(type='checkbox' disabled)
                         td
                           ul.action_list
                             li
