@@ -211,6 +211,12 @@ block append body_end_others
           for(var i = 0; i < total_page; i++){
             var query_obj_copy = Object.assign({}, query_obj);
             query_obj_copy.page = (i+1);
+            if(query_obj_copy.sort_type == undefined){
+              delete query_obj_copy.sort_type;
+            }
+            if(query_obj_copy.sort_value == undefined){
+              delete query_obj_copy.sort_value;
+            }
             page_html += '<li><a class="' + (query_obj.page == (i+1) ? "on": "") + '" href="' + objectToQuerystring(query_obj_copy) + '"><span class="num_text">' + (i+1) + '</span></a></li>';
           }
           $("ul.page_list").html(page_html);
@@ -219,6 +225,12 @@ block append body_end_others
       
       $("select.each_page_number").on("change", function(){
         query_obj.items_per_page = $(this).val()
+        if(query_obj.sort_type == undefined){
+          delete query_obj.sort_type;
+        }
+        if(query_obj.sort_value == undefined){
+          delete query_obj.sort_value;
+        }
         location.href = '#{config.appenv.domain}/search' + objectToQuerystring(query_obj)
       });
       
