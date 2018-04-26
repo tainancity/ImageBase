@@ -147,6 +147,7 @@ block append body_end_others_sl
         $('div.img_preview').html(croppedCanvas);
       });
       $('button.btn_save').on('click', function(){
+        var that = this;
         if($(this).hasClass('-cropping')){
           alert('裁切中…請勿重覆點擊');
         }else{
@@ -162,6 +163,9 @@ block append body_end_others_sl
                 //dataType: dataType,
                 statusCode: {
                   504: function (response) {
+                    if($(that).hasClass('-cropping')){
+                      $(that).removeClass('-cropping');
+                    }
                     alert("伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
                   }
                 },
