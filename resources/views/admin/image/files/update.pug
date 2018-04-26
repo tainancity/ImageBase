@@ -34,6 +34,8 @@ block append content_sl
                       div.right_b
                         div.img_preview: span.temp_text 預覽區域
                         div.info_b
+                          span 原圖裁切範圍：
+                          br
                           span.img_width
                           span.img_height
                         div.action_block
@@ -128,8 +130,8 @@ block append body_end_others_sl
           console.log('rotate: ' + event.detail.rotate);
           console.log('scaleX: ' + event.detail.scaleX);
           console.log('scaleY: ' + event.detail.scaleY); */
-          $("span.img_width").html(parseInt(event.detail.width) + "px");
-          $("span.img_height").html(parseInt(event.detail.height) + "px");
+          $("span.img_width").html("寬：" + Math.round(event.detail.width) + "px");
+          $("span.img_height").html("高" + Math.round(event.detail.height) + "px");
         }
       });
       // Get the Cropper.js instance after initialized

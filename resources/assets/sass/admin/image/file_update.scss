@@ -27,7 +27,6 @@ div.crop_block{
     div.img_preview{
       font-size: 0;
       border: 1px solid #eeeeee;
-      margin-bottom: 10px;
       span.temp_text{
         color: #eeeeee;
         font-size: 16px;
@@ -39,7 +38,7 @@ div.crop_block{
       }
     }
     div.info_b{
-      display: none;
+      margin-bottom: 10px;
       span.img_width, span.img_height{
         display: inline-block;
       }

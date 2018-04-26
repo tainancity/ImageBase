@@ -57,12 +57,13 @@ app.use(cookieParser())
 
 //app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({
-  limit: '10mb'
+  limit: '50mb'
 }));
 app.use(bodyParser.urlencoded({
   extended: true,
-  limit: '10mb'
+  limit: '50mb'
 }));
+//app.use(express.json({limit: '50mb'}));
 
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
