@@ -160,6 +160,11 @@ block append body_end_others_sl
                 url: '#{config.appenv.domain}/api/v1.0/image/crop',
                 data: "img_id=" + u_id + "&img_data=" + ($('div.img_preview').find('canvas')[0]).toDataURL(),
                 //dataType: dataType,
+                statusCode: {
+                  504: function (response) {
+                    alert("伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
+                  }
+                },
                 success: function(data){
                   alert(data.msg);
                   if(data.code == 200){
@@ -199,11 +204,6 @@ block append body_end_others_sl
           cache: false,
           processData:false,
           dataType: 'json',
-          statusCode: {
-            504: function (response) {
-              alert("伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
-            }
-          },
           success: function(data){
             alert(data.msg);
             location.reload();
