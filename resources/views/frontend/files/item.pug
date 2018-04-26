@@ -1,14 +1,15 @@
 extends ../layouts/master
 
 block append page_title
-  title=  (file_obj == null ? "" : (file_obj.title == null ? "" : file_obj.title) ) + ' - '+ config.app.sitename
+  title=  (file_obj == null ? "" : (file_obj.title == null ? '' : file_obj.title) ) + ' - '+ config.app.sitename
 
 block append head_end_tag
   meta(property='og:url' content=current_url)
-  meta(property='og:title' content=(file_obj.title == null ? "" : file_obj.title))
-  each item, index in JSON.parse(file_obj.file_data)
-    if (item.width == 960)
-      meta(property='og:image' content=config.appenv.storage.domain + item.url)
+  meta(property='og:title' content=(file_obj == null ? '' : (file_obj.title == null ? "" : file_obj.title) ))
+  if file_obj != null
+    each item, index in JSON.parse(file_obj.file_data)
+      if (item.width == 960)
+        meta(property='og:image' content=config.appenv.storage.domain + item.url)
   link(href=asset_path('css/frontend/files/item.css') rel='stylesheet')
 
 block append body_start_tag
