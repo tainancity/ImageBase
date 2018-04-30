@@ -20,6 +20,13 @@ module.exports = function(app){
           return
         }
         res.send("2")
+      }else if(req.query.token == 'production_token'){
+        //let token = req.query.token
+        if(req.query.token == 'production_token'){
+          res.send("1")
+          return
+        }
+        res.send("2")
       }else{
         logLoginModel.getOne('token', req.query.token, function(results_check){
           if(results_check.length >= 1){

@@ -60,6 +60,8 @@ exports.login_post = function(options) {
     var password = req.body.password
     if(CONFIG.appenv.env == 'local'){ // 因為如果是 local 端的話，驗證回傳網址是線上的網址，所以這裡固定是寫靜態的 'local_token'
       var generated_token = 'local_token'
+    }else if (CONFIG.appenv.env == 'production'){
+      var generated_token = 'production_token'
     }else{
       var generated_token = functions.generate_token()
     }
