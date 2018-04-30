@@ -1,0 +1,92 @@
+@import "../../../vendors/common/bootstrap/css/bootstrap.min";
+@import "../partials/header";
+@import "../partials/footer";
+@import "../partials/file";
+@import "../partials/article_upload_block";
+@import "../vars";
+
+.display_none{
+  display: none;
+}
+
+div#main{
+  min-height: calc(100vh - #{$footer_height} - #{$header_height_on_desktop});
+  background-image: linear-gradient(to bottom, #273543, #111820);
+  @media screen and (max-width: 767px){
+    min-height: calc(100vh - #{$footer_height} - #{$header_height_on_mobile});
+  }
+}
+
+/* like */
+button.btn_like_box{
+  float:right;
+  display: inline-block;
+  line-height: 1.2;
+  background: none;
+  cursor: pointer;
+  border:0;
+  padding:0 3px 1px 0;
+  border:1px solid $white_level_1;
+  border-radius: 4px;
+  box-sizing: border-box;
+  outline: none;
+  width: 58px;
+  &:hover{
+    span.span_like{
+      color: $orange_level_1;
+    }
+  }
+  &.-have_like{
+    border:1px solid $orange;
+    span.span_like, span.like_num{
+      color: $orange;
+    }
+  }
+  span.span_like{
+    padding:0 3px;
+    display: inline-block;
+    color: $white;
+    font-size: .7rem;
+  }
+  span.like_num{
+    color: $white;
+    font-size: .875rem;
+    display: inline-block;
+    width: calc(100% - 20px);
+  }
+}
+
+div.upload_pics_modal{
+  position: fixed;
+  top:0;
+  left:0;
+  background-color: $black_level_3;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+
+  div.upload_block_container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: $black_level_4;
+    box-shadow: 1px 1px 8px 0 rgba(255, 255, 255, 0.2);
+    width: 600px;
+    padding:30px;
+    @media screen and (max-width: 767px){
+      width: 95%;
+    }
+    button.close_upload{
+      position: absolute;
+      right: 8px;
+      top:8px;
+      color: $white;
+      border:0;
+      padding:0;
+      background: none;
+      outline: none;
+      cursor: pointer;
+    }
+  }
+}

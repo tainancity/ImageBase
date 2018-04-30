@@ -1,0 +1,54 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "圖片API - 臺南市政府圖片資料庫平台",
+    "description": "提供圖片 API，包含：取得、新增、更新、刪除。\n透過 API Key 方能使用。",
+    "version": "1.0.0"
+  },
+  "schemes": ["https"],
+  "basePath": "/api",
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "APIKeyAuth": {
+      "type": "apiKey",
+      "in": "query",
+      "name": "api_key"
+    }
+  },
+  "security": [
+    {
+      "APIKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1.0/image": {
+      "get": {
+        "tags": ["圖片"],
+        "summary": "取得圖片",
+        "description": "這裡是取得圖片的敘述",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": ["圖片"],
+        "summary": "上傳圖片",
+        "description": "這裡是上傳圖片的敘述",
+        "parameters": [{
+            "name": "title",
+            "in": "query",
+            "description": "圖片標題",
+            "required": false,
+            "type": "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "回傳圖片網址",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

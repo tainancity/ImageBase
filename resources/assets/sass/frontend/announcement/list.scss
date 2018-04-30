@@ -1,0 +1,61 @@
+@import "../colors";
+
+section.announcement_sec{
+  padding-top: 50px;
+  padding-bottom: 50px;
+  h1.title1{
+    color: $white;
+    font-weight: normal;
+    border-bottom: 2px solid $white_level_2;
+    font-size: 1.125rem;
+    padding-bottom: 10px;
+    margin:0;
+    span.icon_span{
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
+  div.announcement_block{
+    margin-top: 30px;
+    ul.announcement_list{
+      margin:0;
+      padding:0;
+      list-style: none;
+      > li{
+        margin:0;
+        padding:0;
+        &:nth-child(odd){
+          a.item_link{
+            background-color: $brown_level_2;
+          }
+        }
+        &:nth-child(even){
+          a.item_link{
+            background-color: $brown_level_1;
+          }
+        }
+        a.item_link{
+          display: block;
+          color: $white;
+          border-bottom: 1px solid $white;
+          padding: 10px 30px;
+          text-decoration: underline;
+          &.disable_link{
+            text-decoration: none;
+            cursor: default;
+          }
+          span.icon_span{
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 10px;
+          }
+          span.title_text{
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 28px);
+          }
+        }
+      }
+    }
+  }
+}

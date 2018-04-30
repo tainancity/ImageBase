@@ -1,0 +1,290 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案列表
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_list.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 檔案列表
+          div.cardbox
+            div.cardbox-body
+              if show_uploader_and_organ
+                p *首頁輪播：直接勾選或取消勾選，會直接更新成功。
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 檔案
+                      th 短網址
+
+                      th 分類
+                      if show_uploader_and_organ
+                        th 上傳者
+                        th 所屬組織(id)
+                        
+                      th 副檔名
+                      th 標題
+                      th 瀏覽量
+                      th 權限
+                      th 標籤
+                      th 建立時間
+                      th 更新時間
+                      if show_uploader_and_organ
+                        th 首頁輪播(限公開及圖檔)
+                      th
+                      
+                  tbody
+                    each item, index in files
+                      tr
+                        td= index+1
+                        if item.file_type == '1'
+                          each file, f_index in JSON.parse(item.file_data)
+                            if file.width == 320
+                              td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
+                        if item.file_type == '2'
+                          td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): span.other_file: i.fas.fa-file-pdf.fa-3x
+                        td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank')= config.appenv.domain + '/f/' + item.u_id
+                        
+                        td= item.category_name
+                        
+                        if show_uploader_and_organ
+                          td= item.pid
+                          td= item.organ_name + '(' + item.organ_id + ')'
+                        
+                        td= item.file_ext
+                        td= item.title
+                        td= item.pageviews
+                        if item.permissions == 1
+                          td 公開
+                        if item.permissions == 2
+                          td 隱藏
+                        if item.permissions == 3
+                          td 共用
+                          
+                        if item.tags.length > 0
+                          td
+                            each tag_item, tag_index in item.tags
+                              span.tag_item= tag_item
+                        else
+                          td
+                            
+                        td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                        td= time.get_time_from_timestamp('zh-tw', item.updated_at)
+                        if show_uploader_and_organ
+                          td
+                            if item.permissions == '1'
+                              if carousels.includes(item.id)
+                                input.save_carousel(type='checkbox' data-u-id=item.u_id checked)
+                              else
+                                input.save_carousel(type='checkbox' data-u-id=item.u_id)
+                            else
+                              i.fas.fa-ban
+                              //- input(type='checkbox' disabled)
+                        td
+                          ul.action_list
+                            li
+                              button.btn_action.get_pic_more_info(type='button' title='更多資訊' data-toggle='modal' data-target='.picture-modal-lg' data-id=item.u_id data-file-type=item.file_type): i.fas.fa-info-circle
+                            if !show_uploader_and_organ
+                              li
+                                a.btn_action.btn_update(href='/admin/file/update/'+item.u_id title='編輯'): i.fas.fa-edit
+                            li
+                              button.btn_action.btn_to_trash(type='button' title='垃圾桶' data-id=item.u_id): i.fas.fa-trash-alt
+                            li
+                              button.btn_action.btn_delete_forever(type='button' title='刪除(無法復原)' data-id=item.u_id): i.fas.fa-times
+                            
+                          
+                        
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  div.modal.fade.picture-modal-lg
+    div.modal-dialog.modal-lg
+      div.modal-content
+        div.modal-header
+          h5.mt-0.modal-title
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span ×
+        div.modal-body
+          p.para (原圖定義：上傳之圖片，會視狀況(EXIF Orientation)將圖片方向轉正，並且不會另外壓縮圖片品質，檔案大小會有所不同。)
+          ul.picture_list
+            li
+              i.fas.fa-spinner.fa-spin.fa-2x
+            //-
+              li
+                div.left_block
+                  div.img_block
+                    img.file_info(src='/storage_uploads/a/1/1_1521606792489_original.jpg')
+                    span.original_pic 原圖
+                div.right_block
+                  ul.data_info_list
+                    li
+                      span.label_text 格式：
+                      span.label_value jpeg
+                    li
+                      span.label_text 寬度：
+                      span.label_value 2448
+                    li
+                      span.label_text 高度：
+                      span.label_value 3264
+                    li
+                      span.label_text 大小：
+                      span.label_value 667868 bytes
+                    li
+                      span.label_text 路徑：
+                      span.label_value /storage_uploads/a/1/1_1521616199670_original.jpg
+            
+        
+block append body_end_others_sl
+  //-
+    script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script.
+    $(function(){
+      
+      $("button.get_pic_more_info").on("click", function(){
+        var img_u_id = $(this).attr("data-id");
+        var file_type = parseInt($(this).attr("data-file-type"));
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api/v1.0/image/' + img_u_id + '?api_key=#{config.appenv.full_api_key}',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            $("h5.modal-title").html(r_data.data.files[0].title)
+            
+            var html_str = "";
+            $.each(r_data.data.files[0].file_data, function( i, item ) {
+              html_str += "<li>";
+              html_str +=   "<div class='left_block'>";
+              html_str +=     "<div class='img_block'>";
+              
+              if(file_type == 1){
+                html_str +=     "<img class='file_info' src='" + item.url + "'>";
+              }else{
+                html_str +=     "<i class='fas fa-file-pdf fa-8x'></i>";
+              }
+              
+              if(item.origin && file_type == 1){
+                html_str +=     "<span class='original_pic'>原圖</span>";
+              }
+              
+              html_str +=     "</div>";
+              html_str +=   "</div>";
+              html_str +=   "<div class='right_block'>";
+              html_str +=     "<ul class='data_info_list'>";
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>格式：</span>";
+              html_str +=         "<span class='label_value'>" + item.format + "</span>";
+              html_str +=       "</li>";
+              
+              if(file_type == 1){
+                html_str +=     "<li>";
+                html_str +=       "<span class='label_text'>寬度：</span>";
+                html_str +=       "<span class='label_value'>" + item.width + "</span>";
+                html_str +=     "</li>";
+                html_str +=     "<li>";
+                html_str +=       "<span class='label_text'>高度：</span>";
+                html_str +=       "<span class='label_value'>" + item.height + "</span>";
+                html_str +=     "</li>";
+              }
+              
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>大小：</span>";
+              html_str +=         "<span class='label_value'>" + parseInt(item.size / 1024) + " KB</span>";
+              html_str +=       "</li>";
+              html_str +=       "<li>";
+              html_str +=         "<span class='label_text'>路徑：</span>";
+              html_str +=         "<span class='label_value'>" + item.url + "</span>";
+              html_str +=       "</li>";
+              html_str +=     "</ul>";
+              html_str +=   "</div>";
+              html_str += "</li>";
+            });
+            $("ul.picture_list").html(html_str);
+            
+          }
+        });
+        
+      });
+      
+      $("button.btn_to_trash").on("click", function(){
+        var u_id = $(this).attr("data-id");
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api/v1.0/image/trash/' + u_id + '?api_key=#{config.appenv.full_api_key}',
+          type: 'delete',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            if(r_data.code == 200){
+              location.reload();
+            }
+          }
+        });
+        
+      });
+      
+      $("button.btn_delete_forever").on("click", function(){
+        var u_id = $(this).attr("data-id");
+        var r = confirm("確定要刪除？(無法復原)");
+        if (r == true) {
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api/v1.0/image/delete/' + u_id + '?api_key=#{config.appenv.full_api_key}',
+            type: 'delete',
+            //data: data,
+            dataType: 'json',
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              if(r_data.code == 200){
+                location.reload();
+              }
+            }
+          });
+        }
+        
+      });
+      
+      $('input.save_carousel').on('click', function(){
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api-ajax/v1.0/save-carousel',
+          type: 'post',
+          data: 'checked=' + $(this).prop('checked') + '&u_id=' + $(this).attr('data-u-id'),
+          dataType: 'json',
+          headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+          },
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            //console.log(r_data)
+          }
+        });
+      });
+      
+    });

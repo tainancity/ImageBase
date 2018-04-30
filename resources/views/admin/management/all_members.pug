@@ -1,0 +1,87 @@
+extends ../layouts/admin
+
+block append page_title
+  title 公務帳號
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/all_members.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 公務帳號(曾經登入過，才會記錄於此)
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 帳號
+                      th 姓名
+                      th 所屬組織(代號)
+                      th email
+                      th 職稱
+                      th 辦公電話
+                      th 個人電話
+                      th 指派為平台管理者
+                  tbody
+                    each item, index in members
+                      tr
+                        td= index+1
+                        td= item.pid
+                        td
+                          img(src=item.portrait_url class='portrait_url')
+                          span.name= decrypt(item.name)
+                        td= item.organ_name + '(' + item.organ_id + ')'
+                        td= decrypt(item.email)
+                        td= item.job_title
+                        td= decrypt(item.tel_office)
+                        td= decrypt(item.tel_personal)
+                        td
+                          if item.role_id == 1
+                            if item.pid == 'logintest'
+                              input.admin_check.-disabled(type='checkbox' data-uid=item.u_id checked disabled)
+                              span.disabled_text 此測試帳號無法變更
+                            else
+                              input.admin_check(type='checkbox' data-uid=item.u_id checked)
+                          else
+                            input.admin_check(type='checkbox' data-uid=item.u_id)
+
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+    $("input.admin_check").on('click', function(){
+      // console.log($(this).prop("checked"))
+      if($(this).prop("checked")){
+        var role_number = '1';
+      }else{
+        var role_number = '2';
+      }
+      $.ajax({
+    		url: 'http://localhost:3001/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
+    		type: 'GET',
+    		//data: 'ab='+ab,
+    		dataType: 'json',
+    		success: function(data){
+          //console.log(data);
+          if(data.affectedRows == 1){
+            alert("更新成功");
+          }else{
+            alert("更新失敗");
+          }
+          location.reload()
+    		}
+    	});
+    });

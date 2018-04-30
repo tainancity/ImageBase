@@ -1,0 +1,52 @@
+extends ../layouts/admin
+
+block append page_title
+  title 登入歷程
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/log_login.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 登入歷程
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 帳號
+                      th 驗證訊息
+                      th ip
+                      th 登入時間
+                      th 登出時間
+                  tbody
+                    each item, index in logs
+                      tr
+                        td= index+1
+                        td= item.pid
+                        td= item.verified_message
+                        td= item.ip
+                        if item.logout_at
+                          td
+                        else
+                          td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                        if item.logout_at
+                          td= time.get_time_from_timestamp('zh-tw', item.logout_at)
+                        else
+                          td
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl

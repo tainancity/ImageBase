@@ -1,0 +1,134 @@
+//-
+  sidebar
+aside.sidebar-container
+  .brand-header
+    .float-left.pt-4.text-muted.sidebar-close
+      em.ion-arrow-left-c.icon-lg
+    a.brand-header-logo(href=url(''))
+      span.brand-header-logo-text 後台-臺南市政府圖片資料庫平台
+  .sidebar-content
+    .sidebar-toolbar
+      .sidebar-toolbar-background
+      .sidebar-toolbar-content.text-center
+        a(href=url(''))
+          img.rounded-circle.thumb64(src=auth.user.portrait_url)
+        .mt-3
+          .lead= decrypt(auth.user.name)
+    nav.sidebar-nav
+      ul
+        if is_maintenance != '1'
+          li
+            div.sidebar-nav-heading 檔案管理
+            li(class=is_current_url('/admin/file/list', 'active'))
+              a(href='/admin/file/list')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file
+                span 檔案列表
+            if is_current_url('/admin/file/update', 'true') == 'true'
+              li(class=is_current_url('/admin/file/update', 'active'))
+                a(href='/admin/file/update/'+u_id)
+                  span.nav-icon.custom_icon
+                    i.fas.fa-edit
+                  span 檔案編輯
+            li(class=is_current_url('/admin/file/upload', 'active'))
+              a(href='/admin/file/upload')
+                span.nav-icon.custom_icon
+                  i.fas.fa-upload
+                span 檔案上傳
+            li(class=is_current_url('/admin/file/trash', 'active'))
+              a(href='/admin/file/trash')
+                span.nav-icon.custom_icon
+                  i.fas.fa-trash-alt
+                span 垃圾桶
+          li
+            div.sidebar-nav-heading 其它
+          li(class=is_current_url('/admin/account', 'active'))
+            a(href='/admin')
+              span.nav-icon.custom_icon
+                i.fas.fa-user
+              span 帳號資訊
+          li(class=is_current_url('/admin/log_login', 'active'))
+            a(href='/admin/log_login')
+              span.nav-icon.custom_icon
+                i.fas.fa-history
+              span 登入歷程
+        li
+          a(href='/user/logout')
+            span.nav-icon.custom_icon
+              i.fas.fa-sign-out-alt
+            span 登出
+        
+        //-
+         以下為管理者才看得到
+        if auth.user.role_id == 1
+          li
+            div.sidebar-nav-heading 網站管理(只有平台管理者才看得到)
+          if is_maintenance != '1'
+            li(class=is_current_url('/admin/management/file/', 'active'))
+              a(href='#')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file
+                span.float-right.nav-caret
+                  i.fas.fa-angle-right
+                span 檔案管理
+              ul.sidebar-subnav
+                li(class=is_current_url('/admin/management/file/list', 'active'))
+                  a(href='/admin/management/file/list')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-file
+                    span 檔案列表
+                li(class=is_current_url('/admin/management/file/carousel', 'active'))
+                  a(href='/admin/management/file/carousel')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-images
+                    span 首頁輪播
+                li(class=is_current_url('/admin/management/file/trash', 'active'))
+                  a(href='/admin/management/file/trash')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-trash-alt
+                    span 垃圾桶
+            li(class=is_current_url('/admin/management/image_categories', 'active'))
+              a(href='/admin/management/image_categories')
+                span.nav-icon.custom_icon
+                  i.fas.fa-th-large
+                span 檔案分類管理
+            li(class=is_current_url('/admin/management/all_members', 'active'))
+              a(href='/admin/management/all_members')
+                span.nav-icon.custom_icon
+                  i.fas.fa-users
+                span 公務帳號
+            li(class=is_current_url('/admin/management/announcement_', 'active'))
+              a(href='/admin/management/announcement_list')
+                span.nav-icon.custom_icon
+                  i.fas.fa-clipboard
+                span 公告列表管理
+            li(class=is_current_url('/admin/management/service', 'active'))
+              a(href='/admin/management/service')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file-alt
+                span 平台服務說明
+            li(class=is_current_url('/admin/management/log_login', 'active'))
+              a(href='/admin/management/log_login')
+                span.nav-icon.custom_icon
+                  i.fas.fa-history
+                span 登入歷程(所有帳號)
+            li(class=is_current_url('/admin/management/organization/import_data', 'active'))
+              a(href='/admin/management/organization/import_data')
+                span.nav-icon.custom_icon
+                  i.fas.fa-sitemap
+                span 組織部門匯入
+          li(class=is_current_url('/admin/management/settings', 'active'))
+            a(href='/admin/management/settings')
+              span.nav-icon.custom_icon
+                i.fas.fa-cog
+              span 其它設定
+          li(class=is_current_url('/admin/management/action_log', 'active'))
+            a(href='/admin/management/action_log')
+              span.nav-icon.custom_icon
+                i.fas.fa-ellipsis-h
+              span 平台 log
+          li(class=is_current_url('/admin/management/maintenance', 'active'))
+            a(href='/admin/management/maintenance')
+              span.nav-icon.custom_icon
+                i.fas.fa-exclamation-circle
+              span 維護模式頁面內容

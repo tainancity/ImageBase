@@ -1,0 +1,50 @@
+extends ./master
+block append head_end_tag
+  link(href=asset_path('css/admin/vendor/animate.css/animate.css') rel='stylesheet')
+  link(href=asset_path('css/admin/vendor/bootstrap/dist/css/bootstrap.min.css') rel='stylesheet')
+  link(href=asset_path('css/admin/vendor/ionicons/css/ionicons.css') rel='stylesheet')
+  link(href=asset_path('css/admin/vendor/material-colors/dist/colors.css') rel='stylesheet')
+  link(href=asset_path('css/admin/css/app.css') rel='stylesheet')
+  block head_end_tag_sl
+block append body_start_tag
+  block body_start_tag_sl
+block append content
+  div.layout-container
+    include ../partials/header.pug
+    include ../partials/aside.pug
+    //-
+      div.sidebar-layout-obfuscator is used on mobile to toggle navigation
+    div.sidebar-layout-obfuscator
+    main.main-container
+      if flash.info
+        .container-fluid.alert_block
+          .row
+            .col-xl-12
+              div.alert.alert-info= flash.info
+      block content_sl
+      include ../partials/footer.pug
+block append body_end_tag
+  block body_end_tag_sl
+block append body_end_others
+  script(src=asset_path('js/admin/vendor/modernizr/modernizr.custom.js'))
+  script(src=asset_path('js/admin/vendor/pace/pace.min.js'))
+  script(src=asset_path('js/admin/vendor/jquery/dist/jquery.js'))
+  script(src=asset_path('js/admin/vendor/tether/dist/js/tether.min.js'))
+  script(src=asset_path('js/admin/vendor/bootstrap/dist/js/bootstrap.js'))
+  script(src=asset_path('js/admin/vendor/material-colors/dist/colors.js'))
+  script(src=asset_path('js/admin/vendor/screenfull/dist/screenfull.js'))
+  script(src=asset_path('js/admin/vendor/flot/jquery.flot.js'))
+  script(src=asset_path('js/admin/vendor/flot/jquery.flot.categories.js'))
+  script(src=asset_path('js/admin/vendor/flot-spline/js/jquery.flot.spline.js'))
+  script(src=asset_path('js/admin/vendor/flot.tooltip/js/jquery.flot.tooltip.js'))
+  script(src=asset_path('js/admin/vendor/flot/jquery.flot.resize.js'))
+  script(src=asset_path('js/admin/vendor/flot/jquery.flot.pie.js'))
+  script(src=asset_path('js/admin/vendor/flot/jquery.flot.time.js'))
+  script(src=asset_path('js/admin/vendor/sidebysideimproved/jquery.flot.orderBars.js'))
+  script(src=asset_path('js/admin/vendor/jquery-knob/js/jquery.knob.js'))
+  script(src=asset_path('js/admin/app.js'))
+  script.
+    $(function(){
+      $("div.alert_block").fadeTo(2000, 500).slideUp(1000);
+    });
+  block body_end_others_sl

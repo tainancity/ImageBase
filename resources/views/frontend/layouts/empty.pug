@@ -1,0 +1,22 @@
+doctype html
+html(lang='zh-hant')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, user-scalable=no, user-scalable=0')
+    block page_title
+    link(href=asset_path('images/favicon.ico') rel='shortcut icon')
+    link(href=asset_path('css/frontend/layouts/master.css') rel='stylesheet')
+      
+    block head_end_tag
+    
+    //- ga code：本機端的話就跳過
+    if config.appenv.env != 'local'
+      !=ga_code
+  body
+    block body_start_tag
+    div#main
+      block content
+    block body_end_tag
+    script(src=asset_path('vendors/common/v.js'))
+    block body_end_others

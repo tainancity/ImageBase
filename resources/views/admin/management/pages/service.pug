@@ -1,0 +1,41 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 平台服務說明
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/platform_desc.css') rel='stylesheet')
+  script(src='/lib/ckeditor/ckeditor.js')
+  //-
+    script(src=asset_path('vendors/plugins/ckeditor/ckeditor.js'))
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 平台服務說明
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              p 如欲傳圖，請直接使用拖曳方式即可。
+              form.send_form(action='/admin/management/service_post' method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                textarea#platform_desc.custom_ckeditor(name='platform_desc')
+                  = setting.option_value
+                div.btn_send
+                  input.btn.btn-primary.btn_input(type='submit' value='更新')
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+  
+    CKEDITOR.replace('platform_desc', {
+      'uploadUrl': '#{config.appenv.domain}/image-upload?_csrf=#{csrfToken}&d=g',
+      'height': 360
+    });

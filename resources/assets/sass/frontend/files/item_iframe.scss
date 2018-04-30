@@ -1,0 +1,42 @@
+@import "../colors";
+div#main{
+  background-image: none;
+}
+
+html, body{
+  background-color: $black_level_4;
+  min-height: 100vh;
+}
+article.pic_article{
+  padding: 0;
+  header.pic_h{
+    margin-bottom: 5px;
+    padding-top: 5px;
+    h1.title1{
+      margin:0;
+      padding:0;
+      font-size: 1.125rem;
+      color: $white;
+      font-weight: normal;
+    }
+  }
+  section.pic_s{
+    figure{
+      margin:0;
+    }
+    img{
+      max-width: 100%;
+    }
+  }
+  footer.pic_f{
+    margin-top: 3px;
+    text-align: right;
+    padding-bottom: 5px;
+    a.link{
+      color: $white;
+      display: inline-block;
+      font-size: 14px;
+      font-style: italic;
+    }
+  }
+}

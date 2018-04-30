@@ -1,0 +1,26 @@
+img.portrait_url{
+  width: 20px;
+}
+span.name{
+  margin-left: 2px;
+}
+table.custom_table{
+  tbody{
+    tr{
+      td:nth-child(1){
+      }
+    }
+    td{
+      input.admin_check{
+        cursor: pointer;
+        &.-disabled{
+          cursor: not-allowed;
+        }
+      }
+      span.disabled_text{
+        font-size: .8rem;
+        color: #999999;
+      }
+    }
+  }
+}

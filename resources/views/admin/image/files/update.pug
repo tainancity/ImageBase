@@ -1,0 +1,218 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案編輯
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_update.css') rel='stylesheet')
+  link(href=asset_path('vendors/plugins/cropper/cropper.min.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 檔案編輯
+          div.cardbox
+            div.cardbox-body
+              div.crop_block_container
+                if no_file
+                  p.no_file 無相關檔案
+                else if no_privilege
+                  p.no_prievelege 無權取得該檔案
+                else
+                  h1.title1 裁切圖片
+                  if file.file_type == 1
+                    p.para 裁切功能：裁切過後，除了原始檔案之外，其它檔案都會自動刪除，然後將裁切的圖，分別縮放至 320px、640px、960px 的寬。
+                  else
+                    p.para 此檔不支援裁切功能
+                  if file.file_type == 1
+                    div.crop_block
+                      div.left_b
+                        div.crop_image
+                          img#image(src=config.appenv.storage.domain + origin_file.url)
+                      div.right_b
+                        div.img_preview: span.temp_text 預覽區域
+                        div.info_b
+                          span 原圖裁切範圍：
+                          span.img_width
+                          span.img_height
+                        div.action_block
+                          div.act1
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='1' data-ratio-height='1') 1:1
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='2' data-ratio-height='3') 2:3
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='3' data-ratio-height='2') 3:2
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='3' data-ratio-height='4') 3:4
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='4' data-ratio-height='3') 4:3
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='9' data-ratio-height='16') 9:16
+                            button.btn.btn-secondary.btn_ratio(type='button' data-ratio-width='16' data-ratio-height='9') 16:9
+                            button.btn.btn-secondary.btn_ratio.-on(type='button' data-ratio-width='0' data-ratio-height='1') 任意
+                            
+                          div.act2
+                            button.btn.btn-secondary.btn_preview(type='button') 預覽
+                            button.btn.btn-primary.btn_save(type='button' data-u-id=file.u_id) <span class='-saving'>儲存</span><span class='-cropping'>裁切中</span>
+                            p.hint 如裁切失敗，請重新執行。
+                  
+                  h1.title1.update_data 更新資料
+                  form(method='post' action='#')
+                    //-
+                      input(type='hidden' name='_method' value='put')
+                      input(type='hidden' name='_csrf' value=csrfToken)
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 標題
+                        .col-lg-10
+                          input.form-control(type='text' name='title' value=file.title)
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 分類
+                        .col-lg-10
+                          select.form-control(name='category')
+                            each item, index in categories
+                              if item.id == file.category_id
+                                option(value=item.id selected)= item.category_name
+                              else
+                                option(value=item.id)= item.category_name
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 權限
+                        .col-lg-10
+                          select.form-control(name='permissions')
+                            if file.permissions == '1'
+                              option(value='1' selected) 公開(前台看得到)
+                              option(value='2') 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)
+                              option(value='3') 共用(前台看不到，知道短網址的人，皆可看到)
+                            if file.permissions == '2'
+                              option(value='1') 公開(前台看得到)
+                              option(value='2' selected) 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)
+                              option(value='3') 共用(前台看不到，知道短網址的人，皆可看到)
+                            if file.permissions == '3'
+                              option(value='1') 公開(前台看得到)
+                              option(value='2') 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)
+                              option(value='3' selected) 共用(前台看不到，知道短網址的人，皆可看到)
+                                
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label Tags(以半形逗號分隔)
+                        .col-lg-10
+                          input.form-control.custom_tags(type='text' name='tags' value=file_tags.join(',')) 
+                    
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label
+                        .col-lg-10
+                          button.btn.btn-primary.btn_input(type='button' data-u-id=file.u_id) 更新
+                          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+        
+block append body_end_others_sl
+  //-
+    script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script(src=asset_path('vendors/plugins/cropper/cropper.min.js'))
+  script(src=asset_path('vendors/plugins/cropper/jquery-cropper.min.js'))
+  script.
+    //var cropper;
+    $(function(){
+      
+      var $image = $('#image');
+      $image.cropper({
+        //aspectRatio: 16 / 9,
+        //preview: [$('div.img_preview')[0]],
+        dragMode: 'move',
+        zoomOnWheel: false,
+        crop: function(event) {
+          /* console.log('x: ' + event.detail.x);
+          console.log('y: ' + event.detail.y);
+          console.log('width: ' + event.detail.width);
+          console.log('height: ' + event.detail.height);
+          console.log('rotate: ' + event.detail.rotate);
+          console.log('scaleX: ' + event.detail.scaleX);
+          console.log('scaleY: ' + event.detail.scaleY); */
+          $("span.img_width").html(Math.round(event.detail.width) + ' x');
+          $("span.img_height").html(Math.round(event.detail.height));
+        }
+      });
+      // Get the Cropper.js instance after initialized
+      var cropper = $image.data('cropper');
+      
+      $('button.btn_ratio').on('click', function(){
+        $(this).closest('div.act1').find('button.btn_ratio').removeClass('-on');
+        $(this).addClass('-on');
+        cropper.setAspectRatio( parseInt($(this).attr("data-ratio-width")) / parseInt($(this).attr("data-ratio-height")) );
+      });
+      $('button.btn_preview').on('click', function(){
+        var croppedCanvas = cropper.getCroppedCanvas();
+        $('div.img_preview').html(croppedCanvas);
+      });
+      $('button.btn_save').on('click', function(){
+        var that = this;
+        if($(this).hasClass('-cropping')){
+          alert('裁切中…請勿重覆點擊');
+        }else{
+          if($('div.img_preview').find('canvas').length > 0){
+            var r = confirm("確認裁切？除了原始檔案之外，其它檔案都會自動刪除。");
+            if (r == true) {
+              var u_id = $(this).attr('data-u-id')
+              $(this).addClass('-cropping')
+              $.ajax({
+                type: "POST",
+                url: '#{config.appenv.domain}/api/v1.0/image/crop',
+                data: "img_id=" + u_id + "&img_data=" + ($('div.img_preview').find('canvas')[0]).toDataURL(),
+                //dataType: dataType,
+                statusCode: {
+                  504: function (response) {
+                    if($(that).hasClass('-cropping')){
+                      $(that).removeClass('-cropping');
+                    }
+                    alert("伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
+                  }
+                },
+                success: function(data){
+                  alert(data.msg);
+                  if(data.code == 200){
+                    location.href = '#{config.appenv.domain}/admin/file/list'
+                  }else{
+                    location.reload();
+                  }
+                }
+              });
+            }
+          }else{
+            alert("請先執行預覽，再按儲存。");
+          }
+        }
+        
+      });
+      
+      $('button.btn_input').on('click', function(){
+        
+        var el_form = $(this).closest('form')[0];
+        var title = $(el_form).find("input[name=title]").val();
+        var category = $(el_form).find("select[name=category]").val();
+        var permissions = $(el_form).find("select[name=permissions]").val();
+        var tags = $(el_form).find("input[name=tags]").val();
+        
+        var formData = new FormData();
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('permissions', permissions);
+        formData.append('tags', tags);
+        
+        $.ajax({
+          url: "#{config.appenv.domain}/api/v1.0/image/" + $(this).attr('data-u-id') + "?api_key=#{config.appenv.full_api_key}",
+          type: "put",
+          data: formData,
+          contentType: false,
+          cache: false,
+          processData:false,
+          dataType: 'json',
+          success: function(data){
+            alert(data.msg);
+            location.reload();
+          }
+        });
+      });
+      
+    });

@@ -1,0 +1,108 @@
+doctype html
+html(lang='zh-hant')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, user-scalable=no, user-scalable=0')
+    block page_title
+    link(href=asset_path('images/favicon.ico') rel='shortcut icon')
+    link(href=asset_path('css/frontend/layouts/master.css') rel='stylesheet')
+      
+    block head_end_tag
+    
+    //- ga code：本機端的話就跳過
+    if config.appenv.env != 'local'
+      !=ga_code
+  body
+    block body_start_tag
+    include ../partials/header.pug
+    div#main
+      block content
+    include ../partials/footer.pug
+    
+    if auth.is_auth
+      div.upload_pics_modal.display_none
+        div.upload_block_container
+          button.close_upload: i.fas.fa-times.fa-lg
+          include ../partials/article_upload_block.pug
+    
+    block body_end_tag
+    script(src=asset_path('vendors/common/v.js'))
+    script(src=asset_path('js/all.js'))
+    //-
+      script(src=asset_path('js/upload_file.js'))
+    include ../partials/article_upload_block_js.pug
+    block body_end_others
+    script.
+      var check_like = function(){
+        $.ajax({
+          url: '#{config.appenv.domain}/api-ajax/v1.0/like-ip',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            $("div.each_file").each(function(index, item){
+              var that = this;
+              $(r_data.result).each(function(like_index, like_item){
+                if(like_item.file_id == $(that).attr("data-id") && like_item.ip == client_ip){
+                  $(that).find("button.btn_like_box").addClass("-have_like")
+                }
+              })
+            })
+            
+          }
+        });
+      };
+      
+      $(function(){
+        
+        $('button.toggle_nav').on('click', function(){
+          $(this).closest('header.header').find('div.mobile_nav').slideToggle();
+        });
+        $('button.btn_upload_files').on('click', function(){
+          $('div.upload_pics_modal').removeClass('display_none');
+        });
+        $('button.close_upload').on('click', function(){
+          $(this).closest('div.upload_pics_modal').addClass('display_none');
+        });
+        
+        $(document).on("click", "button.btn_like_box", function(){
+          var that = this;
+          var item_id = $(this).closest("div.each_file").attr("data-id");
+          $.ajax({
+            url: '#{config.appenv.domain}/api-ajax/v1.0/update-like',
+            type: 'POST',
+            data: {like: !$(this).hasClass('-have_like'), id: item_id},
+            dataType: 'json',
+            headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+            },
+            statusCode: {
+              200: function (response) {
+              }
+            },
+            success: function(r_data){
+              if($(that).hasClass('-have_like')){
+                $(that).removeClass("-have_like");
+              }else{
+                $(that).addClass("-have_like");
+              }
+              if(r_data.like_num > 999){
+                $(that).find("span.like_num").html("999+");
+              }else{
+                $(that).find("span.like_num").html(r_data.like_num);
+              }
+            }
+          });
+        })
+      });
+      $(window).on('resize', function(){
+        if($(window).width() >= 768){
+          $('div.mobile_nav').slideUp();
+        }
+      });

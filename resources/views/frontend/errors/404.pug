@@ -1,0 +1,25 @@
+extends ../layouts/master
+
+block append page_title
+  title=  '404 找不到頁面' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/errors/error_404.css') rel='stylesheet')
+
+block append content
+  section.page_404
+    div.block_404_img
+      //-
+        img(src=asset_path('images/img-404.svg'))
+      div.desc_block
+        p.para Oops,現在無法找到你要的頁面
+        a.back_home(href='/') 返回首頁
+              
+    
+
+
+block append body_end_others
+  script.
+    $(function(){
+      
+    });

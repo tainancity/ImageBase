@@ -1,0 +1,218 @@
+extends ../layouts/master
+
+block append page_title
+  title=  (file_obj == null ? "" : (file_obj.title == null ? '' : file_obj.title) ) + ' - '+ config.app.sitename
+
+block append head_end_tag
+  meta(property='og:url' content=current_url)
+  meta(property='og:title' content=(file_obj == null ? '' : (file_obj.title == null ? "" : file_obj.title) ))
+  if file_obj != null
+    each item, index in JSON.parse(file_obj.file_data)
+      if (item.width == 960)
+        meta(property='og:image' content=config.appenv.storage.domain + item.url)
+  link(href=asset_path('css/frontend/files/item.css') rel='stylesheet')
+
+block append body_start_tag
+  //- 分享的 library
+  include ../partials/share.pug
+
+block append content
+  if file_obj == null
+    section.no_file
+      div.container
+        div.row
+          div.col
+            p.no_access 無相關檔案
+  else if (!auth.is_auth && file_obj.permissions == '2' || auth.is_auth && file_obj.user_id != auth.user.id && file_obj.permissions == '2')
+    section.no_authority
+      div.container
+        div.row
+          div.col
+            p.no_access 無權瀏覽
+  else
+    section.pic_sec
+      div.container
+        div.row
+          div.col
+            div.title_block_parent
+              div.title_block
+                div.hint_block
+                  if file_obj.permissions == '1'
+                    p.f_type
+                      span.icon_span: i.fas.fa-eye
+                      span.icon_text 公開
+                  else if file_obj.permissions == '2'
+                    p.f_type
+                      span.icon_span: i.fas.fa-eye-slash
+                      span.icon_text 隱藏
+                  else
+                    p.f_type
+                      span.icon_span: i.fas.fa-share-alt
+                      span.icon_text 共用
+                  
+                  if (auth.is_auth && file_obj.user_id == auth.user.id)
+                    a.edit_link(href=config.appenv.domain + '/admin/file/update/' + file_u_id target='_blank')
+                      i.fas.fa-pencil-alt
+                      span.icon_text= '後台編輯'
+                if file_obj.file_type == '1'
+                  h1.title1= (file_obj.title == null ? "" : file_obj.title )
+                else
+                  each item, index in JSON.parse(file_obj.file_data)
+                    h1.title1.for_other_file: a(href=config.appenv.storage.domain + item.url target='_blank')
+                      span.icon_span
+                        i.fas.fa-file-pdf
+                      span.icon_text!= 'PDF 檔' + '<span class="text_inner_icon"><i class="fas fa-external-link-alt"></i></span>' + (file_obj.title == '' || file_obj.title == null ? "" : '：' + file_obj.title )
+        div.row
+          div.col-sm-12.col-md-8
+            each item, index in JSON.parse(file_obj.file_data)
+              if (item.width == 960)
+                figure: img(src=config.appenv.storage.domain + item.url)
+            div.meta_list_block
+              ul.meta_list
+                li
+                  span.icon_span: i.fas.fa-th-large
+                  span.meta_item= '分類：' + file_obj.category_name
+                li
+                  span.icon_span: i.fas.fa-eye
+                  span.meta_item 瀏覽人次：
+                    span.pageviews= file_obj.pageviews
+                li
+                  span.icon_span: i.fas.fa-sitemap
+                  span.meta_item= '局處：' + file_obj.organization_name
+                li
+                  span.icon_span: i.fas.fa-clock
+                  span.meta_item= '上傳時間：' + time.get_time_from_timestamp('zh-tw', file_obj.created_at)
+                
+                if file_obj.file_type == '1'
+                  li
+                    span.icon_span: i.fas.fa-crosshairs
+                    span.meta_item 圖片尺吋：
+                    each item, index in JSON.parse(file_obj.file_data)
+                      if !item.origin
+                        span.item_size= item.width + ' x ' + item.height
+                  li
+                    span.icon_span: i.fas.fa-file-alt
+                    span.meta_item 圖片格式：
+                    each item, index in JSON.parse(file_obj.file_data)
+                      if !item.origin
+                        if index == 1
+                          span.item_format= item.format
+              //-
+                ul.meta_list
+                  li
+                    span.icon_span: i.fas.fa-th-large
+                    span.meta_item 分類：
+                  li
+                    span.icon_span: i.fas.fa-th-large
+                    span.meta_item 分類：
+            
+            if file_obj.tags != ""
+              div.tab_block
+                ul.tag_list
+                  each item, index in (file_obj.tags).split(",")
+                    li
+                      a.tagl_link(href=config.appenv.domain + '/search?tag=' + item + '&page=1&items_per_page=20')
+                        span.icon_span: i.fas.fa-tag
+                        span.tag_text= item
+          
+          div.col-sm-12.col-md-4
+            div.right_block
+              div.share_block
+                ul.share_list
+                  li
+                    div.fb-like(data-href=current_url data-action='like' data-layout='button_count')
+                  li
+                    div.g-plus(data-href=current_url data-action='share' data-annotation='vertical-bubble')
+              div.link_block
+                h2.title2
+                  span.icon_span: i.fas.fa-link
+                  if file_obj.file_type == '1'
+                    span.title_text 圖片短網址
+                  else
+                    span.title_text 檔案短網址
+                div.short_link_block
+                  div.with_copy
+                    input.short_link(type='text' value=current_url readonly='readonly')
+                    button.btn_copy(type='button' id='btn_copy_short_link' data-copytarget='copyTargetForShortLink')
+                      i.fas.fa-copy
+                      span.copy_hint 已複製
+                    textarea#copyTargetForShortLink(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+                      = current_url
+                if file_obj.file_type == '1'
+                  h2.title2
+                    span.icon_span: i.fas.fa-code
+                    span.title_text 圖片內嵌與預覽
+                  div.iframe_block
+                    div.with_copy
+                      textarea.iframe_text(rows='2' readonly='readonly')
+                        = '<iframe src="' + config.appenv.domain + '/if/' + file_u_id + '" width="100%" frameborder="0" height="300"></iframe>'
+                      button.btn_copy(type='button' id='btn_copy_iframe' data-copytarget='copyTargetForIframe')
+                        i.fas.fa-copy
+                        span.copy_hint 已複製
+                      textarea#copyTargetForIframe(style='opacity:0;visibility:invisible;height:0;padding:0;clear:both;' readonly='true')
+                        = '<iframe src="' + config.appenv.domain + '/if/' + file_u_id + '" width="100%" frameborder="0" height="300"></iframe>'
+              if file_obj.file_type == '1'
+                div.iframe_preview
+                  iframe(src=config.appenv.domain + '/if/' + file_u_id width='100%' frameborder='0' height='300')
+  
+
+block append body_end_others
+  script.
+    function setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      var expires = "expires="+d.toUTCString();
+      var path = '/f/#{file_u_id}';
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=" + path;
+    }
+    function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+          }
+      }
+      return "";
+    }
+    $(function(){
+      $('input.short_link, textarea.iframe_text').on('click', function(){
+        $(this).select();
+      });
+      
+      $("button#btn_copy_short_link, button#btn_copy_iframe").on("click", function(){
+        $(this).addClass("add_bg");
+        var that = $(this);
+        setTimeout(function(){
+          $(that).removeClass("add_bg");
+        }, 1000);
+        allJS.copyToClipboard( $("#" + $(this).attr("data-copytarget"))[0] );
+        $("textarea#" + $(this).attr("data-copytarget")).blur();
+      });
+      
+      if(getCookie("v_#{file_u_id}") == ''){
+        setCookie('v_#{file_u_id}', '1', 1)
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-pageviews',
+          type: 'put',
+          data: 'u_id=' + '#{file_u_id}',
+          dataType: 'json',
+          headers: {
+            "X-CSRF-Token":"#{csrfToken}"
+          },
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            $("span.pageviews").html(r_data.new_pageviews)
+          }
+        });
+      }
+      
+    });

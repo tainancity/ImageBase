@@ -1,0 +1,118 @@
+var CONFIG = require('../../config/global.js')
+var userModel = require(CONFIG.path.models + '/user.js')
+var organizationModel = require(CONFIG.path.models + '/organization.js')
+var apiKeyModel = require(CONFIG.path.models + '/api_key.js')
+var functions = require(CONFIG.path.helpers + '/functions.js')
+
+var generate_api_key
+var api_key_duplicate = false
+
+// 檢查是否有重覆的 api_key
+var check_api_key = function(api_key, cb){
+  apiKeyModel.getOne('api_key', api_key, function(results_check){
+    if(results_check.length == 1){
+      //console.log("相同的 api_key 產生")
+      api_key_duplicate = true
+    }else{
+      api_key_duplicate = false
+    }
+    cb()
+  })
+}
+
+var duplicate_func = function(req, res){
+  if(api_key_duplicate){
+    generate_api_key = functions.generate_api_key()
+    //console.log("新的 api key：" + generate_api_key)
+    check_api_key(generate_api_key, function(){
+      duplicate_func(req, res)
+    })
+  }else{
+    userModel.getOne('u_id', req.session.u_id, function(results){
+      apiKeyModel.getOne('user_id', results[0].id, function(results_check){
+        if(results_check.length >= 1){
+          //console.log("已申請過")
+          res.redirect('/admin/account')
+        }else{
+          var insert_obj = {
+            user_id: results[0].id,
+            api_key: generate_api_key,
+            request_times: 0
+          }
+          apiKeyModel.save(insert_obj, true, function(){
+            res.redirect('/admin/account')
+          })
+        }
+      })
+
+    })
+  }
+}
+
+exports.index = function(options) {
+  return function(req, res) {
+    userModel.getOne('u_id', req.session.u_id, function(results){
+
+      apiKeyModel.getOne('user_id', results[0].id, function(api_result){
+        if(api_result.length == 1){
+          results[0].api_key = api_result[0].api_key
+        }else{
+          results[0].api_key = ''
+        }
+        // 取得 organ_id 對應的 organ_name
+        var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
+        organizationModel.getAll(sort_obj_for_organ, function(results_organ){
+          results.forEach(function(element, index, arr) {
+            // arr 是原來的 results 陣列
+            results_organ.forEach(function(organ, i, arra_organ){
+              if(element.organ_id == organ.organ_id){
+                results[index].organ_name = organ.organ_name
+              }
+            })
+          })
+          //console.log(results)
+          //res.render('admin/management/all_members', {members: results})
+          res.render('admin/pages/account', {account: results[0], csrfToken: req.csrfToken()})
+        })
+      })
+
+    })
+
+  }
+}
+
+// 申請 api key
+exports.apply_api_key = function(options){
+  return function(req, res){
+    generate_api_key = functions.generate_api_key()
+    //generate_api_key = 'oydsOH3Cef7YP4SxnebJ6g8DnN5O5qOw'
+    check_api_key(generate_api_key, function(){
+      duplicate_func(req, res)
+    })
+  }
+}
+
+// 所有公務帳號
+exports.all_members = function(options){
+  return function(req, res){
+    var sort_obj = { "column": "created_at", "sort_type": "DESC" }
+    userModel.getAll(sort_obj, function(results){
+
+      // 取得 organ_id 對應的 organ_name
+      var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
+      organizationModel.getAll(sort_obj_for_organ, function(results_organ){
+        results.forEach(function(element, index, arr) {
+          // arr 是原來的 results 陣列
+          results_organ.forEach(function(organ, i, arra_organ){
+            if(element.organ_id == organ.organ_id){
+              results[index].organ_name = organ.organ_name
+            }
+          })
+        })
+        //console.log(results)
+        res.render('admin/management/all_members', {members: results})
+      })
+
+    })
+  }
+}

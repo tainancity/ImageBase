@@ -21,8 +21,8 @@ exports.up = function(db) {
   }, function(err){
     if (err) console.error(err)
 
-    db.runSql("INSERT INTO roles(`role`) VALUES('Admin');");
-    db.runSql("INSERT INTO roles(`role`) VALUES('Employee');");
+    db.runSql("INSERT INTO roles(`role`) VALUES('管理者');");
+    db.runSql("INSERT INTO roles(`role`) VALUES('公務帳號');");
   });
 };
 

@@ -1,0 +1,177 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 其他設定
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/settings.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 其他設定
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              
+              form(method='#' action='#')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                
+                each val, index in settings
+                  if val.option_name == 'logo_file'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label Logo
+                        .col-lg-10
+                          input.form-control.logo_file(type='file' name='upload')
+                          span.logo_hint 建議大小： 650 x 116。(前台會將高度固定為 58px)
+                          if val.option_value == '' || val.option_value == null
+                            img.logo_file(src=asset_path('images/logo.svg'))
+                          else
+                            img.logo_file(src=val.option_value)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_change_logo(type='submit' value='更新')
+                        
+          div.cardbox
+            div.cardbox-body
+              
+              form(method='post' action='/admin/management/settings-post')
+                //-
+                  input(type='hidden' name='_method' value='put')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                
+                each val, index in settings
+                  if val.option_name == 'upload_filesize_limit'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 上傳檔案的大小上限
+                        .col-lg-10
+                          input.form-control.upload_filesize_limit(type='text' name='upload_filesize_limit' value=val.option_value)
+                          span.custom_text KB。 (1MB = 1024KB)。(可輸入之最大值：<strong>10240</strong>，代表10MB。)
+                  if val.option_name == 'ga_code'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label Google Analytics<br>全域網站代碼 (gtag.js)
+                        .col-lg-10
+                          textarea.form-control.ga_code(type='text' name='ga_code' rows='8')= val.option_value
+                          span.other_text 註：此 GA Code 在前台、後台皆會載入。
+                  if val.option_name == 'is_maintenance'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 開啟「網站維護中」模式？
+                        .col-lg-10
+                          if val.option_value == '1'
+                            label.maintenance_label.first_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1' checked)
+                              | 開啟
+                            label.maintenance_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0')
+                              | 關閉
+                          else
+                            label.maintenance_label.first_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='1')
+                              | 開啟
+                            label.maintenance_label
+                              input.form-control.is_maintenance_mode(type='radio' name='is_maintenance' value='0' checked)
+                              | 關閉
+                          span.other_text_mode 註：若開啟，除了圖片的絕對路徑可用之外，其餘功能皆無法使用，會直接進入維護的說明頁面。(僅平台管理者可登入後台，再度「關閉」維護模式。)
+                
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label
+                    .col-lg-10
+                      input.btn.btn-primary.btn_input(type='submit' value='更新')
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+    $(function(){
+      
+      var progressHandlingFunction = function(e){
+        if(e.lengthComputable){
+          console.log(e)
+          /*
+          this.progress_percent = parseInt((e.loaded / e.total) * 100);
+          if(this.progress_percent == 100){
+            this.choose_filename = '選擇圖片';
+            this.image_uploading = false;
+            this.$refs.the_file.value = '';
+            var that = this;
+            setTimeout(function(){
+              that.progress_percent = 0;
+            }, 1000);
+          }
+          */
+        }
+      }
+      
+      $("input.btn_change_logo").on("click", function(e){
+        e.preventDefault()
+        var el_logo_file = $(this).closest("form").find("input.logo_file")
+        if( $(this).hasClass('-disabled') ){
+          alert("請勿重覆點擊");
+        }else{
+          if($(el_logo_file).val() == ""){
+            alert("尚未選擇檔案！");
+          }else{
+            $(this).addClass('-disabled');
+            // change logo
+            $.ajax({
+              url: '#{config.appenv.domain}/image-upload?_csrf=#{csrfToken}&d=g',
+              type: 'POST',
+              data: new FormData($(this).closest('form')[0]),
+              contentType: false,
+              cache: false,
+              processData:false,
+              xhr: function() {
+                var myXhr = $.ajaxSettings.xhr();
+                if(myXhr.upload){
+                  myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+                }
+                return myXhr;
+              },
+              dataType: 'json',
+              //headers: {
+              //    "X-CSRF-Token":"#{csrfToken}"
+              //},
+              success: function(data){
+                if(data.uploaded == 1){
+                  $.ajax({
+                    url: '#{config.appenv.domain}/admin/management/settings-logo-file-post',
+                    type: 'POST',
+                    data: 'logo_file=' + data.url,
+                    dataType: 'json',
+                    headers: {
+                      "X-CSRF-Token":"#{csrfToken}"
+                    },
+                    success: function(data){
+                      alert("更新成功");
+                      location.reload();
+                    }
+                  });
+                }
+              }
+            });
+          }
+        }
+        
+      });
+      
+      $("textarea.ga_code").on("focus", function(){
+        $(this).select();
+      })
+    })

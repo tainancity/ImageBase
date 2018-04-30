@@ -1,0 +1,239 @@
+extends ./layouts/master
+
+block append page_title
+  title= config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/index.css') rel='stylesheet')
+  script.
+    var client_ip = "#{client_ip}";
+    //var files_like = JSON.parse(("#{files_like}").replace(/&quot;/g,'"'));
+
+include ./partials/btn_like_box.pug
+include ./partials/each_files.pug
+
+block append content
+  //- 公告
+  if announcement_results.length > 0
+    section.announcement_sec
+      h2.display_none 公告
+      div.container
+        div.row
+          div.col
+            div.announcement_block
+              div.announcement_left
+                span(class='span_icon'): i.fas.fa-bullhorn
+              div.announcement_middle
+                marquee(direction='up' scrollamount='1' height='20' onMouseOver='this.stop()' onMouseOut='this.start()')
+                  ul.announcement_list
+                    each item, index in announcement_results
+                      if item.is_only_link == 1
+                        li: a(href=item.contents target='_blank')= item.title
+                      else
+                        li= item.title
+              div.announcement_right
+                a(href='/announcement/list'): i.fas.fa-list-alt.fa-lg
+  
+  //- 輪播
+  if carousels.length > 0
+    section.slick_slider_sec
+      div.container
+        div.row
+          div.col
+            div.slick_slider_container
+              div.slick_slider
+                each carousel_item, carousel_index in carousels
+                  div.slick_content
+                    div.inner_content
+                      each file_item, file_index in JSON.parse(carousel_item.file_data)
+                        if file_item.width == 640
+                          a(href=config.appenv.domain + '/f/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+  
+  //- 最新圖片
+  if newest_files.length > 0
+    section.common_sec
+      div.container
+        div.row
+          div.col
+            div.title_block
+              a.more_items(href=config.appenv.domain + '/search')
+                i.fas.fa-plus
+                |
+                | 看更多最新圖片
+              h2.title2
+                i.fas.fa-clock
+                span.title_text 最新圖片
+            div.pic_block
+              div.row
+                +each_files(newest_files)
+  
+  //- 瀏覽量最高圖片
+  if pageviews_highest_files.length > 0
+    section.common_sec
+      div.container
+        div.row
+          div.col
+            div.title_block
+              a.more_items(href=config.appenv.domain + '/search?page=1&items_per_page=20&sort_type=pageviews&sort_value=DESC')
+                i.fas.fa-plus
+                |
+                | 看更多瀏覽量高的圖片
+              h2.title2
+                i.fas.fa-fire
+                span.title_text 瀏覽量最高
+            div.pic_block
+              div.row
+                +each_files(pageviews_highest_files)
+  
+  //- 按讚最高圖片
+  if files_like_total.length > 0
+    section.common_sec
+      div.container
+        div.row
+          div.col
+            div.title_block
+              a.more_items(href=config.appenv.domain + '/search?page=1&items_per_page=20&sort_type=like&sort_value=DESC')
+                i.fas.fa-plus
+                |
+                | 看更多按讚高的圖片
+              h2.title2
+                i.fas.fa-thumbs-up
+                span.title_text 按讚最高
+            div.pic_block
+              div.row
+                +each_files(files_like_total)
+  
+  //- 局處圖片
+  each item, index in organizations
+    if item.files.length > 0
+      section.common_sec
+        div.container
+          div.row
+            div.col
+              div.title_block
+                a.more_items(href='/search?organ_id=' + item.organ_id + '&page=1&items_per_page=20')
+                  i.fas.fa-plus
+                  |
+                  = ' 看更多「' + item.organ_name_abbr + '」局處圖片'
+                h2.title2
+                  i.fas.fa-sitemap
+                  span.title_text= '「' + item.organ_name_abbr + '」局處圖片'
+              div.pic_block
+                div.row
+                  +each_files(item.files)
+  
+  //- 分類圖片
+  each item, index in categories
+    if item.files.length > 0
+      section.common_sec
+        div.container
+          div.row
+            div.col
+              div.title_block
+                a.more_items(href='/search?category_id=' + item.id + '&page=1&items_per_page=20')
+                  i.fas.fa-plus
+                  |
+                  = ' 看更多「' + item.category_name + '」分類圖片'
+                h2.title2
+                  i.fas.fa-th-large
+                  span.title_text= '「' + item.category_name + '」分類圖片'
+              div.pic_block
+                div.row
+                  +each_files(item.files)
+  
+  section.more_pic_sec
+    div.container
+      div.row
+        div.col
+          ul.more_list
+    div.btn_action_block
+      button.btn_more_pics(type='button' data-next-page='1') 看更多圖片 <span class='icon_spin'><i class='fas fa-spinner fa-spin'></i></span>
+
+block append body_end_others
+  script(src=asset_path('vendors/plugins/slick/slick.min.js'))
+  script.
+    $(function(){
+      
+      check_like();
+      
+      $('.slick_slider').slick({
+        arrows: true,
+        dots: true,
+        infinite: true,
+        speed: 300,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        responsive: [
+          {
+            breakpoint: 768,
+            settings: {
+              arrows:false
+            }
+          }
+        ]
+      });
+      
+      $('button.btn_more_pics').on('click', function(){
+        $(this).addClass('-disabled').attr('disabled');
+        var next_page = $(this).attr('data-next-page');
+        var that = this;
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api/v1.0/image?page=' + next_page + '&items_per_page=10&api_key=#{config.appenv.full_api_key}',
+          type: 'GET',
+          //data: data,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            
+            //console.log(r_data)
+            
+            $(that).removeClass('-disabled').removeAttr('disabled');
+            if(r_data.next_page == ''){
+              $(that).addClass('-none');
+            }else{
+              $(that).attr('data-next-page', r_data.next_page);
+            }
+            
+            var html = '';
+            $(r_data.files).each(function(index, item){
+              //console.log(item)
+              html += '<li>';
+              html +=   '<div class="each_block each_file" data-id="' + item.id + '">';
+              html +=     '<div class="top_block">';
+              html +=       '<a href="' + item.short_url + '">';
+              $(item.file_data).each(function(file_item_index, file_item_obj){
+                if(file_item_obj.width == 320){
+                  html +=         '<img src="' + file_item_obj.url + '">';
+                }
+              });
+              html +=       '</a>';
+              html +=     '</div>';
+              html +=     '<div class="bottom_block">';
+              html +=       '<button class="btn_like_box" type="button">';
+              html +=         '<span class="span_like"><i class="fas fa-thumbs-up"></i></span>';
+              if(item.like_num > 999){
+                html +=         '<span class="like_num">999+</span>';
+              }else{
+                html +=         '<span class="like_num">' + item.like_num + '</span>';
+              }
+              html +=       '</button>';
+              html +=       '<a class="title_link" href="' + item.short_url + '">' + (item.title == null ? '' : item.title) + '</a>';
+              html +=     '</div>';
+              html +=   '</div>';
+              html += '</li>';
+            });
+            
+            $('ul.more_list').append(html);
+            check_like();
+            
+          }
+        });
+        
+      });
+      
+    });

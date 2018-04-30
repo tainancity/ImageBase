@@ -1,0 +1,45 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 維護模式頁面內容
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/management/maintenance_desc.css') rel='stylesheet')
+  script(src='/lib/ckeditor/ckeditor.js')
+  //-
+    script(src=asset_path('vendors/plugins/ckeditor/ckeditor.js'))
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 維護模式頁面內容
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              p 如欲傳圖，請直接使用拖曳方式即可。
+              form.send_form(action='/admin/management/maintenance_post' method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                textarea#maintenance_desc.custom_ckeditor(name='maintenance_desc')
+                  = setting.option_value
+                div.btn_send
+                  input.btn.btn-primary.btn_input(type='submit' value='更新')
+                  span.mode_hint_text
+                    a(href='/pages/maintain' target='_blank') 頁面連結
+                    |
+                    | (在維護模式為關閉的狀態下，只有平台管理者可得到維護模式的頁面。)
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+  
+    CKEDITOR.replace('maintenance_desc', {
+      'uploadUrl': '#{config.appenv.domain}/image-upload?_csrf=#{csrfToken}&d=g',
+      'height': 360
+    });

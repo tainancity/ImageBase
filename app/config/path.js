@@ -11,7 +11,12 @@ const PATH = {
   helpers: path.join(__dirname, '../helpers'),
   db: path.join(__dirname, '../db'),
   models: path.join(__dirname, '../models'),
-  middlewares: path.join(__dirname, '../middlewares')
+  redis: path.join(__dirname, '../redis'),
+  yaml: path.join(__dirname, '../yaml'),
+  logger: path.join(__dirname, '../logger'),
+  middlewares: path.join(__dirname, '../middlewares'),
+  storage_uploads: path.join(__dirname, '../../storage/uploads'),
+  storage_logs: path.join(__dirname, '../../storage/logs')
 }
 
 module.exports = PATH

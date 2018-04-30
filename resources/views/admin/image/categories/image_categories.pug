@@ -1,0 +1,124 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案分類管理
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/image_categories.css') rel='stylesheet')
+
+
+mixin generate_categories(parent_category, categories, level)
+  each val, index in categories
+    if level == 0
+      +category_item(val, level)
+    else
+      if parent_category.id == val.parent_category_id
+        +category_item(val, level)
+
+mixin category_item(category, level)
+  li(class='sort_item_'+level)
+    div.item
+      span(data-id=category.id class='icon_move icon_move_'+level): i.fas.fa-arrows-alt
+      = category.category_name
+      if category.category_name != '其它'
+        if category.show_index == 1
+          span.show_on_home(title='該分類會於首頁中出現'): i.fas.fa-home
+        a.btn.btn-secondary.btn-sm.btn_action(href='/admin/management/image_categories/edit/'+category.id data-id=category.id): i.fas.fa-pencil-alt
+        a.btn.btn-secondary.btn-sm.btn_action.btn_delete_cat(href='/admin/management/image_categories/delete/'+category.id): i.fas.fa-trash-alt
+      ul.sub_category_list.sortable_ul(data-level=(parseInt(level)+1))
+        if level+1 < all_arrays.length
+          +generate_categories(category, all_arrays[level+1], level+1)
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 檔案分類管理
+          a.btn.btn-secondary.btn-sm.btn_custom(href='/admin/management/image_categories/create') 新增
+          p (以下排序限「相同上層分類 且 同一層級」方能互相排序)
+          div.cardbox
+            div.cardbox-body
+              ul.category_list.sortable_ul(data-level='0')
+                +generate_categories(null, all_arrays[0], 0)
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
+  script.
+    $(function(){
+      $("a.btn_delete_cat").on("click", function(e){
+        e.preventDefault();
+        
+        var r = confirm("確定刪除？\n(無法復原，但若該分類含有子分類或圖片的話，會禁止刪除。)");
+        if (r == true) {
+          var send_href = '#{config.appenv.domain}' + $(this).attr("href");
+          $.ajax({
+              url: send_href,
+              type: 'delete',
+              //data: "send_data=" + JSON.stringify(item_sort),
+              dataType: 'json',
+              headers: {
+                  "X-CSRF-Token":"#{csrfToken}"
+              },
+              success: function(data){
+                  if(data.result == 0){
+                    alert("尚有子分類或檔案，不得刪除。");
+                  }else{
+                    alert("刪除成功。");
+                    location.reload();
+                  }
+              }
+          });
+        }
+      });
+      
+      // 排序
+      var sortable_ul = document.getElementsByClassName("sortable_ul");
+      $(sortable_ul).each(function(sort_index, sort_item){
+        
+        if($(sort_item).children("li").length > 0){
+          var level = $(this).attr("data-level");
+          Sortable.create(sort_item, {
+              animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
+              handle: ".icon_move_" + level, // Restricts sort start click/touch to the specified element
+              draggable: ".sort_item_" + level, // Specifies which items inside the element should be sortable
+              onUpdate: function (evt/**Event*/){
+                  var current_move_item = evt.item; // the current dragged HTMLElement
+                  var item_sort = [];
+                  $(current_move_item).closest("ul.sortable_ul").children("li").children("div.item").children("span.icon_move").each(function(index, item){
+                    item_sort.push(parseInt($(item).attr("data-id")));
+                  });
+                  
+                  $.ajax({
+                      url: '/admin/management/image_categories_sort_update',
+                      type: 'POST',
+                      data: "send_data=" + JSON.stringify(item_sort),
+                      dataType: 'json',
+                      headers: {
+                          "X-CSRF-Token":"#{csrfToken}"
+                      },
+                      success: function(data){
+                          if(data){
+                            alert("排序更新成功");
+                            //location.reload();
+                              /*$("#sort_alert").slideDown("fast", function(){
+                                  setTimeout(function(){
+                                      $("#sort_alert").slideUp();
+                                  }, 1000);
+                              });*/
+                          }
+                      }
+                  });
+
+              }
+          });
+        }
+        
+      });
+      
+    });

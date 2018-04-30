@@ -1,0 +1,92 @@
+extends ../layouts/admin
+
+block append page_title
+  title 帳號資訊
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/pages/account.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 帳號資訊
+          //-
+            p.mb-4 text
+          div.cardbox
+            div.cardbox-body
+              form(method='post' action='#')
+                input(type='hidden' name='_method' value='put')
+                //-
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 是否為平台管理者
+                    .col-lg-10
+                      if account.role_id == 1
+                        p.account_info 是
+                      else
+                        p.account_info 否
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 所屬組織(代號)
+                    .col-lg-10
+                      p.account_info= account.organ_name + '(' + account.organ_id + ')'
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 帳號
+                    .col-lg-10
+                      p.account_info= account.pid
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 名稱
+                    .col-lg-10
+                      p.account_info= decrypt(account.name)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label Email
+                    .col-lg-10
+                      p.account_info= decrypt(account.email)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 職稱
+                    .col-lg-10
+                      p.account_info= account.job_title
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 辦公電話
+                    .col-lg-10
+                      p.account_info= decrypt(account.tel_office)
+                fieldset
+                  .form-group.row
+                    label.col-lg-2.col-form-label 個人電話
+                    .col-lg-10
+                      p.account_info= decrypt(account.tel_personal)
+          h5.mt-0 申請 API Key
+          div.cardbox
+            div.cardbox-body
+              p 用途：提供開發人員使用「圖片 RESTful API」。<a href='#{config.appenv.domain}/api-docs/' target='_blank'>RESTful API</a>
+              if account.api_key == ''
+                form(method='post' action='/admin/apply_api_key')
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                  button.mb-4.btn.btn-lg.btn-gradient.wd-sm.btn-primary.btn_apply_key(type='submit') 申請
+              else
+                p 您的 API Key：
+                  input.api_key(type='text' value=account.api_key readonly)
+              
+              
+          
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+    $(function(){
+      $("input.api_key").on("click", function(){
+        $(this).select();
+      });
+    });

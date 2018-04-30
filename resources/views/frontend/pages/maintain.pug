@@ -1,0 +1,18 @@
+extends ../layouts/empty
+
+block append page_title
+  title=  '平台維護中' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/pages/maintain.css') rel='stylesheet')
+
+block append content
+  section.service_sec
+    div.container
+      div.row
+        div.col.col-md-8.offset-md-2
+          div.content_block
+            div.contents
+              != setting.option_value
+
+block append body_end_others

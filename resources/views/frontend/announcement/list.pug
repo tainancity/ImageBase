@@ -1,0 +1,45 @@
+extends ../layouts/master
+
+block append page_title
+  title=  '公告列表' + ' - '+ config.app.sitename
+
+block append head_end_tag
+  link(href=asset_path('css/frontend/announcement/list.css') rel='stylesheet')
+
+block append content
+  section.announcement_sec
+    div.container
+      div.row
+        div.col
+          h1.title1
+            span.icon_span: i.fas.fa-bullhorn
+            | 全部公告
+          if results.length > 0
+            div.announcement_block
+              ul.announcement_list
+                each item, index in results
+                  if item.is_only_link == 1
+                    li
+                      a.item_link(href=item.contents target='_blank')
+                        span.icon_span: i.fas.fa-link
+                        span.title_text= item.title
+                  else
+                    li
+                      a.item_link.disable_link(href='#')
+                        span.icon_span: i.fas.fa-bullhorn
+                        span.title_text= item.title
+          else
+            div.announcement_block
+              ul.announcement_list
+                li
+                  a.item_link.disable_link(href='#')
+                    span.icon_span: i.fas.fa-bullhorn
+                    span.title_text 目前無公告
+
+block append body_end_others
+  script.
+    $(function(){
+      $("a.disable_link").on("click", function(e){
+        e.preventDefault();
+      });
+    });
