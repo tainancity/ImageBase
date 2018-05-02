@@ -85,7 +85,7 @@ block append content_sl
                             li
                               button.btn_action.btn_trash_undo(type='button' title='復原' data-id=item.u_id): i.fas.fa-undo
                             li
-                              button.btn_action(type='button' title='刪除(無法復原)'): i.fas.fa-times
+                              button.btn_action.btn_delete_forever(type='button' title='刪除(無法復原)' data-id=item.u_id): i.fas.fa-times
                           
                         
           
@@ -226,6 +226,30 @@ block append body_end_others_sl
             }
           }
         });
+      });
+      
+      $("button.btn_delete_forever").on("click", function(){
+        var u_id = $(this).attr("data-id");
+        var r = confirm("確定要刪除？(無法復原)");
+        if (r == true) {
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api/v1.0/image/delete/' + u_id + '?api_key=#{config.appenv.full_api_key}',
+            type: 'delete',
+            //data: data,
+            dataType: 'json',
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              if(r_data.code == 200){
+                location.reload();
+              }
+            }
+          });
+        }
+        
       });
       
     });

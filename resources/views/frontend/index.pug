@@ -140,14 +140,14 @@ block append content
               div.pic_block
                 div.row
                   +each_files(item.files)
-  
-  section.more_pic_sec
-    div.container
-      div.row
-        div.col
-          ul.more_list
-    div.btn_action_block
-      button.btn_more_pics(type='button' data-next-page='1') 看更多圖片 <span class='icon_spin'><i class='fas fa-spinner fa-spin'></i></span>
+  if all_files.length > 0
+    section.more_pic_sec
+      div.container
+        div.row
+          div.col
+            ul.more_list
+      div.btn_action_block
+        button.btn_more_pics(type='button' data-next-page='1') 看更多圖片 <span class='icon_spin'><i class='fas fa-spinner fa-spin'></i></span>
 
 block append body_end_others
   script(src=asset_path('vendors/plugins/slick/slick.min.js'))
