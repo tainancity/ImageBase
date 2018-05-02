@@ -131,6 +131,7 @@ exports.index = function(options) {
                   })
 
                   res.render('frontend/index', {
+                    all_files: files,
                     csrfToken: req.csrfToken(),
                     announcement_results: announcement_results,
                     carousels: carousel_files_array,
