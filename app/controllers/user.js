@@ -71,7 +71,7 @@ exports.login_post = function(options) {
     insert_log_obj = {
       "user_id": 0,
       "token": generated_token,
-      "verified_result": "",
+      "verified_result": 0,
       "verified_message": "",
       //"ip": req.ip
       "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress
