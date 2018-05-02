@@ -166,7 +166,13 @@ block append body_end_others_sl
                     if($(that).hasClass('-cropping')){
                       $(that).removeClass('-cropping');
                     }
-                    alert("伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
+                    alert("504 伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
+                  },
+                  413: function (response) {
+                    if($(that).hasClass('-cropping')){
+                      $(that).removeClass('-cropping');
+                    }
+                    alert("413 伺服器逾時，裁切所耗資源過大，請試著將裁切範圍縮小。");
                   }
                 },
                 success: function(data){
@@ -176,6 +182,10 @@ block append body_end_others_sl
                   }else{
                     location.reload();
                   }
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                  alert("Error: " + textStatus);
+                  alert(errorThrown);
                 }
               });
             }
