@@ -184,8 +184,10 @@ block append body_end_others_sl
                   }
                 },
                 error: function(jqXHR, textStatus, errorThrown){
-                  alert("Error: " + textStatus);
-                  alert(errorThrown);
+                  if($(that).hasClass('-cropping')){
+                    $(that).removeClass('-cropping');
+                  }
+                  alert("錯誤: 請試著將裁切範圍縮小。");
                 }
               });
             }
