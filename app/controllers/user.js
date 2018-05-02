@@ -69,7 +69,7 @@ exports.login_post = function(options) {
 
     // log_login
     insert_log_obj = {
-      "user_id": "",
+      "user_id": 0,
       "token": generated_token,
       "verified_result": "",
       "verified_message": "",
