@@ -120,7 +120,9 @@ block append content
               div.share_block
                 ul.share_list
                   li
-                    div.fb-like(data-href=current_url data-action='like' data-layout='button_count')
+                    //-
+                      div.fb-like(data-href=current_url data-action='like' data-layout='button_count')
+                    div.fb-like(data-href=current_url data-layout='button_count' data-action='like' data-size='small' data-show-faces='false' data-share='true')
                   li
                     div.g-plus(data-href=current_url data-action='share' data-annotation='vertical-bubble')
               div.link_block
