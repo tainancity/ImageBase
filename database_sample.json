@@ -1,0 +1,30 @@
+{
+  "defaultEnv": "local",
+  "local": {
+    "driver": "mysql",
+    "host": "",
+    "port": 8889,
+    "user": "",
+    "password": "",
+    "database": "",
+    "multipleStatements": true
+  },
+  "staging": {
+    "driver": "mysql",
+    "host": "",
+    "port": 3306,
+    "user": "",
+    "password": "",
+    "database": "",
+    "multipleStatements": true
+  },
+  "production": {
+    "driver": "mysql",
+    "host": "",
+    "port": 3306,
+    "user": "",
+    "password": "",
+    "database": "",
+    "multipleStatements": true
+  }
+}
