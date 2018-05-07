@@ -14,10 +14,8 @@ nav.action_list_nav
       li
         a(href='/admin' target="backendWindow")
           span.icon_span
-            //-
-              i.fas.fa-user-circle.fa-lg
             img.portrait_pic(src=auth.user.portrait_url)
-          | Carlos
+          = decrypt(auth.user.name)
       li
         a(href='/user/logout' class='logout') 登出
     else
