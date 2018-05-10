@@ -70,7 +70,7 @@ block append body_end_others_sl
         var role_number = '2';
       }
       $.ajax({
-    		url: 'http://localhost:3001/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
+    		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
     		type: 'GET',
     		//data: 'ab='+ab,
     		dataType: 'json',
