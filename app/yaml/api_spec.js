@@ -24,6 +24,12 @@ module.exports = {
           organs_id_array.push(organ_item.organ_id)
         })
 
+        var schemes_type = 'http'
+        if(CONFIG.appenv.env == 'production'){
+          schemes_type = 'https'
+        }
+
+
         var data = {
         	"swagger": "2.0",
         	"info": {
@@ -31,10 +37,7 @@ module.exports = {
         		"description": "提供圖片 API，包含：取得、新增、更新、刪除。\n透過 API Key 方能使用。",
         		"version": "1.0.0"
         	},
-        	"schemes": [
-        		"http",
-        		"https"
-        	],
+        	"schemes": [schemes_type],
         	"basePath": "",
         	"produces": [
         		"application/json"
