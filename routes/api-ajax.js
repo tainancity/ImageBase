@@ -41,7 +41,7 @@ module.exports = function(app){
     app.get('/update-role', function(req, res){
       var update_obj = {"role_id": req.query.role}
       var where_obj = {"u_id": req.query.u_id}
-      userModel.update(update_obj, where_obj, function(result){
+      userModel.update(update_obj, where_obj, true, function(result){
         //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
         res.json(result)
       });
