@@ -139,9 +139,9 @@ var save_file_related_data = function(req, res, results){
     if( file_ext == "jpeg" || file_ext == "jpg" || file_ext == "png" || file_ext == "gif" ){
       var file_type_num = 1
     }
-    if(file_ext == "pdf"){
+    /*if(file_ext == "pdf"){
       var file_type_num = 2
-    }
+    }*/
 
     switch(file_type_num) {
       case 1:
@@ -355,6 +355,7 @@ var save_file_related_data = function(req, res, results){
 
         })
         break;
+      /*
       case 2:
         var api_upload_dir = 'o' // api 上傳的資料夾(非圖片)
         var basic_upload_dir = CONFIG.path.storage_uploads + '/' + api_upload_dir
@@ -445,9 +446,9 @@ var save_file_related_data = function(req, res, results){
           })
 
         })
-        break;
+        break;*/
       default:
-        res.status(403).json({ code: 403, error: { 'message': '檔案類型不支援！(非圖片限 PDF)', original_filename: original_filename } })
+        res.status(403).json({ code: 403, error: { 'message': '檔案類型不支援！', original_filename: original_filename } })
     }
 
   })
