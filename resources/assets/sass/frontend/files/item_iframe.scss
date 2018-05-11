@@ -21,6 +21,13 @@ article.pic_article{
     }
   }
   section.pic_s{
+    p.no_f{
+      color: $white;
+      border: 1px solid $white;
+      border-radius: 5px;
+      padding: 10px;
+      margin:0;
+    }
     figure{
       margin:0;
     }
