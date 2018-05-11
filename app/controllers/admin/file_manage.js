@@ -11,6 +11,12 @@ var functions = require(CONFIG.path.helpers + '/functions.js')
 // 檔案列表
 exports.file_list = function(options) {
   return function(req, res) {
+    var c_page = parseInt(req.query.page)
+    var items_per_page = 20
+    if(c_page == undefined || !Number.isInteger(c_page)){
+      c_page = 1;
+    }
+
     // csrfToken: req.csrfToken()
     var show_uploader_and_organ = false
     if(req.originalUrl == '/admin/management/file/list'){
@@ -92,12 +98,16 @@ exports.file_list = function(options) {
                               })
                             }
                             if(each_index+1 == ori_files.length){
-                              res.render('admin/image/files/list', {files: files, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
+                              var total_pages = Math.ceil(files.length / items_per_page)
+                              files = files.slice((c_page-1) * items_per_page, c_page * items_per_page);
+                              res.render('admin/image/files/list', {files: files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
                             }
                           })
                         })
                       }else{ // 管理者
-                        res.render('admin/image/files/list', {files: files, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
+                        var total_pages = Math.ceil(files.length / items_per_page)
+                        files = files.slice((c_page-1) * items_per_page, c_page * items_per_page);
+                        res.render('admin/image/files/list', {files: files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
                       }
                     }
 
