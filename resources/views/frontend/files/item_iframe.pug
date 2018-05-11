@@ -8,14 +8,20 @@ block append head_end_tag
 
 block append content
   article.pic_article
-    header.pic_h
-      h1.title1= (file_obj.title == null ? "" : file_obj.title )
-    section.pic_s
-      each item, index in JSON.parse(file_obj.file_data)
-        if (item.width == 640 && !item.origin)
-          figure: img(src= config.appenv.storage.domain + item.url style='width:100%;')
-    footer.pic_f
-      a.link(href=config.appenv.domain target='_blank')= config.app.sitename
+    if file_obj == null
+      section.pic_s
+        p.no_f 無相關檔案
+      footer.pic_f
+        a.link(href=config.appenv.domain target='_blank')= config.app.sitename
+    else
+      header.pic_h
+        h1.title1= (file_obj.title == null ? "" : file_obj.title )
+      section.pic_s
+        each item, index in JSON.parse(file_obj.file_data)
+          if (item.width == 640 && !item.origin)
+            figure: img(src= config.appenv.storage.domain + item.url style='width:100%;')
+      footer.pic_f
+        a.link(href=config.appenv.domain target='_blank')= config.app.sitename
     
   
 
