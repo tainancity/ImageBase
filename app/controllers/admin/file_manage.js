@@ -19,7 +19,7 @@ exports.file_list = function(options) {
 
     // csrfToken: req.csrfToken()
     var show_uploader_and_organ = false
-    if(req.originalUrl == '/admin/management/file/list'){
+    if((req.originalUrl).includes('/admin/management/file/list')){
       var show_uploader_and_organ = true
     }
 
