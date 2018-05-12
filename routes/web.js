@@ -125,6 +125,7 @@ module.exports = function(app){
 
     // 短網址
     app.get('/list', AdminShortUrlManage.short_url_list(options))
+    app.post('/item', AdminShortUrlManage.short_url_post(options))
   })
 
   // 平台 Admin

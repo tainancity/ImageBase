@@ -15,9 +15,9 @@ block append content_sl
             h5.mt-0 短網址產生
             div.cardbox
               div.cardbox-body
-                form.generate_short_url_form(action='#' method='post')
+                form.generate_short_url_form(action=config.appenv.domain + '/admin/short_url/item' method='post')
                   input(type='hidden' name='_csrf' value=csrfToken)
-                  input.original_url_text(type='text')
+                  input.original_url_text(type='text' name='long_url')
                   button.btn.btn-secondary.btn_generate(type='submit') 短網址產生
           if show_uploader_and_organ
             h5.mt-0 所有短網址列表
@@ -108,6 +108,14 @@ block append body_end_others_sl
       
       $("input.short_url, input.original_url").on("click", function(){
         $(this).select();
+      });
+      
+      $("button.btn_generate").on("click", function(e){
+        var input_url = $(this).closest("form").find("input.original_url_text").val();
+        if( !allJS.validUrl(input_url) ){
+          e.preventDefault();
+          alert("請輸入正確的網址格式！");
+        }
       });
       
     });
