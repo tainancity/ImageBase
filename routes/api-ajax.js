@@ -3,6 +3,7 @@ var userModel = require(CONFIG.path.models + '/user.js')
 var logLoginModel = require(CONFIG.path.models + '/log_login.js')
 var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
+var shortUrlModel = require(CONFIG.path.models + '/short_urls.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
@@ -153,6 +154,34 @@ module.exports = function(app){
           res.json({new_pageviews:new_pageviews})
         });
       })
+    })
+
+    // 刪除短網址
+    app.delete('/delete-short-url', function(req, res){
+      userModel.getOne('u_id', req.session.u_id, function(user_results){
+
+        if( user_results[0].role_id == 1 ){ // 管理者
+          shortUrlModel.deleteWhere('u_id', req.body.u_id, function(results){
+            //res.json({result: '1'})
+            if(results.affectedRows > 0){
+              res.json({delete_result: 1})
+            }else{
+              res.json({delete_result: 0})
+            }
+          })
+        }else{
+          shortUrlModel.delete2Where('user_id', user_results[0].id, 'u_id', req.body.u_id, function(results){
+            //res.json({result: '1'})
+            if(results.affectedRows > 0){
+              res.json({delete_result: 1})
+            }else{
+              res.json({delete_result: 0})
+            }
+          })
+        }
+
+      });
+
     })
 
   })

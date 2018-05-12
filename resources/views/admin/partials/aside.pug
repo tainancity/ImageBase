@@ -41,6 +41,13 @@ aside.sidebar-container
                   i.fas.fa-trash-alt
                 span 垃圾桶
           li
+            div.sidebar-nav-heading 短網址功能
+            li(class=is_current_url('/admin/short_url/list', 'active'))
+              a(href='/admin/short_url/list')
+                span.nav-icon.custom_icon
+                  i.fas.fa-link
+                span 短網址列表
+          li
             div.sidebar-nav-heading 其它
           li(class=is_current_url('/admin/account', 'active'))
             a(href='/admin')
@@ -92,6 +99,19 @@ aside.sidebar-container
                 span.nav-icon.custom_icon
                   i.fas.fa-th-large
                 span 檔案分類管理
+            li(class=is_current_url('/admin/management/short_url/', 'active'))
+              a(href='#')
+                span.nav-icon.custom_icon
+                  i.fas.fa-external-link-alt
+                span.float-right.nav-caret
+                  i.fas.fa-angle-right
+                span 短網址管理
+              ul.sidebar-subnav
+                li(class=is_current_url('/admin/management/short_url/list', 'active'))
+                  a(href='/admin/management/short_url/list')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-link
+                    span 短網址列表
             li(class=is_current_url('/admin/management/all_members', 'active'))
               a(href='/admin/management/all_members')
                 span.nav-icon.custom_icon

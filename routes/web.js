@@ -8,6 +8,7 @@ var User = require(CONFIG.path.controllers + '/user.js')
 var Announcement = require(CONFIG.path.controllers + '/announcement.js')
 var Page = require(CONFIG.path.controllers + '/page.js')
 var File = require(CONFIG.path.controllers + '/file.js')
+var ShortUrl = require(CONFIG.path.controllers + '/short_url.js')
 var Search = require(CONFIG.path.controllers + '/search.js')
 
 var AdminAccount = require(CONFIG.path.controllers + '/admin/account.js')
@@ -19,6 +20,7 @@ var AdminLogAction = require(CONFIG.path.controllers + '/admin/log_action.js')
 var Settings = require(CONFIG.path.controllers + '/admin/settings.js')
 var AdminFileCategory = require(CONFIG.path.controllers + '/admin/file_category.js')
 var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
+var AdminShortUrlManage = require(CONFIG.path.controllers + '/admin/short_url_manage.js')
 
 module.exports = function(app){
 
@@ -51,6 +53,11 @@ module.exports = function(app){
   app.group('/if', (app) => {
     // iframe
     app.get('/:u_id', File.item_iframe(options))
+  })
+
+  app.group('/u', (app) => {
+    // short url
+    app.get('/:u_id', ShortUrl.short_url_redirect(options))
   })
 
   app.group('/announcement', (app) => {
@@ -104,6 +111,20 @@ module.exports = function(app){
     app.get('/upload', AdminFileManage.file_upload(options))
     // 垃圾桶
     app.get('/trash', AdminFileManage.file_list_trash(options))
+
+    // 短網址
+    app.get('/trash', AdminFileManage.file_list_trash(options))
+  })
+
+  // 公務帳號上傳的短網址管理
+  app.group('/admin/short_url', (app) => {
+    app.use(Auth.is_auth(app))
+    app.get('/', function(req, res, next){ // 直接進到短網址列表
+      res.redirect('/admin/short_url/list')
+    })
+
+    // 短網址
+    app.get('/list', AdminShortUrlManage.short_url_list(options))
   })
 
   // 平台 Admin
@@ -130,6 +151,9 @@ module.exports = function(app){
     app.post('/image_categories/edit_post', AdminFileCategory.image_categories_edit_post(options))
     app.delete('/image_categories/delete/:itemId', AdminFileCategory.image_categories_delete(options))
     app.post('/image_categories_sort_update', AdminFileCategory.image_categories_sort_update(options))
+
+    // 短網址列表
+    app.get('/short_url/list', AdminShortUrlManage.short_url_list(options))
 
     // 公告列表管理
     app.get('/announcement_list', AdminAnnouncement.announcement_list(options))
