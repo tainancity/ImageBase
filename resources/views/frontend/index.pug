@@ -47,7 +47,7 @@ block append content
                     div.inner_content
                       each file_item, file_index in JSON.parse(carousel_item.file_data)
                         if file_item.width == 640
-                          a(href=config.appenv.domain + '/f/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                          a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
   
   //- 最新圖片
   if newest_files.length > 0

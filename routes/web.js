@@ -44,11 +44,16 @@ module.exports = function(app){
   // 基本圖片上傳
   app.post('/image-upload', Image.image_upload(options))
 
+  app.group('/search', (app) => {
+    // 搜尋
+    app.get('/', Search.index(options))
+  })
 
-  app.group('/f', (app) => {
+  app.get('/:u_id', File.item(options))
+  /*app.group('/f', (app) => {
     // 獨立檔案
     app.get('/:u_id', File.item(options))
-  })
+  })*/
 
   app.group('/if', (app) => {
     // iframe
@@ -63,11 +68,6 @@ module.exports = function(app){
   app.group('/announcement', (app) => {
     // 公告列表
     app.get('/list', Announcement.list(options))
-  })
-
-  app.group('/search', (app) => {
-    // 搜尋
-    app.get('/', Search.index(options))
   })
 
   app.group('/pages', (app) => {

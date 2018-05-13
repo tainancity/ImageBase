@@ -65,7 +65,7 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
     res.status(200).json({
       code: 200,
       data:{
-        short_url: CONFIG.appenv.domain + '/f/' + unique_id,
+        short_url: CONFIG.appenv.domain + '/' + unique_id,
         original_filename: original_filename,
         files: data_files
       }
@@ -582,7 +582,7 @@ exports.image_get = function(options){
                         // 資料回傳重組
                         var file_data = [{
                           u_id: files[0].u_id,
-                          short_url: CONFIG.appenv.domain + '/f/' + files[0].u_id,
+                          short_url: CONFIG.appenv.domain + '/' + files[0].u_id,
                           title: files[0].title,
                           file_ext: files[0].file_ext,
                           pageviews: files[0].pageviews,
@@ -759,7 +759,7 @@ exports.image_get_by_data = function(options){
                           })
 
                           // short url
-                          data_files[file_index].short_url = CONFIG.appenv.domain + '/f/' + file_item.u_id
+                          data_files[file_index].short_url = CONFIG.appenv.domain + '/' + file_item.u_id
                         })
 
                         // 不回傳 id

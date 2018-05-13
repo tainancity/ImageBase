@@ -31,8 +31,8 @@ block append content_sl
                         td: span.icon_move(data-id=item.id): i.fas.fa-arrows-alt
                         each file, f_index in JSON.parse(item.file_data)
                           if file.width == 320
-                            td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
-                        td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank')= config.appenv.domain + '/f/' + item.u_id
+                            td: a(href=config.appenv.domain + '/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
+                        td: a(href=config.appenv.domain + '/' + item.u_id target='_blank')= config.appenv.domain + '/' + item.u_id
                         td= item.title
                         td
                           input.save_carousel(type='checkbox' data-u-id=item.u_id checked)        

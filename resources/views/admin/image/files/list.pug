@@ -47,10 +47,10 @@ block append content_sl
                         if item.file_type == '1'
                           each file, f_index in JSON.parse(item.file_data)
                             if file.width == 320
-                              td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
+                              td: a(href=config.appenv.domain + '/' + item.u_id target='_blank'): img.w_32(src=config.appenv.storage.domain + file.url)
                         if item.file_type == '2'
-                          td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank'): span.other_file: i.fas.fa-file-pdf.fa-3x
-                        td: a(href=config.appenv.domain + '/f/' + item.u_id target='_blank')= config.appenv.domain + '/f/' + item.u_id
+                          td: a(href=config.appenv.domain + '/' + item.u_id target='_blank'): span.other_file: i.fas.fa-file-pdf.fa-3x
+                        td: a(href=config.appenv.domain + '/' + item.u_id target='_blank')= config.appenv.domain + '/' + item.u_id
                         
                         td= item.category_name
                         

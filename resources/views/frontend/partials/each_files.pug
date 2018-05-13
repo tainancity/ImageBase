@@ -5,7 +5,7 @@ mixin each_files(files_array)
         div.top_block
           each item_file_data, index_file_data in JSON.parse(item.file_data)
             if item_file_data.width == 320
-              a(href=config.appenv.domain + '/f/' + item.u_id): img(src=config.appenv.storage.domain + item_file_data.url alt=item.title title=item.title)
+              a(href=config.appenv.domain + '/' + item.u_id): img(src=config.appenv.storage.domain + item_file_data.url alt=item.title title=item.title)
         div.bottom_block
           +btn_like_box(false, item.like_num)
-          a(href=config.appenv.domain + '/f/' + item.u_id class='title_link')= (item.title == null ? '' : item.title)
+          a(href=config.appenv.domain + '/' + item.u_id class='title_link')= (item.title == null ? '' : item.title)
