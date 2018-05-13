@@ -1,0 +1,121 @@
+extends ../layouts/admin
+
+block append page_title
+  title 短網址列表
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/short_url/list.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          if !show_uploader_and_organ
+            h5.mt-0 短網址產生
+            div.cardbox
+              div.cardbox-body
+                form.generate_short_url_form(action=config.appenv.domain + '/admin/short_url/item' method='post')
+                  input(type='hidden' name='_csrf' value=csrfToken)
+                  input.original_url_text(type='text' name='long_url')
+                  button.btn.btn-secondary.btn_generate(type='submit') 短網址產生
+          if show_uploader_and_organ
+            h5.mt-0 所有短網址列表
+          else
+            h5.mt-0 短網址列表
+          div.cardbox
+            div.cardbox-body
+              div.table-responsive
+                table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      if show_uploader_and_organ
+                        th 產生者帳號
+                      th 短網址
+                      th 原網址
+                      th 瀏覽量
+                      th 建立時間
+                      th
+                  tbody
+                    
+                    each item, index in short_urls
+                      tr
+                        
+                        td= index+1
+                        
+                        if show_uploader_and_organ
+                          td= item.pid
+                        
+                        if config.appenv.env == 'production'
+                          td
+                            input.short_url(type='text' value='https:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                        else
+                          td
+                            input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                        
+                        td
+                          input.original_url(type='text' value=item.long_url readonly)
+                        
+                        td= item.pageviews
+                        
+                        td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                        
+                        td
+                          ul.action_list
+                            li
+                              button.btn_action.btn_delete_forever(type='button' title='刪除(無法復原)' data-id=item.u_id): i.fas.fa-times
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+            
+        
+block append body_end_others_sl
+  script.
+    $(function(){
+      
+      $("button.btn_delete_forever").on("click", function(){
+        var u_id = $(this).attr("data-id");
+        var r = confirm("確定要刪除？(無法復原)");
+        
+        if (r == true) {
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/delete-short-url',
+            type: 'delete',
+            data: 'u_id=' + $(this).attr("data-id"),
+            dataType: 'json',
+            headers: {
+              "X-CSRF-Token": '#{csrfToken}'
+            },
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              if(r_data.delete_result == 1){
+                alert("刪除成功");
+                location.reload();
+              }else{
+                alert("刪除失敗");
+              }
+            }
+          });
+        }
+        
+      });
+      
+      $("input.short_url, input.original_url").on("click", function(){
+        $(this).select();
+      });
+      
+      $("button.btn_generate").on("click", function(e){
+        var input_url = $(this).closest("form").find("input.original_url_text").val();
+        if( !allJS.validUrl(input_url) ){
+          e.preventDefault();
+          alert("請輸入正確的網址格式！");
+        }
+      });
+      
+    });
