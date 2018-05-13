@@ -44,41 +44,6 @@ module.exports = function(app){
   // 基本圖片上傳
   app.post('/image-upload', Image.image_upload(options))
 
-  app.group('/search', (app) => {
-    // 搜尋
-    app.get('/', Search.index(options))
-  })
-
-  app.get('/:u_id', File.item(options))
-  /*app.group('/f', (app) => {
-    // 獨立檔案
-    app.get('/:u_id', File.item(options))
-  })*/
-
-  app.group('/if', (app) => {
-    // iframe
-    app.get('/:u_id', File.item_iframe(options))
-  })
-
-  app.group('/u', (app) => {
-    // short url
-    app.get('/:u_id', ShortUrl.short_url_redirect(options))
-  })
-
-  app.group('/announcement', (app) => {
-    // 公告列表
-    app.get('/list', Announcement.list(options))
-  })
-
-  app.group('/pages', (app) => {
-    // 平台服務說明
-    app.get('/service', Page.service(options))
-
-    // 維護中
-    app.get('/maintain', Page.maintain(options))
-  })
-
-
   // 公務帳號管理
   app.group('/admin', (app) => {
     app.use(Auth.is_auth(app))
@@ -188,6 +153,40 @@ module.exports = function(app){
     // 維護模式頁面內容
     app.get('/maintenance', AdminPage.maintenance(options))
     app.post('/maintenance_post', AdminPage.maintenance_post(options))
+  })
+
+  app.group('/search', (app) => {
+    // 搜尋
+    app.get('/', Search.index(options))
+  })
+
+  app.get('/:u_id', File.item(options))
+  /*app.group('/f', (app) => {
+    // 獨立檔案
+    app.get('/:u_id', File.item(options))
+  })*/
+
+  app.group('/if', (app) => {
+    // iframe
+    app.get('/:u_id', File.item_iframe(options))
+  })
+
+  app.group('/u', (app) => {
+    // short url
+    app.get('/:u_id', ShortUrl.short_url_redirect(options))
+  })
+
+  app.group('/announcement', (app) => {
+    // 公告列表
+    app.get('/list', Announcement.list(options))
+  })
+
+  app.group('/pages', (app) => {
+    // 平台服務說明
+    app.get('/service', Page.service(options))
+
+    // 維護中
+    app.get('/maintain', Page.maintain(options))
   })
 
 
