@@ -74,6 +74,7 @@ block append content_sl
               else
                 p 您的 API Key：
                   input.api_key(type='text' value=account.api_key readonly)
+                  span.use_count= '已使用次數：' + account.request_times
               
               
           

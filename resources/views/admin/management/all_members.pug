@@ -28,6 +28,7 @@ block append content_sl
                       th 職稱
                       th 辦公電話
                       th 個人電話
+                      th API Key
                       th 指派為平台管理者
                   tbody
                     each item, index in members
@@ -42,6 +43,13 @@ block append content_sl
                         td= item.job_title
                         td= decrypt(item.tel_office)
                         td= decrypt(item.tel_personal)
+                        if item.api_key == undefined
+                          td
+                        else
+                          td
+                            input.api_key_text(type='text' value=item.api_key readonly)
+                            br
+                            = '(使用次數：' + item.api_request_times + ')'
                         td
                           if item.role_id == 1
                             if item.pid == 'logintest'
@@ -62,26 +70,33 @@ block append content_sl
   
 block append body_end_others_sl
   script.
-    $("input.admin_check").on('click', function(){
-      // console.log($(this).prop("checked"))
-      if($(this).prop("checked")){
-        var role_number = '1';
-      }else{
-        var role_number = '2';
-      }
-      $.ajax({
-    		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
-    		type: 'GET',
-    		//data: 'ab='+ab,
-    		dataType: 'json',
-    		success: function(data){
-          //console.log(data);
-          if(data.affectedRows == 1){
-            alert("更新成功");
-          }else{
-            alert("更新失敗");
-          }
-          location.reload()
-    		}
-    	});
+    $(function(){
+      $("input.admin_check").on('click', function(){
+        // console.log($(this).prop("checked"))
+        if($(this).prop("checked")){
+          var role_number = '1';
+        }else{
+          var role_number = '2';
+        }
+        $.ajax({
+      		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
+      		type: 'GET',
+      		//data: 'ab='+ab,
+      		dataType: 'json',
+      		success: function(data){
+            //console.log(data);
+            if(data.affectedRows == 1){
+              alert("更新成功");
+            }else{
+              alert("更新失敗");
+            }
+            location.reload()
+      		}
+      	});
+      });
+      
+      $("input.api_key_text").on("focus", function(){
+        $(this).select();
+      });
     });
+    
