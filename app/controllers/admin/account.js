@@ -56,8 +56,10 @@ exports.index = function(options) {
       apiKeyModel.getOne('user_id', results[0].id, function(api_result){
         if(api_result.length == 1){
           results[0].api_key = api_result[0].api_key
+          results[0].request_times = api_result[0].request_times
         }else{
           results[0].api_key = ''
+          results[0].request_times = ''
         }
         // 取得 organ_id 對應的 organ_name
         var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
@@ -109,8 +111,23 @@ exports.all_members = function(options){
             }
           })
         })
-        //console.log(results)
-        res.render('admin/management/all_members', {members: results})
+
+        var sort_obj_for_api_key = { "column": "created_at", "sort_type": "DESC" }
+        apiKeyModel.getAll(sort_obj_for_api_key, function(results_apikey){
+          results.forEach(function(element, index, arr) {
+            // arr 是原來的 results 陣列
+            results_apikey.forEach(function(api_key_item, i){
+              if(element.id == api_key_item.user_id){
+                results[index].api_key = api_key_item.api_key
+                results[index].api_request_times = api_key_item.request_times
+              }
+            })
+          })
+          //console.log(results)
+          res.render('admin/management/all_members', {members: results})
+        })
+
+
       })
 
     })
