@@ -65,6 +65,7 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
       code: 200,
       data:{
         short_url: CONFIG.appenv.domain + '/' + unique_id,
+        short_id: unique_id,
         original_filename: original_filename,
         files: data_files
       }
