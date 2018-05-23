@@ -110,7 +110,7 @@ module.exports = {
         					{
         						"name": "permissions",
         						"in": "formData",
-        						"default": "1",
+        						"default": "2",
         						"enum": [
         							"1",
         							"2",
@@ -274,7 +274,7 @@ module.exports = {
         					{
         						"name": "permissions",
         						"in": "formData",
-        						"default": "1",
+        						"default": "2",
         						"enum": [
         							"1",
         							"2",
