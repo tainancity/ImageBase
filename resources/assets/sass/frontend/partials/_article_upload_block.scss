@@ -151,4 +151,29 @@ article.upload_block{
       }
     }
   }
+
+  div.agreement{
+    ul.agreement_list{
+      > li{
+        color: $white;
+        ul.sub_agreement_list{
+          > li{
+            color: $white;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+    p.para{
+      color: $white;
+      font-size: 1rem;
+    }
+    div.action_block{
+      button.btn_agree{
+        display: inline-block;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+    }
+  }
 }

@@ -122,7 +122,8 @@ exports.login_post = function(options) {
               "job_title": result.SSO_Auth_ValidateResult.UserJobTitle,
               "portrait_url": result.SSO_Auth_ValidateResult.UserPortraitUrl,
               "tel_office": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelOffice),
-              "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal)
+              "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal),
+              "agreement": 0
             }
             if(result.SSO_Auth_ValidateResult.VerifiedAccount == 'logintest'){
               insert_obj.role_id = 1
@@ -135,7 +136,8 @@ exports.login_post = function(options) {
               "job_title": result.SSO_Auth_ValidateResult.UserJobTitle,
               "portrait_url": result.SSO_Auth_ValidateResult.UserPortraitUrl,
               "tel_office": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelOffice),
-              "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal)
+              "tel_personal": functions.encrypt(result.SSO_Auth_ValidateResult.UserTelPersonal),
+              "agreement": 0
             }
 
             // log_login

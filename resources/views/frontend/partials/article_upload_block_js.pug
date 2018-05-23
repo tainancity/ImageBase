@@ -154,5 +154,23 @@ script.
         }
       }
     });
-
+    
+    $("article.upload_block button.btn_agree").on("click", function(){
+      $.ajax({
+        url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-agreement',
+        type: 'GET',
+        //data: 'ab='+ab,
+        dataType: 'json',
+        success: function(data){
+          console.log(data);
+          if(data.affectedRows == 1){
+            alert("更新成功");
+          }else{
+            alert("更新失敗");
+          }
+          location.reload()
+        }
+      });
+    });
+    
   });
