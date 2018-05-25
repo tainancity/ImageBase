@@ -48,6 +48,15 @@ module.exports = function(app){
       });
     })
 
+    app.get('/update-agreement', function(req, res){
+      var update_obj = {"agreement": 1}
+      var where_obj = {"u_id": req.session.u_id}
+      userModel.update(update_obj, where_obj, true, function(result){
+        //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
+        res.json(result)
+      });
+    })
+
     // 前台輪播
     app.post('/save-carousel', function(req, res){
       fileModel.getOne('u_id', req.body.u_id, function(file_resule){

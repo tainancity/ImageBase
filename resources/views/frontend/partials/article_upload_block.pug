@@ -1,20 +1,34 @@
 article.upload_block
-  p.upload_desc 圖檔上傳，會另外產生寬度分別為 320px、640px、960px 的檔案，高度依原比例。
-  div.file_zone_parent
-    span.hint 將檔案拖曳進來即可上傳
-    div#holder.file_zone
-      ul#file_list.pic_list
-        //-
-          each val in [0, 1, 2]
-            li
-              div.progress_block.-uploading(style='width:10%;')
-                span.percentag_text 20%
-              div.info_block  
-                span.icon_type: i.fas.fa-file-image
-                span.file_text 檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案
-                a.info_success(href='#' target='_blank'): i.fas.fa-link
-          
-  div.or_select_file
-    p.or_para 或
-    button.choose_file(type='button') 選擇檔案
-    input.select_file.display_none(type='file' accept='.png,.jpg,.jpeg,.gif' multiple)
+  if auth.user.agreement == 1
+    p.upload_desc 圖檔上傳，會另外產生寬度分別為 320px、640px、960px 的檔案，高度依原比例。
+    div.file_zone_parent
+      span.hint 將檔案拖曳進來即可上傳
+      div#holder.file_zone
+        ul#file_list.pic_list
+          //-
+            each val in [0, 1, 2]
+              li
+                div.progress_block.-uploading(style='width:10%;')
+                  span.percentag_text 20%
+                div.info_block  
+                  span.icon_type: i.fas.fa-file-image
+                  span.file_text 檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案檔案
+                  a.info_success(href='#' target='_blank'): i.fas.fa-link
+            
+    div.or_select_file
+      p.or_para 或
+      button.choose_file(type='button') 選擇檔案
+      input.select_file.display_none(type='file' accept='.png,.jpg,.jpeg,.gif' multiple)
+  else
+    div.agreement
+      ul.agreement_list
+        li a. 公務帳號登入之使用者，嚴禁上傳任何有版權之圖片。
+        li b. 也禁止上傳以下內容：
+          ul.sub_agreement_list
+            li 針對個人或群體的特定人種、族裔、宗教、殘疾、年齡、國籍、服役狀態、性傾向、性別、性別認同或其他與系統性歧視或邊緣化相關的特質，鼓吹仇恨、煽動歧視或加以貶損的內容
+            li 恐怖組織所製作或他人代替這類組織製作的內容
+            li 騷擾、恐嚇或霸凌個人或群體的內容
+        li c. 圖片上傳後，預設為隱藏，只有上傳者看得到，若需公開，請至後台更改權限。
+      p.para 上述若違反，經查證屬實，需負完全責任。同意後，方可使用圖片上傳服務。
+      div.action_block
+        button.btn_agree.btn-primary(type='button') 同意

@@ -36,7 +36,8 @@ script.
       html +=   "<div class='info_block'>";
       html +=     "<span class='icon_type'><i class='fas fa-file-image'></i></span>";
       html +=     "<span class='file_text'>" + file_item.name + "</span>";
-      html +=     "<a class='info_success display_none' href='#' target='_blank'><i class='fas fa-link'></i></a>";
+      html +=     "<a class='info_success_setting display_none' href='#' target='_blank' title='設定'><i class='fas fa-cog'></i></a>";
+      html +=     "<a class='info_success display_none' href='#' target='_blank' title='短網址'><i class='fas fa-link'></i></a>";
       if(!accepted_ext.includes(file_ext)){
         html +=   "<span class='info_file'>格式不符，限圖檔</span>";
       }
@@ -48,7 +49,7 @@ script.
       if(accepted_ext.includes(file_ext)){
         var data = new FormData();
         data.append('upload', file_item)
-        data.append('permissions', '1')
+        data.append('permissions', '2')
         data.append('category', 1)
         
         
@@ -88,6 +89,7 @@ script.
             }
             $(article_upload_block).find("ul.pic_list").children("li").each(function(){
               if(data_obj.data.original_filename == $(this).attr("data-original-filename")){
+                $(this).find("div.info_block").find("a.info_success_setting").removeClass("display_none").attr("href", '/admin/file/update/' + data_obj.data.short_id);
                 $(this).find("div.info_block").find("a.info_success").removeClass("display_none").attr("href", data_obj.data.short_url);
                 $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
                 $(this).removeAttr("data-original-filename");
@@ -152,5 +154,23 @@ script.
         }
       }
     });
-
+    
+    $("article.upload_block button.btn_agree").on("click", function(){
+      $.ajax({
+        url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-agreement',
+        type: 'GET',
+        //data: 'ab='+ab,
+        dataType: 'json',
+        success: function(data){
+          console.log(data);
+          if(data.affectedRows == 1){
+            alert("更新成功");
+          }else{
+            alert("更新失敗");
+          }
+          location.reload()
+        }
+      });
+    });
+    
   });

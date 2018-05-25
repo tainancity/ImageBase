@@ -61,16 +61,21 @@ article.upload_block{
               overflow: hidden;
               vertical-align: top;
             }
-            a.info_success{
+            a.info_success, a.info_success_setting{
               display: inline-block;
               vertical-align: top;
               color: $white;
-              float:right;
-              margin-right: 10px;
               text-decoration: none;
+              position: absolute;
               &.display_none{
                 display: none;
               }
+            }
+            a.info_success{
+              right: 10px;
+            }
+            a.info_success_setting{
+              right: 40px;
             }
             span.info_file{
               float: right;
@@ -143,6 +148,31 @@ article.upload_block{
     input.select_file{
       &.display_none{
         display: none;
+      }
+    }
+  }
+
+  div.agreement{
+    ul.agreement_list{
+      > li{
+        color: $white;
+        ul.sub_agreement_list{
+          > li{
+            color: $white;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+    p.para{
+      color: $white;
+      font-size: 1rem;
+    }
+    div.action_block{
+      button.btn_agree{
+        display: inline-block;
+        margin-right: 20px;
+        cursor: pointer;
       }
     }
   }

@@ -14,6 +14,7 @@ header.header{
   a.logo{
     display: inline-block;
     vertical-align: middle;
+    position: relative;
     > img{
       height: 58px;
     }
@@ -21,6 +22,19 @@ header.header{
       > img{
         height: 40px;
       }
+    }
+    span.beta{
+      position: absolute;
+      left:-5px;
+      top:-5px;
+      background-color: $black;
+      color: $white;
+      border-radius: 3px;
+      font-size: .875rem;
+      line-height: 1;
+      padding: 2px 5px;
+      opacity: .8;
+      transform: rotate(-10deg);
     }
   }
   div.right_block{
