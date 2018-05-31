@@ -32,6 +32,7 @@ block append content_sl
                       th 副檔名
                       th 標題
                       th 瀏覽量
+                      th 按讚數
                       th 權限
                       th 標籤
                       th 建立時間
@@ -61,6 +62,7 @@ block append content_sl
                         td= item.file_ext
                         td= item.title
                         td= item.pageviews
+                        td= item.like_num
                         if item.permissions == 1
                           td 公開
                         if item.permissions == 2
