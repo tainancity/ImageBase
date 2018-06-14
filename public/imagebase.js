@@ -51,6 +51,7 @@ app.use(function(req, res, next){
   //console.log("test middleware")
   next()
 })
+app.use(require(CONFIG.path.middlewares + '/ban_ips').ban_ips(app)) // ban ips
 app.use(express.static(CONFIG.path.public))
 app.use(helmet())
 app.use(cookieParser())
