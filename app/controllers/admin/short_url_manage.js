@@ -18,6 +18,15 @@ var check_u_id = function(req, res, save_obj, cb){
   })
 }
 
+var validUrl = function(str){
+  var pattern = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+  if(!pattern.test(str)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 var save_data = function(req, res, save_obj){
   shortUrlModel.save(save_obj, true, function(save_results){
     res.redirect('/admin/short_url/list')
@@ -71,22 +80,26 @@ exports.short_url_list = function(options) {
 exports.short_url_post = function(options) {
   return function(req, res) {
 
+    if(validUrl(req.body.long_url)){
+      userModel.getOne('u_id', req.session.u_id, function(the_user_results){
 
-    userModel.getOne('u_id', req.session.u_id, function(the_user_results){
+        var unique_id = functions.generate_random_code(4)
+        var save_obj = {
+          u_id: unique_id,
+          user_id: the_user_results[0].id,
+          long_url: req.body.long_url,
+          pageviews: 0
+        }
 
-      var unique_id = functions.generate_random_code(4)
-      var save_obj = {
-        u_id: unique_id,
-        user_id: the_user_results[0].id,
-        long_url: req.body.long_url,
-        pageviews: 0
-      }
+        check_u_id(req, res, save_obj, function(){
+          save_data(req, res, save_obj)
+        })
 
-      check_u_id(req, res, save_obj, function(){
-        save_data(req, res, save_obj)
       })
+    }else{
+      res.redirect('/admin/short_url/list')
+    }
 
-    })
 
   }
 }
