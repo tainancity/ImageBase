@@ -33,7 +33,7 @@ block append content_sl
                     .col-lg-10
                       select.form-control(name='parent_category_id')
                         if category.parent_category_id == 0
-                          option(value='' selected='selected') (無上層)
+                          option(value='0' selected='selected') (無上層)
                         else
                           option(value='') (無上層)
                         each val, index in categories
