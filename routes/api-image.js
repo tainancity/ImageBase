@@ -4,11 +4,7 @@ var cors = require('cors')
 //var logLoginModel = require(CONFIG.path.models + '/log_login.js')
 
 //if( CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging' ){
-if( CONFIG.appenv.env == 'staging' ){
-  var apiImage = require(CONFIG.path.controllers + '/api/v1_0/image_for_jimp.js')
-}else{
-  var apiImage = require(CONFIG.path.controllers + '/api/v1_0/image_for_sharp.js')
-}
+var apiImage = require(CONFIG.path.controllers + '/api/v1_0/image_for_sharp.js')
 
 module.exports = function(app){
 
