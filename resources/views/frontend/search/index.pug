@@ -144,12 +144,11 @@ block append body_end_others
             data: {"id": query_obj.organ_id }
         });
       }
-      if(query_obj.tag != undefined){
-        //$("select[name=tag]").val(query_obj.tag);
-        $("select[name=tag]").data('select2').trigger('select', {
-            data: {"id": query_obj.tag }
-        });
-      }
+      // if(query_obj.tag != undefined){
+      //   $("select[name=tag]").data('select2').trigger('select', {
+      //       data: {"id": query_obj.tag }
+      //   });
+      // }
       var original_query_obj_sort_type = query_obj.sort_type;
       var original_query_obj_sort_value = query_obj.sort_value;
       $.ajax({
@@ -255,10 +254,10 @@ block append body_end_others
           form_obj.organ_id = organ_id;
         }
         
-        var tag = $(this).closest("form").find("select[name=tag]").val();
-        if(parseInt(tag) != 0){
-          form_obj.tag = tag;
-        }
+        // var tag = $(this).closest("form").find("select[name=tag]").val();
+        // if(parseInt(tag) != 0){
+        //   form_obj.tag = tag;
+        // }
         
         form_obj.page = 1;
         form_obj.items_per_page = query_obj.items_per_page;

@@ -709,15 +709,30 @@ exports.image_get_by_data = function(options){
 
                         // 標題(title)的 filter
                         all_files.forEach(function(file_item, file_index){
+
+                          // 將每張圖片，加上 tags
+                          file_item.tags = []
+                          all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
+                            if(file_tag_item.file_id == file_item.id){
+                              all_tags.forEach(function(the_tag, tag_index){
+                                if(file_tag_item.tag_id == the_tag.id){
+                                  file_item.tags.push(the_tag.tag_name)
+                                }
+                              })
+                            }
+                          })
+                          //console.log("標籤：")
+                          //console.log(file_item.tags)
                           if(req.query.title == '' || req.query.title == undefined){ // 如果 title 是空的，或 undefined
                             data_files.push(file_item)
                           }else{
-                            if( file_item.title != null && (file_item.title).includes(req.query.title) ){
+                            if( file_item.title != null && ((file_item.title).includes(req.query.title) || file_item.tags.includes(req.query.title)) ){
                               data_files.push(file_item)
                             }
                           }
                         })
 
+                        // 替上述的圖片，再找出以下資料
                         data_files.forEach(function(file_item, file_index){
                           // 找出使用者名稱
                           all_users.forEach(function(the_user, user_index){
@@ -748,16 +763,16 @@ exports.image_get_by_data = function(options){
                           data_files[file_index].file_data = new_file_data
 
                           // tags
-                          data_files[file_index].tags = []
-                          all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
-                            if(file_tag_item.file_id == file_item.id){
-                              all_tags.forEach(function(the_tag, tag_index){
-                                if(file_tag_item.tag_id == the_tag.id){
-                                  data_files[file_index].tags.push(the_tag.tag_name)
-                                }
-                              })
-                            }
-                          })
+                          // data_files[file_index].tags = []
+                          // all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
+                          //   if(file_tag_item.file_id == file_item.id){
+                          //     all_tags.forEach(function(the_tag, tag_index){
+                          //       if(file_tag_item.tag_id == the_tag.id){
+                          //         data_files[file_index].tags.push(the_tag.tag_name)
+                          //       }
+                          //     })
+                          //   }
+                          // })
 
                           // short url
                           data_files[file_index].short_url = CONFIG.appenv.domain + '/' + file_item.u_id
@@ -769,19 +784,19 @@ exports.image_get_by_data = function(options){
                         //})
 
                         // tags filter
-                        var new_data_files = []
-                        if(req.query.tag == '' || req.query.tag == undefined){
-                        }else{
-                          data_files.forEach(function(file_item, file_index){
-                            if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
-                              new_data_files.push(file_item)
-                            }
-                          })
-                          data_files = new_data_files;
-                        }
+                        // var new_data_files = []
+                        // if(req.query.tag == '' || req.query.tag == undefined){
+                        // }else{
+                        //   data_files.forEach(function(file_item, file_index){
+                        //     if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
+                        //       new_data_files.push(file_item)
+                        //     }
+                        //   })
+                        //   data_files = new_data_files;
+                        // }
 
                         // 分類(category_id)的 filter
-                        new_data_files = []
+                        var new_data_files = []
                         if(req.query.category_id == '' || req.query.category_id == undefined){
                         }else{
                           data_files.forEach(function(file_item, file_index){
