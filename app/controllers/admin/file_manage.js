@@ -8,6 +8,7 @@ var fileTagModel = require(CONFIG.path.models + '/file_tag.js')
 var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
+const settingModel = require(CONFIG.path.models + '/setting.js')
 
 // 檔案列表
 exports.file_list = function(options) {
@@ -150,18 +151,87 @@ exports.file_carousel_list = function(options) {
 
       fileModel.getAllWhere({ column: "created_at", sort_type: "DESC" }, { column_name: "deleted_at", operator: "", column_value: 'IS NULL' }, function(files){
 
-        carousel_files_array = []
-        files_carousel_result.forEach(function(carousel_item, carousel_index){
-          files.forEach(function(file_item, file_index){
-            if(carousel_item.file_id == file_item.id){
-              carousel_files_array.push(file_item)
+        settingModel.getAll({ column: "id", sort_type: "DESC" }, function(settings_result){
+
+          fileLikeModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_like_result){
+
+
+            let carousel_setting_data = ''
+            settings_result.forEach(function(setting_item, setting_index){
+              if(setting_item.option_name == "carousel_setting"){
+                carousel_setting_data = JSON.parse(setting_item.option_value)
+              }
+            })
+
+            let carousels_system_files_array_hot = [] // 系統挑圖：熱門
+            let carousels_system_files_array_public = [] // 系統挑圖：最新公開
+            if(carousel_setting_data !== ''){
+              let return_obj = functions.get_slide_from_system(carousel_setting_data, files, files_like_result)
+              carousels_system_files_array_hot = return_obj.hot_files
+              carousels_system_files_array_public = return_obj.public_files
             }
+
+
+            let carousel_files_array = [] // 手動挑圖
+            files_carousel_result.forEach(function(carousel_item, carousel_index){
+              files.forEach(function(file_item, file_index){
+                if(carousel_item.file_id == file_item.id){
+                  carousel_files_array.push(file_item)
+                }
+              })
+            })
+
+            res.render('admin/image/files/carousel', {carousels: carousel_files_array, carousels_system_hot: carousels_system_files_array_hot, carousels_system_public: carousels_system_files_array_public, carousel_setting: carousel_setting_data, csrfToken: req.csrfToken()})
+
+
           })
+
+
         })
 
-        res.render('admin/image/files/carousel', {carousels: carousel_files_array, csrfToken: req.csrfToken()})
-
       })
+
+    })
+
+  }
+}
+
+// 首頁輪播列表：系統挑圖的設定
+exports.file_carousel_list_setting = function(options) {
+  return function(req, res) {
+    // csrfToken: req.csrfToken()
+    let carousel_setting = {
+      hot_threshold: req.body.hot_threshold,
+      slide_number: req.body.slide_number,
+      slide_number_ratio: req.body.slide_number_ratio,
+      slide_priority: req.body.slide_priority
+    }
+    //console.log(carousel_setting)
+
+    settingModel.getAll({"column": "id", "sort_type": "DESC"}, function(results){
+
+      let has_carousel_setting = false
+      results.forEach(function(entry) {
+        if(entry.option_name == 'carousel_setting'){
+          has_carousel_setting = true
+        }
+      })
+
+      if(has_carousel_setting){ // 更新
+        let update_obj = {"option_value": JSON.stringify(carousel_setting)}
+        let where_obj = {"option_name": "carousel_setting"}
+        settingModel.update(update_obj, where_obj, true, function(){
+          res.redirect('/admin/management/file/carousel')
+        })
+      }else{ // 新增
+        let insert_obj = {
+          "option_name": "carousel_setting",
+          "option_value": JSON.stringify(carousel_setting)
+        }
+        settingModel.save(insert_obj, false, function(){
+          res.redirect('/admin/management/file/carousel')
+        })
+      }
 
     })
 

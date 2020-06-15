@@ -9,8 +9,9 @@ var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var organizationModel = require(CONFIG.path.models + '/organization.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
+const settingModel = require(CONFIG.path.models + '/setting.js')
 //var userModel = require(CONFIG.path.models + '/user.js')
-//var functions = require(CONFIG.path.helpers + '/functions.js')
+var functions = require(CONFIG.path.helpers + '/functions.js')
 
 // CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip
 
@@ -31,117 +32,140 @@ exports.index = function(options) {
 
                 fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
-                  // 輪播
-                  carousel_files_array = []
-                  files_carousel_result.forEach(function(carousel_item, carousel_index){
-                    files.forEach(function(file_item, file_index){
-                      if(carousel_item.file_id == file_item.id){
-                        carousel_files_array.push(file_item)
-                      }
-                    })
-                  })
+                  settingModel.getAll({ column: "id", sort_type: "DESC" }, function(settings_result){
 
-                  // 為每個檔案加上按讚數
-                  files.forEach(function(file_item, file_index){
-                    files[file_index].like_num = 0
-                    files_like.forEach(function(like_item, like_index){
-                      if(file_item.id == like_item.file_id){
-                        files[file_index].like_num = like_item.file_id_total
+                    let carousel_setting_data = ''
+                    settings_result.forEach(function(setting_item, setting_index){
+                      if(setting_item.option_name == "carousel_setting"){
+                        carousel_setting_data = JSON.parse(setting_item.option_value)
                       }
                     })
-                  })
-                  files_pageviews.forEach(function(file_item, file_index){
-                    files_pageviews[file_index].like_num = 0
-                    files_like.forEach(function(like_item, like_index){
-                      if(file_item.id == like_item.file_id){
-                        files_pageviews[file_index].like_num = like_item.file_id_total
-                      }
-                    })
-                  })
 
-                  // 最新圖片的前 4 個
-                  var newest_files = []
-                  files.forEach(function(file_item, file_index){
-                    if(newest_files.length < 4){
-                      if(file_item.permissions == '1' && file_item.file_type == '1'){
-                        newest_files.push(file_item)
-                      }
+                    let carousels_system_files_array_hot = [] // 系統挑圖：熱門
+                    let carousels_system_files_array_public = [] // 系統挑圖：最新公開
+                    if(carousel_setting_data !== ''){
+                      let return_obj = functions.get_slide_from_system(carousel_setting_data, files, files_like)
+                      carousels_system_files_array_hot = return_obj.hot_files
+                      carousels_system_files_array_public = return_obj.public_files
                     }
-                  })
 
+                    // 輪播
+                    carousel_files_array = []
+                    files_carousel_result.forEach(function(carousel_item, carousel_index){
+                      files.forEach(function(file_item, file_index){
+                        if(carousel_item.file_id == file_item.id){
+                          carousel_files_array.push(file_item)
+                        }
+                      })
+                    })
 
-                  // 瀏覽量最高前 4 個
-                  var pageviews_highest_files = []
-                  files_pageviews.forEach(function(file_item, file_index){
-                    if(pageviews_highest_files.length < 4){
-                      if(file_item.permissions == '1' && file_item.file_type == '1'){
-                        pageviews_highest_files.push(file_item)
-                      }
-                    }
-                  })
-
-
-                  // 按讚最高 files_like
-                  var files_like_total = []
-                  files_like.forEach(function(file_like_item, file_like_index){
+                    // 為每個檔案加上按讚數
                     files.forEach(function(file_item, file_index){
-                      if(file_like_item.file_id == file_item.id){
+                      files[file_index].like_num = 0
+                      files_like.forEach(function(like_item, like_index){
+                        if(file_item.id == like_item.file_id){
+                          files[file_index].like_num = like_item.file_id_total
+                        }
+                      })
+                    })
+                    files_pageviews.forEach(function(file_item, file_index){
+                      files_pageviews[file_index].like_num = 0
+                      files_like.forEach(function(like_item, like_index){
+                        if(file_item.id == like_item.file_id){
+                          files_pageviews[file_index].like_num = like_item.file_id_total
+                        }
+                      })
+                    })
+
+                    // 最新圖片的前 4 個
+                    var newest_files = []
+                    files.forEach(function(file_item, file_index){
+                      if(newest_files.length < 4){
                         if(file_item.permissions == '1' && file_item.file_type == '1'){
-                          if(files_like_total.length < 4){
-                            files_like_total.push(file_item)
-                          }
+                          newest_files.push(file_item)
                         }
                       }
                     })
-                  })
 
 
-                  // 分類圖片
-                  //console.log(categories)
-                  categories.forEach(function(category_item, category_index){
-                    categories[category_index].files = []
-                  })
-                  files.forEach(function(file_item, file_index){
-                    if(file_item.permissions == '1' && file_item.file_type == '1'){
-                      categories.forEach(function(category_item, category_index){
-                        if(category_item.id == file_item.category_id){
-                          if(categories[category_index].files.length < 4){
-                            categories[category_index].files.push(file_item)
+                    // 瀏覽量最高前 4 個
+                    var pageviews_highest_files = []
+                    files_pageviews.forEach(function(file_item, file_index){
+                      if(pageviews_highest_files.length < 4){
+                        if(file_item.permissions == '1' && file_item.file_type == '1'){
+                          pageviews_highest_files.push(file_item)
+                        }
+                      }
+                    })
+
+
+                    // 按讚最高 files_like
+                    var files_like_total = []
+                    files_like.forEach(function(file_like_item, file_like_index){
+                      files.forEach(function(file_item, file_index){
+                        if(file_like_item.file_id == file_item.id){
+                          if(file_item.permissions == '1' && file_item.file_type == '1'){
+                            if(files_like_total.length < 4){
+                              files_like_total.push(file_item)
+                            }
                           }
                         }
                       })
-                    }
-                  })
+                    })
 
-                  // 局處圖片
-                  //console.log(organizations)
-                  organizations.forEach(function(organization_item, organization_index){
-                    organizations[organization_index].files = []
-                  })
-                  files.forEach(function(file_item, file_index){
-                    if(file_item.permissions == '1' && file_item.file_type == '1'){
-                      organizations.forEach(function(organization_item, organization_index){
-                        if(organization_item.organ_id == file_item.organ_id){
-                          if(organizations[organization_index].files.length < 4){
-                            organizations[organization_index].files.push(file_item)
+
+                    // 分類圖片
+                    //console.log(categories)
+                    categories.forEach(function(category_item, category_index){
+                      categories[category_index].files = []
+                    })
+                    files.forEach(function(file_item, file_index){
+                      if(file_item.permissions == '1' && file_item.file_type == '1'){
+                        categories.forEach(function(category_item, category_index){
+                          if(category_item.id == file_item.category_id){
+                            if(categories[category_index].files.length < 4){
+                              categories[category_index].files.push(file_item)
+                            }
                           }
-                        }
-                      })
-                    }
-                  })
+                        })
+                      }
+                    })
 
-                  res.render('frontend/index', {
-                    all_files: files,
-                    csrfToken: req.csrfToken(),
-                    announcement_results: announcement_results,
-                    carousels: carousel_files_array,
-                    newest_files: newest_files,
-                    categories: categories,
-                    organizations: organizations,
-                    pageviews_highest_files: pageviews_highest_files,
-                    files_like_total: files_like_total,
-                    //client_ip: '1.1.1.1'
-                    client_ip: req.headers['x-forwarded-for'] || req.ip
+                    // 局處圖片
+                    //console.log(organizations)
+                    organizations.forEach(function(organization_item, organization_index){
+                      organizations[organization_index].files = []
+                    })
+                    files.forEach(function(file_item, file_index){
+                      if(file_item.permissions == '1' && file_item.file_type == '1'){
+                        organizations.forEach(function(organization_item, organization_index){
+                          if(organization_item.organ_id == file_item.organ_id){
+                            if(organizations[organization_index].files.length < 4){
+                              organizations[organization_index].files.push(file_item)
+                            }
+                          }
+                        })
+                      }
+                    })
+                    console.log("hi")
+                    console.log(carousel_setting_data)
+                    res.render('frontend/index', {
+                      all_files: files,
+                      csrfToken: req.csrfToken(),
+                      announcement_results: announcement_results,
+                      carousel_setting_data: carousel_setting_data,
+                      carousels: carousel_files_array,
+                      carousels_system_files_array_hot: carousels_system_files_array_hot,
+                      carousels_system_files_array_public: carousels_system_files_array_public,
+                      newest_files: newest_files,
+                      categories: categories,
+                      organizations: organizations,
+                      pageviews_highest_files: pageviews_highest_files,
+                      files_like_total: files_like_total,
+                      //client_ip: '1.1.1.1'
+                      client_ip: req.headers['x-forwarded-for'] || req.ip
+                    })
+
                   })
 
                 })

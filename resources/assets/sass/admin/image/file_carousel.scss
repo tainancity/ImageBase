@@ -1,3 +1,46 @@
+form.setting_block{
+  input.hot_number{
+    width: 80px;
+  }
+  input.slide_number{
+    width: 50px;
+  }
+  input.hot_number, input.slide_number{
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  div.setting_ratio{
+    margin-top: 8px;
+    input.slide_number{
+      margin-right: 10px;
+    }
+    span.ratio{
+      background-color: hsl(0, 0%, 94%);
+      display: inline-block;
+    }
+    select.slide_ratio{
+      width: 50px;
+      height: 27px;
+      cursor: pointer;
+    }
+  }
+  div.priority_block{
+    margin-top: 8px;
+    label{
+      margin-right: 14px;
+      cursor: pointer;
+    }
+    input[name="slide_priority"]{
+      position: relative;
+      top: 2px;
+      margin-right: 4px;
+    }
+  }
+  button.btn-primary{
+    cursor: pointer;
+  }
+}
+
 table.custom_table{
   thead{
     tr{
