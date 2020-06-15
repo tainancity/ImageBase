@@ -147,8 +147,7 @@ exports.index = function(options) {
                         })
                       }
                     })
-                    console.log("hi")
-                    console.log(carousel_setting_data)
+                    
                     res.render('frontend/index', {
                       all_files: files,
                       csrfToken: req.csrfToken(),
