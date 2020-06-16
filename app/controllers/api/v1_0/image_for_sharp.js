@@ -329,7 +329,7 @@ var save_file_related_data = function(req, res, results){
                                       original_filename: original_filename,
                                       saved_obj: saved_obj
                                     }
-                                    if(CONFIG.appenv.env == 'local'){ // local 端直接儲存
+                                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
                                       var unique_id = functions.generate_random_code(code_num)
                                       have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
                                         duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
@@ -1104,7 +1104,7 @@ exports.image_hard_delete = function(options){
                   fileCarouselModel.deleteWhere('file_id', files[0].id, function(del_like_result){
 
                     // step 4: 刪除 實際檔案
-                    if(CONFIG.appenv.env == 'local'){
+                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
 
                       JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
 
@@ -1227,7 +1227,7 @@ exports.image_crop = function(options){
               var new_file_name = ((original_filename_arr[original_filename_arr.length-1]).split('.')[0])
               file_name_arr.push(new_file_name)
               file_width_arr.push(file_item.width)
-              if(CONFIG.appenv.env == 'local'){ // 本機端刪檔
+              if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // 本機端刪檔
                 if (fs.existsSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)) {
                   fs.unlinkSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)
                 }
@@ -1306,7 +1306,7 @@ exports.image_crop = function(options){
                   }
 
                   // 複製檔案至 storage
-                  if(CONFIG.appenv.env != 'local'){
+                  if(CONFIG.appenv.env == 'production'){
                     file_name_arr.forEach(function(file_name_item, file_name_index){
                       client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
 
