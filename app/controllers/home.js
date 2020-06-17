@@ -22,13 +22,13 @@ exports.index = function(options) {
 
       fileCarouselModel.getAll({column: 'sort_index', sort_type: 'ASC'}, function(files_carousel_result){
 
-        fileModel.getAllWhere({ column: 'created_at', sort_type: 'DESC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(files){
+        fileModel.getAll2Where({ column: 'created_at', sort_type: 'DESC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, function(files){
 
           fileCategoryModel.getAllWhere({ column: 'level', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(categories){
 
             organizationModel.getAllWhere({ column: 'sort_index', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(organizations){
 
-              fileModel.getAllWhere({ column: 'pageviews', sort_type: 'ASC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(files_pageviews){
+              fileModel.getAll2Where({ column: 'pageviews', sort_type: 'ASC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, function(files_pageviews){
 
                 fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
@@ -147,7 +147,7 @@ exports.index = function(options) {
                         })
                       }
                     })
-                    
+
                     res.render('frontend/index', {
                       all_files: files,
                       csrfToken: req.csrfToken(),
