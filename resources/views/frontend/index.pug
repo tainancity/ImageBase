@@ -35,19 +35,84 @@ block append content
                 a(href='/announcement/list'): i.fas.fa-list-alt.fa-lg
   
   //- 輪播
-  if carousels.length > 0
-    section.slick_slider_sec
-      div.container
-        div.row
-          div.col
-            div.slick_slider_container
-              div.slick_slider
-                each carousel_item, carousel_index in carousels
-                  div.slick_content
-                    div.inner_content
-                      each file_item, file_index in JSON.parse(carousel_item.file_data)
-                        if file_item.width == 960
-                          a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+  if carousel_setting_data == ""
+    //- 只有手動挑圖
+    if carousels.length > 0
+      section.slick_slider_sec
+        div.container
+          div.row
+            div.col
+              div.slick_slider_container
+                div.slick_slider
+                  each carousel_item, carousel_index in carousels
+                    div.slick_content
+                      div.inner_content
+                        each file_item, file_index in JSON.parse(carousel_item.file_data)
+                          if file_item.width == 960
+                            a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+  else
+    
+    //- 系統挑圖和手動挑圖皆有
+    if carousel_setting_data.slide_priority == "1"
+      //- 系統挑圖優先
+      if carousels.length > 0 || carousels_system_files_array_hot.length > 0 || carousels_system_files_array_public.length > 0
+        section.slick_slider_sec
+          div.container
+            div.row
+              div.col
+                div.slick_slider_container
+                  div.slick_slider
+                    if carousels_system_files_array_hot.length > 0
+                      each carousel_item, carousel_index in carousels_system_files_array_hot
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                    if carousels_system_files_array_public.length > 0
+                      each carousel_item, carousel_index in carousels_system_files_array_public
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                    if carousels.length > 0
+                      each carousel_item, carousel_index in carousels
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                    
+    else
+      if carousels.length > 0 || carousels_system_files_array_hot.length > 0 || carousels_system_files_array_public.length > 0
+        section.slick_slider_sec
+          div.container
+            div.row
+              div.col
+                div.slick_slider_container
+                  div.slick_slider
+                    if carousels.length > 0
+                      each carousel_item, carousel_index in carousels
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                    if carousels_system_files_array_hot.length > 0
+                      each carousel_item, carousel_index in carousels_system_files_array_hot
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
+                    if carousels_system_files_array_public.length > 0
+                      each carousel_item, carousel_index in carousels_system_files_array_public
+                        div.slick_content
+                          div.inner_content
+                            each file_item, file_index in JSON.parse(carousel_item.file_data)
+                              if file_item.width == 960
+                                a(href=config.appenv.domain + '/' + carousel_item.u_id class='content_link'): img(src=config.appenv.storage.domain + file_item.url class='content_img')
   
   //- 最新圖片
   if newest_files.length > 0

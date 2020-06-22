@@ -27,8 +27,10 @@ block append content
                 div.item_group
                   span.icon_span
                     i.fas.fa-font
-                  span.span_text 輸入標題
-                  input.form_group(type='text' class='search_field' name='title')
+                  span.span_text 關鍵字
+                  input.form_group(type="text" class="search_field" name="title" placeholder="輸入關鍵字" autocomplete="off")
+                
+              div.bottom_block
                 div.item_group
                   span.icon_span
                     i.fas.fa-th-large
@@ -37,7 +39,6 @@ block append content
                     option(value='0') (無)
                     each item, index in categories
                       option(value=item.id)= item.category_name
-              div.bottom_block
                 div.item_group
                   span.icon_span
                     i.fas.fa-sitemap
@@ -46,14 +47,15 @@ block append content
                     option(value='0') (無)
                     each item, index in organs
                       option(value=item.organ_id)= item.organ_name
-                div.item_group
-                  span.icon_span
-                    i.fas.fa-tags
-                  span.span_text 選擇標籤
-                  select.select_option.custom_select(name='tag')
-                    option(value='0') (無)
-                    each item, index in tags
-                      option(value=item.tag_name)= item.tag_name
+                //-
+                  div.item_group
+                    span.icon_span
+                      i.fas.fa-tags
+                    span.span_text 選擇標籤
+                    select.select_option.custom_select(name='tag')
+                      option(value='0') (無)
+                      each item, index in tags
+                        option(value=item.tag_name)= item.tag_name
             div.action_block
               button.btn_submit(type='submit') 開始搜尋
   
@@ -142,12 +144,11 @@ block append body_end_others
             data: {"id": query_obj.organ_id }
         });
       }
-      if(query_obj.tag != undefined){
-        //$("select[name=tag]").val(query_obj.tag);
-        $("select[name=tag]").data('select2').trigger('select', {
-            data: {"id": query_obj.tag }
-        });
-      }
+      // if(query_obj.tag != undefined){
+      //   $("select[name=tag]").data('select2').trigger('select', {
+      //       data: {"id": query_obj.tag }
+      //   });
+      // }
       var original_query_obj_sort_type = query_obj.sort_type;
       var original_query_obj_sort_value = query_obj.sort_value;
       $.ajax({
@@ -253,10 +254,10 @@ block append body_end_others
           form_obj.organ_id = organ_id;
         }
         
-        var tag = $(this).closest("form").find("select[name=tag]").val();
-        if(parseInt(tag) != 0){
-          form_obj.tag = tag;
-        }
+        // var tag = $(this).closest("form").find("select[name=tag]").val();
+        // if(parseInt(tag) != 0){
+        //   form_obj.tag = tag;
+        // }
         
         form_obj.page = 1;
         form_obj.items_per_page = query_obj.items_per_page;

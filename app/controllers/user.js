@@ -63,7 +63,8 @@ exports.login_post = function(options) {
     }else if (CONFIG.appenv.env == 'production'){
       var generated_token = 'production_token'
     }else{
-      var generated_token = functions.generate_token()
+      //var generated_token = functions.generate_token()
+      var generated_token = 'production_token'
     }
 
 

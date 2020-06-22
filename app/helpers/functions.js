@@ -95,6 +95,87 @@ module.exports = {
       }
     }
     return i18n_str
+  },
+
+  // 系統挑圖
+  get_slide_from_system: function(carousel_setting_data, files, files_like_result){
+    let carousels_system_files_array_hot = [] // 系統挑圖：熱門
+    let carousels_system_files_array_public = [] // 系統挑圖：最新公開
+
+    let hot_num = 0
+    let public_num = 0
+    if(carousel_setting_data.slide_number > 0){
+      switch(carousel_setting_data.slide_number_ratio){
+        case "1": // 4:1
+          hot_num = parseInt((carousel_setting_data.slide_number) * 4 / 5)
+          public_num = parseInt((carousel_setting_data.slide_number) * 1 / 5)
+          break
+        case "2": // 3:2
+          hot_num = parseInt((carousel_setting_data.slide_number) * 3 / 5)
+          public_num = parseInt((carousel_setting_data.slide_number) * 2 / 5)
+          break
+        case "3": // 2:3
+          hot_num = parseInt((carousel_setting_data.slide_number) * 2 / 5)
+          public_num = parseInt((carousel_setting_data.slide_number) * 3 / 5)
+          break
+        case "4": // 1:4
+          hot_num = parseInt((carousel_setting_data.slide_number) * 1 / 5)
+          public_num = parseInt((carousel_setting_data.slide_number) * 4 / 5)
+          break
+        default:
+      }
+    }
+
+    // 系統挑圖：熱門
+    files.forEach(function(file_item, file_index){ // 為每張圖片，加上按讚數
+      files[file_index].like_num = 0
+      files_like_result.forEach(function(file_like_item, file_like_index){
+        if(file_item.id == file_like_item.file_id){
+          files[file_index].like_num += 1
+        }
+      })
+    })
+    // console.log(files)
+
+    let hot_temp = []
+    files.forEach(function(file_item, file_index){
+      if( (file_item.like_num + file_item.pageviews) >= parseInt(carousel_setting_data.hot_threshold) ){
+        hot_temp.push(file_item)
+      }
+    })
+    hot_temp.forEach(function(file_item, file_index){
+      hot_temp[file_index].like_and_pageviews = (file_item.like_num + file_item.pageviews)
+    })
+
+    hot_temp.sort(function(a, b) { // 熱門的圖片，由大到小排序
+      if (a.like_and_pageviews < b.like_and_pageviews) { return 1 }
+      if (a.like_and_pageviews > b.like_and_pageviews) { return -1 }
+      return 0
+    })
+    //console.log(hot_temp)
+    let hot_num_inserted = 0
+    hot_temp.forEach(function(file_item, file_index){
+      if(hot_num_inserted < hot_num){
+        carousels_system_files_array_hot.push(file_item)
+        hot_num_inserted++
+      }
+    })
+    //console.log(carousels_system_files_array)
+
+    // 系統挑圖：最新公開圖片
+    let public_num_inserted = 0
+    files.forEach(function(file_item, file_index){
+      if(file_item.permissions == "1"){ // 公開
+        if(public_num_inserted < public_num){
+          carousels_system_files_array_public.push(file_item)
+          public_num_inserted++
+        }
+      }
+    })
+    return {
+      hot_files: carousels_system_files_array_hot,
+      public_files: carousels_system_files_array_public
+    }
   }
 
 };

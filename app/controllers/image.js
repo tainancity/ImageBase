@@ -54,7 +54,7 @@ exports.image_upload = function(options){
               })
             })
           }else{
-            if(CONFIG.appenv.env == 'local'){ // 如果是 local 端，直接回傳
+            if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // 如果是 local 端，直接回傳
 
               res.json({
                 'uploaded': 1,

@@ -329,7 +329,7 @@ var save_file_related_data = function(req, res, results){
                                       original_filename: original_filename,
                                       saved_obj: saved_obj
                                     }
-                                    if(CONFIG.appenv.env == 'local'){ // local 端直接儲存
+                                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
                                       var unique_id = functions.generate_random_code(code_num)
                                       have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
                                         duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
@@ -709,15 +709,45 @@ exports.image_get_by_data = function(options){
 
                         // 標題(title)的 filter
                         all_files.forEach(function(file_item, file_index){
+
+                          // 將每張圖片，加上 tags
+                          file_item.tags = []
+                          all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
+                            if(file_tag_item.file_id == file_item.id){
+                              all_tags.forEach(function(the_tag, tag_index){
+                                if(file_tag_item.tag_id == the_tag.id){
+                                  file_item.tags.push(the_tag.tag_name)
+                                }
+                              })
+                            }
+                          })
+                          //console.log("標籤：")
+                          //console.log(file_item.tags)
                           if(req.query.title == '' || req.query.title == undefined){ // 如果 title 是空的，或 undefined
                             data_files.push(file_item)
                           }else{
-                            if( file_item.title != null && (file_item.title).includes(req.query.title) ){
-                              data_files.push(file_item)
-                            }
+                            let temp_title_array = req.query.title.split(" ")
+                            let title_array = []
+                            temp_title_array.forEach(function(temp_title_item, temp_title_index){
+                              if(temp_title_item != ""){
+                                title_array.push(temp_title_item)
+                              }
+                            })
+                            //console.log(title_array)
+                            let put_in = true
+                            title_array.forEach(function(title_item, title_index){
+                              if(put_in){
+                                if( file_item.title != null && (((file_item.title).toLowerCase()).includes((title_item).toLowerCase()) || file_item.tags.some(value => value.toLowerCase().includes(title_item.toLowerCase()) ) ) ){
+                                  data_files.push(file_item)
+                                  put_in = false
+                                }
+                              }
+                            })
+
                           }
                         })
 
+                        // 替上述的圖片，再找出以下資料
                         data_files.forEach(function(file_item, file_index){
                           // 找出使用者名稱
                           all_users.forEach(function(the_user, user_index){
@@ -748,16 +778,16 @@ exports.image_get_by_data = function(options){
                           data_files[file_index].file_data = new_file_data
 
                           // tags
-                          data_files[file_index].tags = []
-                          all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
-                            if(file_tag_item.file_id == file_item.id){
-                              all_tags.forEach(function(the_tag, tag_index){
-                                if(file_tag_item.tag_id == the_tag.id){
-                                  data_files[file_index].tags.push(the_tag.tag_name)
-                                }
-                              })
-                            }
-                          })
+                          // data_files[file_index].tags = []
+                          // all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
+                          //   if(file_tag_item.file_id == file_item.id){
+                          //     all_tags.forEach(function(the_tag, tag_index){
+                          //       if(file_tag_item.tag_id == the_tag.id){
+                          //         data_files[file_index].tags.push(the_tag.tag_name)
+                          //       }
+                          //     })
+                          //   }
+                          // })
 
                           // short url
                           data_files[file_index].short_url = CONFIG.appenv.domain + '/' + file_item.u_id
@@ -769,19 +799,19 @@ exports.image_get_by_data = function(options){
                         //})
 
                         // tags filter
-                        var new_data_files = []
-                        if(req.query.tag == '' || req.query.tag == undefined){
-                        }else{
-                          data_files.forEach(function(file_item, file_index){
-                            if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
-                              new_data_files.push(file_item)
-                            }
-                          })
-                          data_files = new_data_files;
-                        }
+                        // var new_data_files = []
+                        // if(req.query.tag == '' || req.query.tag == undefined){
+                        // }else{
+                        //   data_files.forEach(function(file_item, file_index){
+                        //     if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
+                        //       new_data_files.push(file_item)
+                        //     }
+                        //   })
+                        //   data_files = new_data_files;
+                        // }
 
                         // 分類(category_id)的 filter
-                        new_data_files = []
+                        var new_data_files = []
                         if(req.query.category_id == '' || req.query.category_id == undefined){
                         }else{
                           data_files.forEach(function(file_item, file_index){
@@ -1089,7 +1119,7 @@ exports.image_hard_delete = function(options){
                   fileCarouselModel.deleteWhere('file_id', files[0].id, function(del_like_result){
 
                     // step 4: 刪除 實際檔案
-                    if(CONFIG.appenv.env == 'local'){
+                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
 
                       JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
 
@@ -1212,7 +1242,7 @@ exports.image_crop = function(options){
               var new_file_name = ((original_filename_arr[original_filename_arr.length-1]).split('.')[0])
               file_name_arr.push(new_file_name)
               file_width_arr.push(file_item.width)
-              if(CONFIG.appenv.env == 'local'){ // 本機端刪檔
+              if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // 本機端刪檔
                 if (fs.existsSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)) {
                   fs.unlinkSync(CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + original_full_name)
                 }
@@ -1291,7 +1321,7 @@ exports.image_crop = function(options){
                   }
 
                   // 複製檔案至 storage
-                  if(CONFIG.appenv.env != 'local'){
+                  if(CONFIG.appenv.env == 'production'){
                     file_name_arr.forEach(function(file_name_item, file_name_index){
                       client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
 

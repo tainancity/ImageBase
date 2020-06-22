@@ -4,11 +4,11 @@ var baseModel = require(CONFIG.path.models + '/base.js')
 const table_name = 'settings'
 const table_columns = ['option_name', 'option_value']
 
-/*
+
 exports.save = function(insert_obj, has_time, cb) {
   baseModel.save(table_name, table_columns, insert_obj, has_time, cb)
 }
-*/
+
 
 exports.update = function(update_obj, where_obj, has_time, cb) {
   baseModel.update(table_name, update_obj, where_obj, has_time, cb)
