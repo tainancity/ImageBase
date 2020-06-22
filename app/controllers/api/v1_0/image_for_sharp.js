@@ -726,9 +726,24 @@ exports.image_get_by_data = function(options){
                           if(req.query.title == '' || req.query.title == undefined){ // 如果 title 是空的，或 undefined
                             data_files.push(file_item)
                           }else{
-                            if( file_item.title != null && ((file_item.title).includes(req.query.title) || file_item.tags.includes(req.query.title)) ){
-                              data_files.push(file_item)
-                            }
+                            let temp_title_array = req.query.title.split(" ")
+                            let title_array = []
+                            temp_title_array.forEach(function(temp_title_item, temp_title_index){
+                              if(temp_title_item != ""){
+                                title_array.push(temp_title_item)
+                              }
+                            })
+                            //console.log(title_array)
+                            let put_in = true
+                            title_array.forEach(function(title_item, title_index){
+                              if(put_in){
+                                if( file_item.title != null && (((file_item.title).toLowerCase()).includes((title_item).toLowerCase()) || file_item.tags.some(value => value.toLowerCase().includes(title_item.toLowerCase()) ) ) ){
+                                  data_files.push(file_item)
+                                  put_in = false
+                                }
+                              }
+                            })
+
                           }
                         })
 
