@@ -139,8 +139,10 @@ module.exports = {
 
     let hot_temp = []
     files.forEach(function(file_item, file_index){
-      if( (file_item.like_num + file_item.pageviews) >= parseInt(carousel_setting_data.hot_threshold) ){
-        hot_temp.push(file_item)
+      if(file_item.permissions == "1"){ // 公開
+        if( (file_item.like_num + file_item.pageviews) >= parseInt(carousel_setting_data.hot_threshold) ){
+          hot_temp.push(file_item)
+        }
       }
     })
     hot_temp.forEach(function(file_item, file_index){
