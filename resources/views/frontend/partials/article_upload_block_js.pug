@@ -2,6 +2,8 @@ script.
   var filenames = [];
   var files_upload;
   var file_index = 0;
+  var user_prepare_upload_files = [];
+  var article_upload_block;
   
   var uploadProgress = function(e, filet){
     if(e.lengthComputable){
@@ -123,10 +125,12 @@ script.
     });
 
     $("article.upload_block").find("input.select_file").on("change", function(){
-      var article_upload_block = $(this).closest("article");
-      
-      loop_files(article_upload_block, $(this).get(0).files);
-      
+      article_upload_block = $(this).closest("article");
+      user_prepare_upload_files = $(this).get(0).files;
+      if($(this).get(0).files.length > 0){
+        $("button.upload_file").removeClass("-disabled");
+      }
+      //loop_files(article_upload_block, $(this).get(0).files);
     });
     
     // Drag and Drop
@@ -148,10 +152,23 @@ script.
             e.preventDefault();
             e.stopPropagation();
             
-            var article_upload_block = $(this).closest("article");
+            article_upload_block = $(this).closest("article");
+            user_prepare_upload_files = dataTransfer.files;
+            if(dataTransfer.files.length > 0){
+              $("button.upload_file").removeClass("-disabled");
+            }
             
-            loop_files(article_upload_block, dataTransfer.files);
+            //loop_files(article_upload_block, dataTransfer.files);
         }
+      }
+    });
+    
+    // 檔案上傳按鈕
+    $("button.upload_file").on("click", function(){
+      if($(this).hasClass("-disabled")){
+      }else{
+        loop_files(article_upload_block, user_prepare_upload_files);
+        $("button.upload_file").addClass("-disabled");
       }
     });
     

@@ -130,11 +130,31 @@ article.upload_block{
 
   div.or_select_file{
     margin-top:10px;
+    &::after{
+      content: "";
+      display: block;
+      clear: both;
+    }
     p.or_para{
       color: $white;
       margin:0 10px 0 0;
       display: inline-block;
       vertical-align: middle;
+    }
+    button.upload_file{
+      float: right;
+      cursor: pointer;
+      background: none;
+      border: 0;
+      padding: 5px 20px;
+      background-color: #c9910d;
+      color: white;
+      outline: none;
+      &.-disabled{
+        cursor: not-allowed;
+        background-color: #ccc;
+      }
+
     }
     button.choose_file{
       border:0;
@@ -145,6 +165,7 @@ article.upload_block{
       cursor: pointer;
       outline: none;
     }
+
     input.select_file{
       &.display_none{
         display: none;
