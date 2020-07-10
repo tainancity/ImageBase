@@ -61,7 +61,7 @@ article.upload_block{
               overflow: hidden;
               vertical-align: top;
             }
-            a.info_success, a.info_success_setting{
+            a.info_success, a.info_success_setting, a.info_remove{
               display: inline-block;
               vertical-align: top;
               color: $white;
@@ -76,6 +76,9 @@ article.upload_block{
             }
             a.info_success_setting{
               right: 40px;
+            }
+            a.info_remove{
+              right: 10px;
             }
             span.info_file{
               float: right;
