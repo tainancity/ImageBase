@@ -68,7 +68,12 @@ html(lang='zh-Hant')
           $('div.upload_pics_modal').removeClass('display_none');
         });
         $('button.close_upload').on('click', function(){
-          $(this).closest('div.upload_pics_modal').addClass('display_none');
+          let upload_block_container = $(this).closest("div.upload_block_container");
+          $(upload_block_container).find("ul.pic_list").html("");
+          $(upload_block_container).find("button.upload_file").addClass("-disabled");
+          $(upload_block_container).find("input.select_file").val("");
+          user_prepare_upload_files = [];
+          $(this).closest('div.upload_pics_modal').addClass('display_none'); // close modal
         });
         
         $(document).on("click", "button.btn_like_box", function(){
