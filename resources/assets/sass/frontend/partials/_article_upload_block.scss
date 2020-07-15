@@ -206,7 +206,94 @@ article.upload_block{
       }
     }
   }
-
+  div.hr{
+    border: 1px solid gray;
+    height: 1px;
+    width: 100%;
+    margin: 30px auto;
+  }
+  div.meta_block{
+    h3.title3{
+      color: white;
+      font-size: 1rem;
+      span.icon_span{
+        display: inline-block;
+        margin-left: 5px;
+        position: relative;
+      }
+      span.icon_span:hover span.tooltip_info{
+        display: inline-block;
+      }
+      span.tooltip_info{
+        position: absolute;
+        white-space: nowrap;
+        background-color: #eee;
+        color: black;
+        font-size: .9rem;
+        border-radius: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 26px;
+        padding: 5px 10px;
+        font-weight: normal;
+        display: none;
+        &::before{
+          content: "";
+          display: inline-block;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: -6px;
+          border-top: 7px solid white;
+          border-right: 7px solid transparent;
+          border-bottom: 0 solid yellow;
+          border-left: 7px solid transparent;
+        }
+      }
+    }
+    div.block{
+      font-size: 0;
+      margin-bottom: 10px;
+      &:last-child{
+        margin-bottom: 0;
+      }
+      div.left_block, div.right_block{
+        display: inline-block;
+        vertical-align: top;
+        font-size: 1rem;
+        label{
+          color: white;
+          margin: 0;
+          display: inline-block;
+          width: 50px;
+          vertical-align: middle;
+        }
+        input.meta_info, select.meta_info{
+          margin: 0;
+          border-radius: 5px;
+          outline: none;
+          height: 30px;
+          line-height: 30px;
+          width: calc(100% - 50px);
+          border: 1px solid black;
+          vertical-align: middle;
+          padding: 0 5px;
+        }
+        span.select2-container{
+          width: calc(100% - 50px) !important;
+          border-radius: 5px;
+          border: 1px solid black;
+        }
+      }
+      div.left_block{
+        margin-right: 10px;
+        width: 50%;
+      }
+      div.right_block{
+        width: calc(50% - 10px);
+      }
+    }
+  }
   div.agreement{
     ul.agreement_list{
       > li{

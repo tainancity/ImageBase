@@ -20,6 +20,31 @@ article#upload_block.upload_block
       button.choose_file(type='button') 選擇檔案
       button.upload_file.-disabled(type='button') 檔案上傳
       input.select_file.display_none(type='file' accept='.png,.jpg,.jpeg,.gif' multiple)
+    div.hr
+    div.meta_block
+      h3.title3!= "圖片基本資訊<span class='icon_span'><i class='fa fa-question-circle'></i><span class='tooltip_info'>這裡設定的資訊，每張圖片皆會套用。</span></span>"
+      
+      div.block
+        div.left_block
+          label 標題：
+          input.meta_info(type="text")
+        div.right_block
+          label 分類：
+          select.meta_info.custom_select
+            each item, index in all_file_categories
+              option(value=item.id selected=(item.category_name == '其它' ? true : false))= item.category_name
+                
+      div.block
+        div.left_block
+          label 權限：
+          select.meta_info(name="permissions")
+            option(value="1") 公開(前台看得到)
+            option(value="2" selected) 隱藏(前台看不到，短網址只有原上傳者及平台管理者看得到)
+            option(value="3") 共用(前台看不到，知道短網址的人，皆可看到)
+          
+        div.right_block
+          label 標籤：
+          input.meta_info(type="text")
   else
     div.agreement
       ul.agreement_list

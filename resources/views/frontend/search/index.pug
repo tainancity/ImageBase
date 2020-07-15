@@ -4,7 +4,8 @@ block append page_title
   title=  '搜尋' + ' - '+ config.app.sitename
 
 block append head_end_tag
-  link(href=asset_path('vendors/plugins/select2/select2.min.css') rel='stylesheet')
+  //-
+    link(href=asset_path('vendors/plugins/select2/select2.min.css') rel='stylesheet')
   link(href=asset_path('css/frontend/search/index.css') rel='stylesheet')
   script.
     var client_ip = "#{client_ip}";
@@ -109,7 +110,8 @@ block append content
                 ul.page_list
 
 block append body_end_others
-  script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
+  //-
+    script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
   script(src=asset_path('vendors/plugins/jsurl/url.min.js'))
   script.
     function objectToQuerystring (obj) {
@@ -123,7 +125,7 @@ block append body_end_others
     }
     $(function(){
       
-      $('.custom_select').select2();
+      //$('.custom_select').select2();
       
       var query_obj = url('?');
       if(query_obj == undefined){

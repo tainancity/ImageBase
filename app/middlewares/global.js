@@ -1,5 +1,6 @@
 var CONFIG = require('../config/global.js')
 var settingModel = require(CONFIG.path.models + '/setting.js')
+const fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var fs = require('fs')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
@@ -43,6 +44,10 @@ exports.global = function(app){
     res.locals.is_current_url = function(search_str, active_class){
       return (req.originalUrl).indexOf(search_str) > -1 ? active_class : ''
     }
+
+    fileCategoryModel.getAll({column: 'level', sort_type: 'ASC'}, function(all_categories){
+      res.locals.all_file_categories = all_categories
+    })
 
     next()
   }

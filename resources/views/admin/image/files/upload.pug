@@ -4,6 +4,7 @@ block append page_title
   title 檔案上傳
 
 block append head_end_tag_sl
+  link(href=asset_path('vendors/plugins/select2/select2.min.css') rel='stylesheet')
   link(href=asset_path('css/admin/image/file_upload.css') rel='stylesheet')
 
 block append content_sl
@@ -25,7 +26,8 @@ block append body_end_others_sl
   //-
     script(src=asset_path('vendors/plugins/sortable/Sortable.js'))
   include ../../../frontend/partials/article_upload_block_js.pug
+  script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
   script.
     $(function(){
-      
+      $('.custom_select').select2();
     });
