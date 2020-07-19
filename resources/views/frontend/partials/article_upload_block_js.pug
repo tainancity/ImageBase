@@ -32,7 +32,13 @@ script.
           </div>
           <div class="info_block">
             <span class="icon_type"><span class="-done">傳輸完成</span><img src="${reader.result}" class="img_preview"></span>
-            <span class="file_text">${file_item.name}</span>
+            
+            <div class="file_text">
+              <span class="file_name">${file_item.name}</span>
+              <div class="tag_block">
+                <input type="checkbox" class="tag_checkbox"><input type="text" class="tag_text" placeholder="標籤(半形逗號做分隔)，左側需打勾">
+              </div>
+            </div>
             <a class="info_success_setting display_none" href="#" target="_blank" title="設定"><i class="fas fa-cog"></i></a>
             <a class="info_success display_none" href="#" target="_blank" title="短網址"><i class="fas fa-link"></i></a>
             <a class="info_remove" href="#" title="移除"><i class="fas fa-times"></i></a>
@@ -52,9 +58,20 @@ script.
     
     if(accepted_ext.includes(file_ext)){
       var data = new FormData();
-      data.append('upload', file_item)
-      data.append('permissions', '2')
-      data.append('category', 1)
+      data.append('upload', file_item);
+      data.append('title', ($(article_upload_block).find(".image_title").val()).trim() );
+      data.append('permissions', $(article_upload_block).find(".image_permission").val()); // 本來是字串2
+      data.append('category', $(article_upload_block).find(".image_category").val()); // 本來是整數1
+      $(article_upload_block).find("ul#file_list").children("li").each(function(){
+        if($(this).attr("data-original-filename") == file_item.name){
+          if( $(this).find("input.tag_checkbox").prop("checked") ){ // 有打勾
+            data.append('tags', ($(this).find("input.tag_text").val()).trim());
+          }else{
+            data.append('tags', ($(article_upload_block).find("input.image_tags").val()).trim());
+          }
+        }
+      });
+      
       
       $.ajax({
         url: "#{config.appenv.domain}/api/v1.0/image?api_key=#{config.appenv.full_api_key}",
@@ -101,7 +118,7 @@ script.
               $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
               $(this).removeAttr("data-original-filename");
             }
-          })
+          });
           
         }
       });
@@ -175,8 +192,8 @@ script.
     $("button.upload_file").on("click", function(){
       if($(this).hasClass("-disabled")){
       }else{
-        loop_files();
         $("button.upload_file").addClass("-disabled");
+        loop_files();
       }
     });
     

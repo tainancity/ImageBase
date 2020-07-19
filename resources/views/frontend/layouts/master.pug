@@ -76,6 +76,9 @@ html(lang='zh-Hant')
           $(upload_block_container).find("ul.pic_list").html("");
           $(upload_block_container).find("button.upload_file").addClass("-disabled");
           $(upload_block_container).find("input.select_file").val("");
+          $(upload_block_container).find("input.image_title").val("");
+          $(upload_block_container).find("input.image_tags").val("");
+          $(upload_block_container).find("select.image_permission").val("2");
           user_prepare_upload_files = [];
           $(this).closest('div.upload_pics_modal').addClass('display_none'); // close modal
         });
