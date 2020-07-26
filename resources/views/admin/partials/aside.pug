@@ -65,6 +65,43 @@ aside.sidebar-container
               i.fas.fa-sign-out-alt
             span 登出
         
+        //- 以下為局處管理者才看得到
+        if auth.user.role_id == 3
+          li
+            div.sidebar-nav-heading 局處管理(只有局處管理者才看得到)
+          if is_maintenance != '1'
+            li(class=is_current_url('/admin/organization/file/', 'active'))
+              a(href='#')
+                span.nav-icon.custom_icon
+                  i.fas.fa-file
+                span.float-right.nav-caret
+                  i.fas.fa-angle-right
+                span 檔案管理
+              ul.sidebar-subnav
+                li(class=is_current_url('/admin/organization/file/list', 'active'))
+                  a(href='/admin/organization/file/list')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-file
+                    span 檔案列表
+                li(class=is_current_url('/admin/organization/file/trash', 'active'))
+                  a(href='/admin/organization/file/trash')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-trash-alt
+                    span 垃圾桶
+            li(class=is_current_url('/admin/organization/short_url/', 'active'))
+              a(href='#')
+                span.nav-icon.custom_icon
+                  i.fas.fa-external-link-alt
+                span.float-right.nav-caret
+                  i.fas.fa-angle-right
+                span 短網址管理
+              ul.sidebar-subnav
+                li(class=is_current_url('/admin/organization/short_url/list', 'active'))
+                  a(href='/admin/organization/short_url/list')
+                    span.nav-icon.custom_icon
+                      i.fas.fa-link
+                    span 短網址列表
+        
         //-
          以下為管理者才看得到
         if auth.user.role_id == 1

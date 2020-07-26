@@ -93,13 +93,27 @@ module.exports = function(app){
     app.post('/item', AdminShortUrlManage.short_url_post(options))
   })
 
+  // 局處管理者
+  app.group('/admin/organization', (app) => {
+    app.use(Auth.is_admin(app))
+
+    // 檔案列表
+    app.get('/file/list', AdminFileManage.file_list(options))
+
+    // 垃圾桶
+    app.get('/file/trash', AdminFileManage.file_list_trash(options))
+
+    // 短網址列表
+    app.get('/short_url/list', AdminShortUrlManage.short_url_list(options))
+  })
+
   // 平台 Admin
   app.group('/admin/management', (app) => {
     app.use(Auth.is_admin(app))
 
     // 檔案列表
     app.get('/file/list', AdminFileManage.file_list(options))
-    
+
     // 首頁輪播列表
     app.get('/file/carousel', AdminFileManage.file_carousel_list(options))
     app.post('/file/carousel_sort_update', AdminFileManage.file_carousel_sort_update(options))

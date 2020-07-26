@@ -30,6 +30,7 @@ block append content_sl
                       th 個人電話
                       th API Key
                       th 指派為平台管理者
+                      th 指派為局處管理者
                   tbody
                     each item, index in members
                       tr
@@ -53,13 +54,18 @@ block append content_sl
                         td
                           if item.role_id == 1
                             if item.pid == 'logintest'
-                              input.admin_check.-disabled(type='checkbox' data-uid=item.u_id checked disabled)
+                              input.admin_check.-disabled(type='checkbox' data-uid=item.u_id data-role-id="1" checked disabled)
                               span.disabled_text 此測試帳號無法變更
                             else
-                              input.admin_check(type='checkbox' data-uid=item.u_id checked)
+                              input.admin_check(type='checkbox' data-role-id="1" data-uid=item.u_id checked)
                           else
-                            input.admin_check(type='checkbox' data-uid=item.u_id)
-
+                            input.admin_check(type='checkbox' data-role-id="1" data-uid=item.u_id)
+                        td
+                          if item.pid == 'logintest'
+                            input.admin_check.-disabled(type='checkbox' data-role-id="3" data-uid=item.u_id disabled)
+                            span.disabled_text 此測試帳號無法變更
+                          else
+                            input.admin_check(type='checkbox' data-role-id="3" data-uid=item.u_id checked=(item.role_id == 3))
               
           
           
@@ -73,11 +79,25 @@ block append body_end_others_sl
     $(function(){
       $("input.admin_check").on('click', function(){
         // console.log($(this).prop("checked"))
-        if($(this).prop("checked")){
-          var role_number = '1';
-        }else{
-          var role_number = '2';
+        var original_status = $(this).prop("checked");
+        $(this).closest("tr").find("input.admin_check").prop("checked", false);
+        $(this).prop("checked", original_status);
+        if( $(this).attr("data-role-id") == "1" ){
+          if($(this).prop("checked")){
+            var role_number = '1';
+          }else{
+            var role_number = '2';
+          }
         }
+        if( $(this).attr("data-role-id") == "3" ){
+          if($(this).prop("checked")){
+            var role_number = '3';
+          }else{
+            var role_number = '2';
+          }
+        }
+        
+        
         $.ajax({
       		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-role?u_id=' + $(this).attr('data-uid') + '&role=' + role_number,
       		type: 'GET',
@@ -93,6 +113,7 @@ block append body_end_others_sl
             location.reload()
       		}
       	});
+        
       });
       
       $("input.api_key_text").on("focus", function(){

@@ -24,7 +24,7 @@ exports.is_not_auth = function(app){
 exports.is_admin = function(app){
   return function(req, res, next) {
     userModel.getOne('u_id', req.session.u_id, function(results){
-      if(results[0].role_id == 1){ // 是 Admin
+      if(results[0].role_id == 1 || results[0].role_id == 3){ // 局處管理者或平台管理者
         next()
       }else{ // Not Admin
         res.redirect('/')

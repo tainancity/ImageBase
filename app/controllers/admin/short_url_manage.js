@@ -37,7 +37,7 @@ var save_data = function(req, res, save_obj){
 exports.short_url_list = function(options) {
   return function(req, res) {
     var show_uploader_and_organ = false
-    if((req.originalUrl).includes('/admin/management/short_url/list')){
+    if( (req.originalUrl).includes('/admin/management/short_url/list') || (req.originalUrl).includes('/admin/organization/short_url/list') ){
       var show_uploader_and_organ = true
     }
 
@@ -45,19 +45,45 @@ exports.short_url_list = function(options) {
 
     if(show_uploader_and_organ){ // 管理者
 
-      userModel.getAll(sort_obj, function(user_results){
-        shortUrlModel.getAll(sort_obj, function(results){
 
-          results.forEach(function(url_item, url_index){
-            user_results.forEach(function(user_item, user_index){
-              if(url_item.user_id == user_item.id){
-                results[url_index].pid = user_item.pid
-              }
+      userModel.getOne('u_id', req.session.u_id, function(the_user_results){
+        if(the_user_results[0].role_id == 1){ // 平台管理者
+          userModel.getAll(sort_obj, function(user_results){
+            shortUrlModel.getAll(sort_obj, function(results){
+
+              results.forEach(function(url_item, url_index){
+                user_results.forEach(function(user_item, user_index){
+                  if(url_item.user_id == user_item.id){
+                    results[url_index].pid = user_item.pid
+                  }
+                })
+
+              })
+              res.render('admin/short_url/list', {short_urls: results, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
             })
-
           })
-          res.render('admin/short_url/list', {short_urls: results, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
-        })
+        }else if(the_user_results[0].role_id == 3){ // 局處管理者
+          userModel.getAll(sort_obj, function(user_results){
+            shortUrlModel.getAll(sort_obj, function(results){
+
+              let show_urls = [];
+              results.forEach(function(url_item, url_index){
+                user_results.forEach(function(user_item, user_index){
+                  if(the_user_results[0].organ_id == user_item.organ_id){
+                    if(url_item.user_id == user_item.id){
+                      results[url_index].pid = user_item.pid
+                      show_urls.push(results[url_index]);
+                    }
+                  }
+                })
+              })
+
+              res.render('admin/short_url/list', {short_urls: show_urls, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+            })
+          })
+        }else{
+
+        }
       })
 
     }else{ // 一般公務帳號

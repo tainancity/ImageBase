@@ -21,7 +21,7 @@ exports.file_list = function(options) {
 
     // csrfToken: req.csrfToken()
     var show_uploader_and_organ = false
-    if((req.originalUrl).includes('/admin/management/file/list')){
+    if( (req.originalUrl).includes('/admin/management/file/list') || (req.originalUrl).includes('/admin/organization/file/list') ){
       var show_uploader_and_organ = true
     }
 
@@ -116,10 +116,34 @@ exports.file_list = function(options) {
                               }
                             })
                           })
-                        }else{ // 管理者
-                          var total_pages = Math.ceil(files.length / items_per_page)
-                          files = files.slice((c_page-1) * items_per_page, c_page * items_per_page);
-                          res.render('admin/image/files/list', {files: files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
+                        }else{ // 平台管理者、局處理者者
+
+                          userModel.getOne('u_id', req.session.u_id, function(user_results){
+                            //console.log("here: " + user_results[0].role_id)
+                            if(user_results[0].role_id == 3){ // 局處管理者
+
+                              let show_files = []
+                              files.forEach(function(each_files_item, each_files_index){
+                                if(each_files_item.organ_id == user_results[0].organ_id){
+                                  //files.splice(each_files_index, 1)
+                                  show_files.push(each_files_item)
+                                }
+                              })
+
+                              var total_pages = Math.ceil(show_files.length / items_per_page)
+                              show_files = show_files.slice((c_page-1) * items_per_page, c_page * items_per_page);
+                              res.render('admin/image/files/list', {files: show_files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
+
+                            }else if(user_results[0].role_id == 1){ // 平台管理者
+                              var total_pages = Math.ceil(files.length / items_per_page)
+                              files = files.slice((c_page-1) * items_per_page, c_page * items_per_page);
+                              res.render('admin/image/files/list', {files: files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, carousels: carousel_arr, csrfToken: req.csrfToken()})
+                            }else{
+
+                            }
+                          })
+
+
                         }
                       }
 
@@ -299,7 +323,7 @@ exports.file_list_trash = function(options) {
   return function(req, res) {
     // csrfToken: req.csrfToken()
     var show_uploader_and_organ = false
-    if(req.originalUrl == '/admin/management/file/trash'){
+    if(req.originalUrl == '/admin/management/file/trash' || req.originalUrl == '/admin/organization/file/trash'){
       var show_uploader_and_organ = true
     }
 
@@ -386,7 +410,30 @@ exports.file_list_trash = function(options) {
                           })
                         })
                       }else{ // 管理者
-                        res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
+
+                        userModel.getOne('u_id', req.session.u_id, function(user_results){
+                          //console.log("here: " + user_results[0].role_id)
+                          if(user_results[0].role_id == 3){ // 局處管理者
+
+                            let show_files = []
+                            files.forEach(function(each_files_item, each_files_index){
+                              if(each_files_item.organ_id == user_results[0].organ_id){
+                                //files.splice(each_files_index, 1)
+                                show_files.push(each_files_item)
+                              }
+                            })
+
+                            res.render('admin/image/files/trash', {files: show_files, show_uploader_and_organ: show_uploader_and_organ})
+
+                          }else if(user_results[0].role_id == 1){ // 平台管理者
+
+                            res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
+                          }else{
+
+                          }
+                        })
+
+
                       }
                     }
 

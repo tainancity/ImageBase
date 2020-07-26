@@ -14,7 +14,7 @@ block append content_sl
           h5.mt-0 檔案列表
           div.cardbox
             div.cardbox-body
-              if show_uploader_and_organ
+              if show_uploader_and_organ && auth.user.role_id == 1
                 p *首頁輪播：直接勾選或取消勾選，會直接更新成功。
               div.table-responsive
                 table.table.custom_table
@@ -37,7 +37,7 @@ block append content_sl
                       th 標籤
                       th 建立時間
                       th 更新時間
-                      if show_uploader_and_organ
+                      if show_uploader_and_organ && auth.user.role_id == 1
                         th 首頁輪播(限公開及圖檔)
                       th
                       
@@ -79,7 +79,7 @@ block append content_sl
                             
                         td= time.get_time_from_timestamp('zh-tw', item.created_at)
                         td= time.get_time_from_timestamp('zh-tw', item.updated_at)
-                        if show_uploader_and_organ
+                        if show_uploader_and_organ && auth.user.role_id == 1
                           td
                             if item.permissions == '1'
                               if carousels.includes(item.id)
