@@ -54,7 +54,7 @@ block append content_sl
                         td
                           if item.role_id == 1 || item.role_id == 3
                             if item.pid == 'logintest'
-                              input.admin_check.-disabled(type='checkbox' data-uid=item.u_id data-role-id="1" checked disabled)
+                              input.admin_check.-disabled(type='checkbox' data-uid=item.u_id data-role-id="1" checked=(item.role_id == 1) disabled)
                               span.disabled_text 此測試帳號無法變更
                             else
                               input.admin_check(type='checkbox' data-role-id="1" data-uid=item.u_id checked)
