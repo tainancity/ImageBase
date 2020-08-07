@@ -15,11 +15,19 @@ block append content_sl
           div.cardbox
             div.cardbox-body
               
-              p 欲移轉的圖片，目前所屬帳號：
-                input.input_account(type='text')
+              div.transfer_from
+                span.-text 欲移轉的圖片，目前所屬帳號：
+                input.input_account(type='text' placeholder="輸入帳號")
                 button.account_check(type="button") 查找
                 span#error_msg.-not-found
               
+              div.transfer_to.-transparent
+                span.-text 移轉至(輸入帳號)：
+                input.to_account(type='text' placeholder="輸入帳號")
+                button.account_transfer(type="button") 移轉
+                span#error_msg_to.-not-found
+              
+              div.preview 以下圖片將移轉：
               div.table-responsive
                 table#data_table.table.custom_table
                   thead
@@ -37,6 +45,7 @@ block append content_sl
   
 block append body_end_others_sl
   script.
+    var transfer_from = '';
     $(function(){
       $("button.account_check").on("click", function(){
         
@@ -63,8 +72,12 @@ block append body_end_others_sl
             },
             success: function(r_data){
               //console.log(r_data);
+              $("div.transfer_to").addClass("-transparent");
+              $("#error_msg_to").html("");
+              $("input.to_account").val("");
+              
               if(r_data.account_check == 1){
-                
+                transfer_from = pid;
                 $("#error_msg").html("");
                 
                 var html = "";
@@ -85,7 +98,7 @@ block append body_end_others_sl
                   html += "<td><button type='button'>檢視</button></td>";
                 });
                 $("#data_table").find("tbody").html(html);
-                
+                $("div.transfer_to").removeClass("-transparent");
               }else if(r_data.account_check == 2){
                 $("#error_msg").html("請輸入您局處內的帳號！");
               }else if(r_data.account_check == 3){
@@ -100,6 +113,54 @@ block append body_end_others_sl
         }
         
         
+        
+      });
+      
+      $("button.account_transfer").on("click", function(){
+        
+        let to_account = ($("input.to_account").val()).trim();
+        
+        if(to_account == ""){
+          $("#error_msg_to").html("請輸入帳號！");
+        }else{
+          if(transfer_from == to_account){
+            $("#error_msg_to").html("不能轉移相同帳號！");
+          }else{
+            alert("ajax 待開發");
+            
+            /*
+            $.ajax({
+              url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files/' + to_account,
+              type: 'GET',
+              //data: data,
+              dataType: 'json',
+              statusCode: {
+                200: function (response) {
+                  //console.log(response);
+                }
+              },
+              success: function(r_data){
+                //console.log(r_data);
+                $("div.transfer_to").addClass("-transparent");
+                $("#error_msg_to").html("");
+                $("input.to_account").val("");
+                
+                if(r_data.account_check == 1){
+                  
+                }else if(r_data.account_check == 2){
+                  $("#error_msg").html("請輸入您局處內的帳號！");
+                }else if(r_data.account_check == 3){
+                  $("#error_msg").html("該帳號沒有圖片！");
+                }else{
+                  $("#error_msg").html("找不到這個帳號！");
+                }
+                
+              }
+            });
+            */
+            
+          }
+        }
         
       });
       

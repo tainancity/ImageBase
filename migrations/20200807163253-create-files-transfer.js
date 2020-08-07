@@ -17,6 +17,15 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('files_transfer', {
     id: { type: 'int', primaryKey: true, autoIncrement: true, unsigned: true, length: 11 },
+    file_id: { type: 'int', unsigned: true, notNull: true, foreignKey: {
+      name: 'fk_file_id_in_files_transfer',
+      table: 'files',
+      rules: {
+        onDelete: 'RESTRICT',
+        onUpdate: 'RESTRICT'
+      },
+      mapping: 'id'
+    }},
     user_id_from: { type: 'int', unsigned: true, notNull: true, foreignKey: {
       name: 'fk_user_id_from_in_files_transfer',
       table: 'users',

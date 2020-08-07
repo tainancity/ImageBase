@@ -1,4 +1,4 @@
-input.input_account{
+input.input_account, input.to_account{
   border:1px solid rgb(207, 207, 207);
   display: inline-block;
   padding: 6px 8px 5px;
@@ -6,7 +6,7 @@ input.input_account{
   width: 300px;
   outline:none;
 }
-button.account_check{
+button.account_check, button.account_transfer{
   display: inline-block;
   margin-left: 5px;
   padding: 6px 20px 5px;
@@ -44,4 +44,25 @@ img.w_32{
       }
     }
   }
+}
+span.-text{
+  display: inline-block;
+  width: 200px;
+  text-align: right;
+}
+div.transfer_to{
+  margin: 10px 0;
+  opacity: 1;
+  transition: opacity 1s;
+  input.to_account{
+    background-color: hsl(185, 75%, 87%);
+  }
+  &.-transparent{
+    opacity: 0;
+    text-indent: -999999999px;
+  }
+}
+div.preview{
+  margin-top: 50px;
+  margin-bottom: 5px;
 }
