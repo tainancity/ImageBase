@@ -103,6 +103,9 @@ module.exports = function(app){
     // 垃圾桶
     app.get('/file/trash', AdminFileManage.file_list_trash(options))
 
+    // 權限移轉
+    app.get('/file/transfer', AdminFileManage.file_transfer(options))
+
     // 短網址列表
     app.get('/short_url/list', AdminShortUrlManage.short_url_list(options))
   })
@@ -122,6 +125,9 @@ module.exports = function(app){
 
     // 垃圾桶
     app.get('/file/trash', AdminFileManage.file_list_trash(options))
+
+    // 權限移轉
+    app.get('/file/transfer', AdminFileManage.file_transfer(options))
 
     // 所有公務帳號
     app.get('/all_members', AdminAccount.all_members(options))

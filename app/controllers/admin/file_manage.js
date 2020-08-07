@@ -454,6 +454,15 @@ exports.file_list_trash = function(options) {
   }
 }
 
+
+// 權限移轉
+exports.file_transfer = function(options) {
+  return function(req, res) {
+    res.render('admin/image/files/transfer', {csrfToken: req.csrfToken()})
+  }
+}
+
+
 // 送出更新的資料：排序更新
 exports.file_carousel_sort_update = function(options){
   return function(req, res){

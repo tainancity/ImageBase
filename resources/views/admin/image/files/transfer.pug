@@ -1,0 +1,106 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案管理 - 權限移轉
+
+block append head_end_tag_sl
+  link(href=asset_path('css/admin/image/file_transfer.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          h5.mt-0 權限移轉
+          div.cardbox
+            div.cardbox-body
+              
+              p 欲移轉的圖片，目前所屬帳號：
+                input.input_account(type='text')
+                button.account_check(type="button") 查找
+                span#error_msg.-not-found
+              
+              div.table-responsive
+                table#data_table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 檔案
+                      th 短網址
+                      th 轉移歷程
+                  tbody
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script.
+    $(function(){
+      $("button.account_check").on("click", function(){
+        
+        let pid = ($("input.input_account").val()).trim();
+        
+        if(pid == ""){
+          $("#error_msg").html("請輸入帳號！");
+        }else{
+          $("#data_table").find("tbody").html("");
+          //if(pid == "#{auth.user.pid}"){
+            //$("#error_msg").html("不能轉移給自己！");
+          //}else{
+          //}
+          
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files/' + pid,
+            type: 'GET',
+            //data: data,
+            dataType: 'json',
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              //console.log(r_data);
+              if(r_data.account_check == 1){
+                
+                $("#error_msg").html("");
+                
+                var html = "";
+                $.each(r_data.files, function( index, item ) {
+                  //console.log(item);
+                  html += "<tr>";
+                  html += "<td>" + (index + 1) + "</td>";
+                  
+                  html += "<td>";
+                  $.each(JSON.parse(item.file_data), function(j, file_item){
+                    if(file_item.width == 320){
+                      html += "<a href='#{config.appenv.domain}/" + item.u_id + "' target='_blank'><img class='w_32' src='#{config.appenv.storage.domain}" + file_item.url + "'></a>";
+                    }
+                  });
+                  html += "</td>";
+                      
+                  html += "<td><a href='#{config.appenv.domain}/" + item.u_id + "' target='_blank'>" + "#{config.appenv.domain}/" + item.u_id + "</a></td>";
+                  html += "<td><button type='button'>檢視</button></td>";
+                });
+                $("#data_table").find("tbody").html(html);
+                
+              }else if(r_data.account_check == 2){
+                $("#error_msg").html("請輸入您局處內的帳號！");
+              }else if(r_data.account_check == 3){
+                $("#error_msg").html("該帳號沒有圖片！");
+              }else{
+                $("#error_msg").html("找不到這個帳號！");
+              }
+              
+            }
+          });
+          
+        }
+        
+        
+        
+      });
+      
+    });

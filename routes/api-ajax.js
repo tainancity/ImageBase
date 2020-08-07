@@ -193,6 +193,64 @@ module.exports = function(app){
 
     })
 
+    // 圖片權限移轉
+    app.get('/transfer-files/:account', function(req, res){
+
+      userModel.getOne('u_id', req.session.u_id, function(login_user){
+
+        if(login_user[0].role_id == 1){ // 平台管理者
+          userModel.getOne('pid', req.params.account, function(user_results){
+
+            if(user_results.length > 0){
+
+              fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results[0].id }, function(files){
+                //console.log(files)
+                if(files.length > 0){
+                  res.json({account_check: 1, files: files}) // 允許
+                }else{
+                  res.json({account_check: 3}) // 該帳號沒有圖片
+                }
+              })
+
+            }else{
+              res.json({account_check: 0}) // 沒有這個帳號
+            }
+
+          })
+        }else if(login_user[0].role_id == 3){ // 局處管理者
+
+          userModel.getOne('pid', req.params.account, function(user_results){
+
+            if(user_results.length > 0){
+              if(user_results[0].organ_id == login_user[0].organ_id){
+
+                fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results[0].id }, function(files){
+                  //console.log(files)
+                  if(files.length > 0){
+                    res.json({account_check: 1, files: files}) // 允許
+                  }else{
+                    res.json({account_check: 3}) // 該帳號沒有圖片
+                  }
+                })
+                
+              }else{
+                res.json({account_check: 2}) // 表示組織不同
+              }
+
+            }else{
+              res.json({account_check: 0}) // 沒有這個帳號
+            }
+
+
+          })
+
+        }else{}
+      })
+
+      //res.json({delete_result: 0})
+    })
+
+
   })
 
 }
