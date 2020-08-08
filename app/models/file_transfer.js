@@ -4,8 +4,8 @@ var baseModel = require(CONFIG.path.models + '/base.js')
 const table_name = 'files_transfer'
 const table_columns = ['file_id', 'user_id_from', 'user_id_to']
 
-exports.save = function(insert_obj, has_time, cb) {
-  baseModel.save(table_name, table_columns, insert_obj, has_time, cb)
+exports.save_with_created_at = function(insert_obj, has_time, cb) {
+  baseModel.save_with_created_at(table_name, table_columns, insert_obj, has_time, cb)
 }
 
 /*
@@ -41,7 +41,6 @@ exports.getAll2Where = function(sort_obj, where_obj1, where_obj2, cb) {
  * sort_obj = { column: 'created_at', sort_type: 'DESC' }
  *
  */
-/*
 exports.getAll = function(sort_obj, cb) {
   baseModel.getAll(table_name, sort_obj, cb)
 }
@@ -50,6 +49,7 @@ exports.deleteWhere = function(u_id_col, u_id, cb){
   baseModel.deleteWhere(table_name, u_id_col, u_id, cb)
 }
 
+/*
 exports.delete2Where = function(u_id_col, u_id, u_id_col_2, u_id_2, cb) {
   baseModel.delete2Where(table_name, u_id_col, u_id, u_id_col_2, u_id_2, cb)
 }

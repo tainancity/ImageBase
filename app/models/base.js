@@ -25,6 +25,23 @@ exports.save = function(table_name, table_columns, insert_data, has_time, cb) {
   //console.log(query.sql)
 }
 
+exports.save_with_created_at = function(table_name, table_columns, insert_data, has_time, cb) {
+  // save only specific columns in table
+  var insert_obj = {}
+  for (var i = 0; i < table_columns.length; i++) {
+    insert_obj[table_columns[i]] = insert_data[table_columns[i]]
+  }
+  if(has_time){
+    insert_obj.created_at = timestamp_now()
+  }
+
+  conn.query('INSERT INTO ' + table_name + ' SET ?', insert_obj, function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}
+
 // var update_obj = { column_name: 'column_name_value' }
 // var where_obj = { column_name: 'column_name_value' }
 exports.update = function(table_name, update_obj, where_obj, has_time, cb) {

@@ -42,6 +42,19 @@ img.w_32{
       th:nth-child(3){
         width: 300px;
       }
+      th:nth-child(4){
+        width: 90px;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+    }
+  }
+  tbody{
+    tr{
+      td:nth-child(4){
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
     }
   }
 }
@@ -65,4 +78,25 @@ div.transfer_to{
 div.preview{
   margin-top: 50px;
   margin-bottom: 5px;
+}
+
+ul.transfer_list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+label.check_all{
+  margin: 0;
+  display: inline-block;
+  cursor: pointer;
+}
+input#check_all{
+  margin-right: 3px;
+  position: relative;
+  cursor: pointer;
+  top: 2px;
+}
+input.file_item{
+  cursor: pointer;
 }

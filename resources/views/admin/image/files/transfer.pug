@@ -27,7 +27,7 @@ block append content_sl
                 button.account_transfer(type="button") 移轉
                 span#error_msg_to.-not-found
               
-              div.preview 以下圖片將移轉：
+              div.preview 以下圖片有勾選的將進行移轉：
               div.table-responsive
                 table#data_table.table.custom_table
                   thead
@@ -35,7 +35,10 @@ block append content_sl
                       th #
                       th 檔案
                       th 短網址
-                      th 轉移歷程
+                      th
+                        input#check_all(type="checkbox" checked)
+                        label.check_all(for="check_all") 全選
+                      th 帳號轉移歷程
                   tbody
           
           //-
@@ -45,6 +48,13 @@ block append content_sl
   
 block append body_end_others_sl
   script.
+    function str_pad(my_num, digits){
+      var my_num_str = my_num.toString();
+      if(my_num_str.length < digits){
+        return "0" + my_num_str;
+      }
+      return my_num_str;
+    }
     var transfer_from = '';
     $(function(){
       $("button.account_check").on("click", function(){
@@ -83,19 +93,41 @@ block append body_end_others_sl
                 var html = "";
                 $.each(r_data.files, function( index, item ) {
                   //console.log(item);
-                  html += "<tr>";
-                  html += "<td>" + (index + 1) + "</td>";
-                  
-                  html += "<td>";
+                  html += `
+                    <tr>
+                      <td>${index + 1}</td>
+                      <td>
+                  `;
+                      
                   $.each(JSON.parse(item.file_data), function(j, file_item){
                     if(file_item.width == 320){
-                      html += "<a href='#{config.appenv.domain}/" + item.u_id + "' target='_blank'><img class='w_32' src='#{config.appenv.storage.domain}" + file_item.url + "'></a>";
+                      html += `<a href="#{config.appenv.domain}/${item.u_id}" target="_blank"><img class="w_32" src="#{config.appenv.storage.domain}${file_item.url}"></a>`;
                     }
                   });
-                  html += "</td>";
                       
-                  html += "<td><a href='#{config.appenv.domain}/" + item.u_id + "' target='_blank'>" + "#{config.appenv.domain}/" + item.u_id + "</a></td>";
-                  html += "<td><button type='button'>檢視</button></td>";
+                  html += `
+                      </td>
+                      
+                      <td><a href="#{config.appenv.domain}/${item.u_id}" target="_blank">#{config.appenv.domain}/${item.u_id}</a></td>
+                      <td><input class="file_item" type="checkbox" data-file-id="${item.id}" checked></td>
+                      <td>
+                  `;
+                  
+                  if(item.transfer_log.length > 0){
+                    html += `<ul class="transfer_list">`;
+                    $.each(item.transfer_log, function(transfer_index, transfer_item){
+                      let d1 = new Date(transfer_item.created_at * 1000);
+                      html += ("<li>於 " + d1.getFullYear() + "/" + str_pad((d1.getMonth() + 1), 2) + "/" + str_pad(d1.getDate(), 2) + " " + str_pad(d1.getHours(), 2) + ":" + str_pad(d1.getMinutes(), 2) + ":" + str_pad(d1.getSeconds(), 2) + "，帳號從 " + transfer_item.user_from + " 轉移至 " + transfer_item.user_to + "。</li>");
+                    });
+                    html += `</ul>`;
+                  }
+                  
+                  html += `
+                      </td>
+                      
+                    </tr>
+                  `;
+                  
                 });
                 $("#data_table").find("tbody").html(html);
                 $("div.transfer_to").removeClass("-transparent");
@@ -126,42 +158,71 @@ block append body_end_others_sl
           if(transfer_from == to_account){
             $("#error_msg_to").html("不能轉移相同帳號！");
           }else{
-            alert("ajax 待開發");
             
-            /*
-            $.ajax({
-              url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files/' + to_account,
-              type: 'GET',
-              //data: data,
-              dataType: 'json',
-              statusCode: {
-                200: function (response) {
-                  //console.log(response);
-                }
-              },
-              success: function(r_data){
-                //console.log(r_data);
-                $("div.transfer_to").addClass("-transparent");
-                $("#error_msg_to").html("");
-                $("input.to_account").val("");
+            var r = confirm("確認移轉？");
+            if (r == true) {
+              
+              if($("input.file_item:checked").length > 0){
+                let file_items = [];
                 
-                if(r_data.account_check == 1){
-                  
-                }else if(r_data.account_check == 2){
-                  $("#error_msg").html("請輸入您局處內的帳號！");
-                }else if(r_data.account_check == 3){
-                  $("#error_msg").html("該帳號沒有圖片！");
-                }else{
-                  $("#error_msg").html("找不到這個帳號！");
-                }
+                $("input.file_item:checked").each(function(){
+                  file_items.push(parseInt($(this).attr("data-file-id")))
+                });
                 
+                
+                $.ajax({
+                  url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files-from/' + transfer_from + '/to/' + to_account,
+                  type: 'PUT',
+                  data: {transfer_files: file_items},
+                  dataType: 'json',
+                  headers: {
+                      "X-CSRF-Token": '#{csrfToken}'
+                  },
+                  statusCode: {
+                    200: function (response) {
+                      //console.log(response);
+                    }
+                  },
+                  success: function(r_data){
+                    //console.log(r_data);
+                    
+                    if(r_data.account_check == 1){
+                      alert("移轉完成。(按下確認，頁面重新整理。)");
+                      location.reload();
+                    }else if(r_data.account_check == 2){
+                      $("#error_msg_to").html("請輸入您局處內的帳號！");
+                    }else{
+                      $("#error_msg_to").html("找不到這個帳號！");
+                    }
+                    
+                  }
+                });
+                
+              }else{
+                alert("請勾選欲移轉的圖片！");
               }
-            });
-            */
+              
+            }
+            
             
           }
         }
         
       });
+      
+      
+      
+      $("#check_all").on("click", function(){
+        $("input.file_item").prop("checked", $(this).prop("checked"));
+      });
+
+      $(document).on("click", "input.file_item", function(){
+        if( $("input.file_item:checked").length == $("input.file_item").length ){
+           $("#check_all").prop("checked", true);
+        }else{
+          $("#check_all").prop("checked", false);
+        }
+      });
+      
       
     });

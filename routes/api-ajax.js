@@ -5,6 +5,7 @@ var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var fileModel = require(CONFIG.path.models + '/file.js')
 var shortUrlModel = require(CONFIG.path.models + '/short_urls.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
+var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
 
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 
@@ -193,7 +194,7 @@ module.exports = function(app){
 
     })
 
-    // 圖片權限移轉
+    // 圖片權限移轉：列表
     app.get('/transfer-files/:account', function(req, res){
 
       userModel.getOne('u_id', req.session.u_id, function(login_user){
@@ -206,7 +207,36 @@ module.exports = function(app){
               fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results[0].id }, function(files){
                 //console.log(files)
                 if(files.length > 0){
-                  res.json({account_check: 1, files: files}) // 允許
+
+                  userModel.getAll({ column: 'created_at', sort_type: 'DESC' }, function(users_result){
+                    fileTransferModel.getAll({ column: 'created_at', sort_type: 'DESC' }, function(files_transfer_result){
+                      //console.log(files_transfer_result)
+                      files.forEach(function(file_item, file_index){
+                        files[file_index].transfer_log = []
+                        files_transfer_result.forEach(function(transfer_item, transfer_index){
+
+                          let transfer_item_log = {
+                            created_at: transfer_item.created_at
+                          }
+                          users_result.forEach(function(user_item, user_index){
+                            if(transfer_item.user_id_from == user_item.id){
+                              transfer_item_log.user_from = user_item.pid
+                            }
+                            if(transfer_item.user_id_to == user_item.id){
+                              transfer_item_log.user_to = user_item.pid
+                            }
+                          })
+                          if(file_item.id == transfer_item.file_id){
+                            files[file_index].transfer_log.push(transfer_item_log)
+                          }
+                        })
+                      })
+                      //console.log(files)
+                      res.json({account_check: 1, files: files}) // 允許
+                    })
+                  })
+
+
                 }else{
                   res.json({account_check: 3}) // 該帳號沒有圖片
                 }
@@ -227,12 +257,154 @@ module.exports = function(app){
                 fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results[0].id }, function(files){
                   //console.log(files)
                   if(files.length > 0){
-                    res.json({account_check: 1, files: files}) // 允許
+
+                    userModel.getAll({ column: 'created_at', sort_type: 'DESC' }, function(users_result){
+                      fileTransferModel.getAll({ column: 'created_at', sort_type: 'DESC' }, function(files_transfer_result){
+                        //console.log(files_transfer_result)
+                        files.forEach(function(file_item, file_index){
+                          files[file_index].transfer_log = []
+                          files_transfer_result.forEach(function(transfer_item, transfer_index){
+
+                            let transfer_item_log = {
+                              created_at: transfer_item.created_at
+                            }
+                            users_result.forEach(function(user_item, user_index){
+                              if(transfer_item.user_id_from == user_item.id){
+                                transfer_item_log.user_from = user_item.pid
+                              }
+                              if(transfer_item.user_id_to == user_item.id){
+                                transfer_item_log.user_to = user_item.pid
+                              }
+                            })
+                            if(file_item.id == transfer_item.file_id){
+                              files[file_index].transfer_log.push(transfer_item_log)
+                            }
+                          })
+                        })
+                        //console.log(files)
+                        res.json({account_check: 1, files: files}) // 允許
+                      })
+                    })
+
                   }else{
                     res.json({account_check: 3}) // 該帳號沒有圖片
                   }
                 })
-                
+
+              }else{
+                res.json({account_check: 2}) // 表示組織不同
+              }
+
+            }else{
+              res.json({account_check: 0}) // 沒有這個帳號
+            }
+
+
+          })
+
+        }else{}
+      })
+
+      //res.json({delete_result: 0})
+    })
+
+    // 圖片權限移轉：開始進行移轉
+    app.put('/transfer-files-from/:account_from/to/:account_to', function(req, res){
+      //console.log(req.body.transfer_files)
+      //res.json({account_check: 0}) // 沒有這個帳號
+
+      userModel.getOne('u_id', req.session.u_id, function(login_user){
+
+        if(login_user[0].role_id == 1){ // 平台管理者
+          userModel.getOne('pid', req.params.account_to, function(user_results){
+
+            if(user_results.length > 0){
+
+              // 進行移轉
+              userModel.getOne('pid', req.params.account_from, function(user_results_from){
+                fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results_from[0].id }, function(files){
+                  //console.log(files)
+                  // fileTransferModel
+                  files.forEach(function(file_item, file_index){
+
+                    if(req.body.transfer_files.includes( (file_item.id).toString() )){
+
+                      fileTransferModel.save_with_created_at({file_id: file_item.id, user_id_from: user_results_from[0].id, user_id_to: user_results[0].id}, true, function(save_result){
+
+                        let update_obj = {'user_id': user_results[0].id, 'organ_id': user_results[0].organ_id}
+                        let where_obj = {'id': file_item.id}
+                        fileModel.update(update_obj, where_obj, true, function(result){
+                          //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
+
+                          if(files.length == file_index + 1){
+                            redisFileDataModel.import_to_redis()
+                            res.json({account_check: 1})
+                          }
+                        });
+
+
+                      })
+                    }else{
+                      if(files.length == file_index + 1){
+                        redisFileDataModel.import_to_redis()
+                        res.json({account_check: 1})
+                      }
+                    }
+
+                  })
+
+                })
+              })
+
+
+            }else{
+              res.json({account_check: 0}) // 沒有這個帳號
+            }
+
+          })
+        }else if(login_user[0].role_id == 3){ // 局處管理者
+
+          userModel.getOne('pid', req.params.account_to, function(user_results){
+
+            if(user_results.length > 0){
+              if(user_results[0].organ_id == login_user[0].organ_id){
+
+                // 開始進行移轉
+                userModel.getOne('pid', req.params.account_from, function(user_results_from){
+                  fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results_from[0].id }, function(files){
+                    //console.log(files)
+                    // fileTransferModel
+                    files.forEach(function(file_item, file_index){
+
+                      if(req.body.transfer_files.includes( (file_item.id).toString() )){
+
+                        fileTransferModel.save_with_created_at({file_id: file_item.id, user_id_from: user_results_from[0].id, user_id_to: user_results[0].id}, true, function(save_result){
+
+                          let update_obj = {'user_id': user_results[0].id, 'organ_id': user_results[0].organ_id}
+                          let where_obj = {'id': file_item.id}
+                          fileModel.update(update_obj, where_obj, true, function(result){
+                            //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
+
+                            if(files.length == file_index + 1){
+                              redisFileDataModel.import_to_redis()
+                              res.json({account_check: 1})
+                            }
+                          });
+
+
+                        })
+                      }else{
+                        if(files.length == file_index + 1){
+                          redisFileDataModel.import_to_redis()
+                          res.json({account_check: 1})
+                        }
+                      }
+
+                    })
+
+                  })
+                })
+
               }else{
                 res.json({account_check: 2}) // 表示組織不同
               }

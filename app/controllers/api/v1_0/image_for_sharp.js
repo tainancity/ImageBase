@@ -15,6 +15,7 @@ var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 var fileCarouselModel = require(CONFIG.path.models + '/file_carousel.js')
 var organizationModel = require(CONFIG.path.models + '/organization.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
+var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
 
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 
@@ -1026,57 +1027,27 @@ exports.image_hard_delete = function(options){
                   // step 3: 刪除 資料表 file_carousel
                   fileCarouselModel.deleteWhere('file_id', files[0].id, function(del_like_result){
 
-                    // step 4: 刪除 實際檔案
-                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
+                    // step 4: 刪除 資料表 files_transfer
+                    fileTransferModel.deleteWhere('file_id', files[0].id, function(del_transfer_result){
 
-                      JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
+                      // step 5: 刪除 實際檔案
+                      if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
 
-                        // 取得欲刪除的檔案路徑
-                        var file_path_split = files[0].file_path.split('/')
-                        file_path_split.splice(0, 1)
-                        var dir_path = file_path_split[0].split('_')
-                        file_path_split.splice(0, 1)
-                        var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
+                        JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
 
-                        var will_del_file_name = file_item.url.split('/').pop()  // 檔名
+                          // 取得欲刪除的檔案路徑
+                          var file_path_split = files[0].file_path.split('/')
+                          file_path_split.splice(0, 1)
+                          var dir_path = file_path_split[0].split('_')
+                          file_path_split.splice(0, 1)
+                          var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
 
-                        var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
-                        if (fs.existsSync(delete_file_path)) {
-                          fs.unlinkSync(delete_file_path)
-                        }
-                        if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
-                          // step 5: 刪除 資料表 files
-                          fileModel.deleteWhere('id', files[0].id, function(){
-                            redisFileDataModel.import_to_redis()
-                            return res.status(200).json({code: 200, msg:'刪除成功'})
-                          })
-                        }
+                          var will_del_file_name = file_item.url.split('/').pop()  // 檔名
 
-                      })
-
-                    }else{ // 非 local 端，刪除遠端路徑
-                      JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
-
-                        // 取得欲刪除的檔案路徑
-                        var file_path_split = files[0].file_path.split('/')
-                        file_path_split.splice(0, 1)
-                        var dir_path = file_path_split[0].split('_')
-                        file_path_split.splice(0, 1)
-                        var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
-
-                        var will_del_file_name = file_item.url.split('/').pop()  // 檔名
-
-                        var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
-
-                        //client_scp2: here
-                        client_ssh_sftp.connect({
-                            host: CONFIG.appenv.storage.scp.ip,
-                            port: 22,
-                            username: CONFIG.appenv.storage.scp.user,
-                            password: CONFIG.appenv.storage.scp.password
-                        }).then(() => {
-                          //console.log(delete_file_path)
-                          client_ssh_sftp.delete(delete_file_path);
+                          var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+                          if (fs.existsSync(delete_file_path)) {
+                            fs.unlinkSync(delete_file_path)
+                          }
                           if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
@@ -1084,14 +1055,49 @@ exports.image_hard_delete = function(options){
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
                           }
-                        }).catch((err) => {
-                          console.log(err, 'catch error');
+
                         })
 
+                      }else{ // 非 local 端，刪除遠端路徑
+                        JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
+
+                          // 取得欲刪除的檔案路徑
+                          var file_path_split = files[0].file_path.split('/')
+                          file_path_split.splice(0, 1)
+                          var dir_path = file_path_split[0].split('_')
+                          file_path_split.splice(0, 1)
+                          var unlink_path = dir_path.join('/') + '/' + file_path_split.join('/')
+
+                          var will_del_file_name = file_item.url.split('/').pop()  // 檔名
+
+                          var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+
+                          //client_scp2: here
+                          client_ssh_sftp.connect({
+                              host: CONFIG.appenv.storage.scp.ip,
+                              port: 22,
+                              username: CONFIG.appenv.storage.scp.user,
+                              password: CONFIG.appenv.storage.scp.password
+                          }).then(() => {
+                            //console.log(delete_file_path)
+                            client_ssh_sftp.delete(delete_file_path);
+                            if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
+                              // step 5: 刪除 資料表 files
+                              fileModel.deleteWhere('id', files[0].id, function(){
+                                redisFileDataModel.import_to_redis()
+                                return res.status(200).json({code: 200, msg:'刪除成功'})
+                              })
+                            }
+                          }).catch((err) => {
+                            console.log(err, 'catch error');
+                          })
 
 
-                      })
-                    }
+
+                        })
+                      }
+
+                    })
 
 
                   })
