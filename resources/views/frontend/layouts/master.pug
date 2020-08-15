@@ -34,7 +34,7 @@ html(lang='zh-Hant')
     //-
       script(src=asset_path('js/upload_file.js'))
     include ../partials/article_upload_block_js.pug
-    block body_end_others
+    
     script.
       var check_like = function(){
         $.ajax({
@@ -118,3 +118,4 @@ html(lang='zh-Hant')
           $('div.mobile_nav').slideUp();
         }
       });
+    block body_end_others
