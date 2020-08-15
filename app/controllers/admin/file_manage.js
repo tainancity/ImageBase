@@ -481,3 +481,18 @@ exports.file_carousel_sort_update = function(options){
     })
   }
 }
+
+// 檔案下載
+exports.file_download = function(options) {
+  return function(req, res) {
+    organizationModel.getAll({column: 'id', sort_type: 'ASC'}, function(all_organs){
+
+      res.render('admin/image/files/download', {
+        organs: all_organs,
+        csrfToken: req.csrfToken()
+      })
+      
+    })
+
+  }
+}

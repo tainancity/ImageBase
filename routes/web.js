@@ -79,6 +79,9 @@ module.exports = function(app){
 
     // 短網址
     app.get('/trash', AdminFileManage.file_list_trash(options))
+
+    // 檔案下載
+    app.get('/download', AdminFileManage.file_download(options))
   })
 
   // 公務帳號上傳的短網址管理

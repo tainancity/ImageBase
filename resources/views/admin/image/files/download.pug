@@ -1,0 +1,197 @@
+extends ../../layouts/admin
+
+block append page_title
+  title 檔案管理 - 下載
+
+block append head_end_tag_sl
+  link(href=asset_path('vendors/plugins/select2/select2.min.css') rel='stylesheet')
+  link(href=asset_path('css/admin/image/file_download.css') rel='stylesheet')
+
+block append content_sl
+  section.section-container
+    .container-fluid
+      .row
+        .col-xl-12
+          p.mt-0 圖片下載
+          div.cardbox
+            div.cardbox-body
+              h4.title4.-first= "下載範圍"
+              
+              div.download_parent
+                if auth.user.role_id == 1
+                  div.download_option
+                    input.check(type="radio" name="download_scope" id="download_all")
+                    label.check_label(for="download_all") 全部
+                if auth.user.role_id == 1 || auth.user.role_id == 3
+                  div.download_option
+                    input.check(type="radio" name="download_scope" id="organ_item")
+                    label.check_label(for="organ_item") 局處
+                    select.select_option.custom_select(name='organ_id')
+                      option(value='0') (無)
+                      each item, index in organs
+                        option(value=item.organ_id)= item.organ_name
+                
+                div.download_option
+                  input.check(type="radio" name="download_scope" id="account_item" checked)
+                  label.check_label(for="account_item") 帳號
+                  input.account_text(type="text" placeholder="輸入帳號")
+              
+              h4.title4= "權限篩選"
+              div.download_parent
+                div.download_option
+                  input.check(type="checkbox" id="public_item" value="1" checked)
+                  label.check_label(for="public_item") 公開
+                
+                div.download_option
+                  input.check(type="checkbox" id="private_item" value="2" checked)
+                  label.check_label(for="private_item") 隱藏
+                
+                div.download_option
+                  input.check(type="checkbox" id="share_item" value="3" checked)
+                  label.check_label(for="share_item") 共用
+                
+              button.filter_images.btn.btn-secondary(type="button") 篩選
+              
+              div.preview 以下圖片有勾選的將進行移轉：
+              div.table-responsive
+                table#data_table.table.custom_table
+                  thead
+                    tr
+                      th #
+                      th 檔案
+                      th 短網址
+                      th
+                        input#check_all(type="checkbox" checked)
+                        label.check_all(for="check_all") 全選
+                  tbody
+          
+          //-
+            p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
+            p.mb-4= i18n('webcloud_account.account_updated_at') + time.get_time_from_timestamp(CurrentLang, auth.user.updated_at)
+
+  
+block append body_end_others_sl
+  script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
+  script.
+    /*function str_pad(my_num, digits){
+      var my_num_str = my_num.toString();
+      if(my_num_str.length < digits){
+        return "0" + my_num_str;
+      }
+      return my_num_str;
+    }
+    var transfer_from = '';
+    */
+    $(function(){
+      $('.custom_select').select2();
+      /*
+      $("button.account_check").on("click", function(){
+        
+        let pid = ($("input.input_account").val()).trim();
+        
+        if(pid == ""){
+          $("#error_msg").html("請輸入帳號！");
+        }else{
+          $("#data_table").find("tbody").html("");
+          //if(pid == "#{auth.user.pid}"){
+            //$("#error_msg").html("不能轉移給自己！");
+          //}else{
+          //}
+          
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files/' + pid,
+            type: 'GET',
+            //data: data,
+            dataType: 'json',
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              //console.log(r_data);
+              $("div.transfer_to").addClass("-transparent");
+              $("#error_msg_to").html("");
+              $("input.to_account").val("");
+              
+              if(r_data.account_check == 1){
+                transfer_from = pid;
+                $("#error_msg").html("");
+                
+                var html = "";
+                $.each(r_data.files, function( index, item ) {
+                  //console.log(item);
+                  html += `
+                    <tr>
+                      <td>${index + 1}</td>
+                      <td>
+                  `;
+                      
+                  $.each(JSON.parse(item.file_data), function(j, file_item){
+                    if(file_item.width == 320){
+                      html += `<a href="#{config.appenv.domain}/${item.u_id}" target="_blank"><img class="w_32" src="#{config.appenv.storage.domain}${file_item.url}"></a>`;
+                    }
+                  });
+                      
+                  html += `
+                      </td>
+                      
+                      <td><a href="#{config.appenv.domain}/${item.u_id}" target="_blank">#{config.appenv.domain}/${item.u_id}</a></td>
+                      <td><input class="file_item" type="checkbox" data-file-id="${item.id}" checked></td>
+                      <td>
+                  `;
+                  
+                  if(item.transfer_log.length > 0){
+                    html += `<ul class="transfer_list">`;
+                    $.each(item.transfer_log, function(transfer_index, transfer_item){
+                      let d1 = new Date(transfer_item.created_at * 1000);
+                      html += ("<li>於 " + d1.getFullYear() + "/" + str_pad((d1.getMonth() + 1), 2) + "/" + str_pad(d1.getDate(), 2) + " " + str_pad(d1.getHours(), 2) + ":" + str_pad(d1.getMinutes(), 2) + ":" + str_pad(d1.getSeconds(), 2) + "，帳號從 " + transfer_item.user_from + " 轉移至 " + transfer_item.user_to + "。</li>");
+                    });
+                    html += `</ul>`;
+                  }
+                  
+                  html += `
+                      </td>
+                      
+                    </tr>
+                  `;
+                  
+                });
+                $("#data_table").find("tbody").html(html);
+                $("div.transfer_to").removeClass("-transparent");
+              }else if(r_data.account_check == 2){
+                $("#error_msg").html("請輸入您局處內的帳號！");
+              }else if(r_data.account_check == 3){
+                $("#error_msg").html("該帳號沒有圖片！");
+              }else{
+                $("#error_msg").html("找不到這個帳號！");
+              }
+              
+            }
+          });
+          
+        }
+        
+        
+        
+      });
+      
+      
+      
+      
+      
+      $("#check_all").on("click", function(){
+        $("input.file_item").prop("checked", $(this).prop("checked"));
+      });
+
+      $(document).on("click", "input.file_item", function(){
+        if( $("input.file_item:checked").length == $("input.file_item").length ){
+           $("#check_all").prop("checked", true);
+        }else{
+          $("#check_all").prop("checked", false);
+        }
+      });
+      */
+      
+      
+    });
