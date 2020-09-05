@@ -16,7 +16,8 @@ const PATH = {
   logger: path.join(__dirname, '../logger'),
   middlewares: path.join(__dirname, '../middlewares'),
   storage_uploads: path.join(__dirname, '../../storage/uploads'),
-  storage_logs: path.join(__dirname, '../../storage/logs')
+  storage_logs: path.join(__dirname, '../../storage/logs'),
+  storage_temp: path.join(__dirname, '../../storage/temp')
 }
 
 module.exports = PATH

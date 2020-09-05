@@ -61,6 +61,7 @@ img.w_32{
         width: 300px;
       }
       th:nth-child(4){
+        width: 70px;
         /*padding-left: 10px !important;
         padding-right: 10px !important;
         */
@@ -85,6 +86,10 @@ span.-text{
 div.preview{
   margin-top: 50px;
   margin-bottom: 5px;
+  button.custom_btn{
+    cursor: pointer;
+    margin-left: 10px;
+  }
 }
 
 ul.transfer_list{

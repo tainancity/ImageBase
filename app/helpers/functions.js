@@ -97,6 +97,16 @@ module.exports = {
     return i18n_str
   },
 
+  str_pad: function(my_num, digits){
+
+    var my_num_str = my_num.toString();
+    while(my_num_str.length < digits){
+      my_num_str = "0" + my_num_str;
+    }
+    
+    return my_num_str;
+  },
+
   // 系統挑圖
   get_slide_from_system: function(carousel_setting_data, files, files_like_result){
     let carousels_system_files_array_hot = [] // 系統挑圖：熱門

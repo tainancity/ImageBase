@@ -487,11 +487,15 @@ exports.file_download = function(options) {
   return function(req, res) {
     organizationModel.getAll({column: 'id', sort_type: 'ASC'}, function(all_organs){
 
-      res.render('admin/image/files/download', {
-        organs: all_organs,
-        csrfToken: req.csrfToken()
+      userModel.getOne('u_id', req.session.u_id, function(user_results){
+        res.render('admin/image/files/download', {
+          organs: all_organs,
+          login_user_organ_id: user_results[0].organ_id,
+          login_user_account: user_results[0].pid,
+          csrfToken: req.csrfToken()
+        })
       })
-      
+
     })
 
   }

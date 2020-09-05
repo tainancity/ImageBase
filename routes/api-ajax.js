@@ -6,8 +6,15 @@ var fileModel = require(CONFIG.path.models + '/file.js')
 var shortUrlModel = require(CONFIG.path.models + '/short_urls.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
-
 var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
+var functions = require(CONFIG.path.helpers + '/functions.js')
+
+
+const fs = require("fs")
+const http = require('http')
+const async = require("async")
+const exec = require('child_process').exec
+const AdmZip = require('adm-zip')
 
 module.exports = function(app){
 
@@ -422,6 +429,216 @@ module.exports = function(app){
       //res.json({delete_result: 0})
     })
 
+    // 圖片下載：篩選
+    app.get('/images/download-filter', function(req, res){
+      //console.log(req.query.public_item)
+      //console.log(req.query.private_item)
+      //console.log(req.query.share_item)
+      userModel.getOne('u_id', req.session.u_id, function(login_user){
+        switch(req.query.filter_range){
+
+          case "by_all": // 全部
+            if(login_user[0].role_id == 1){
+              fileModel.getAll({ "column": "created_at", "sort_type": "DESC" }, function(results){
+                //console.log(results)
+                let files_result = []
+                results.forEach(function(file_item, file_index){
+                  if(parseInt(req.query.public_item) == 1 && file_item.permissions == "1"){
+                    files_result.push(file_item)
+                  }
+                  if(parseInt(req.query.private_item) == 1 && file_item.permissions == "2"){
+                    files_result.push(file_item)
+                  }
+                  if(parseInt(req.query.share_item) == 1 && file_item.permissions == "3"){
+                    files_result.push(file_item)
+                  }
+                })
+                res.json({msg: "success", files: files_result})
+              })
+            }else{
+              res.json({msg: "denied", files: []})
+            }
+            break;
+
+          case "by_organ": // 局處
+            if(login_user[0].role_id == 1 || login_user[0].role_id == 3){
+              let limit_organ_id = req.query.organ_id
+              if(login_user[0].role_id == 3){
+                limit_organ_id = login_user[0].organ_id // 限定只能是自己局處
+              }
+
+              fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "organ_id", "operator": "=", "column_value": "'" + limit_organ_id + "'" }, function(results){
+                //console.log(results)
+                let files_result = []
+                results.forEach(function(file_item, file_index){
+                  if(parseInt(req.query.public_item) == 1 && file_item.permissions == "1"){
+                    files_result.push(file_item)
+                  }
+                  if(parseInt(req.query.private_item) == 1 && file_item.permissions == "2"){
+                    files_result.push(file_item)
+                  }
+                  if(parseInt(req.query.share_item) == 1 && file_item.permissions == "3"){
+                    files_result.push(file_item)
+                  }
+                })
+                res.json({msg: "success", files: files_result})
+              })
+            }else{
+              res.json({msg: "denied", files: []})
+            }
+            break;
+
+          case "by_account": // 帳號
+            //console.log("here: " + req.query.user_account)
+
+            userModel.getOne('pid', req.query.user_account, function(user_results){
+              if(user_results.length > 0){
+                let can_call = true
+                let wrong_msg
+                if(login_user[0].role_id == 2 && req.query.user_account != login_user[0].pid){ // 一般帳號
+                  can_call = false
+                  wrong_msg = "限定只能使用登入的帳號"
+                }
+                if(login_user[0].role_id == 3 && user_results[0].organ_id != login_user[0].organ_id){ // 局處管理者
+                  can_call = false
+                  wrong_msg = "限定只能相同局處的帳號"
+                }
+
+                if(can_call){
+                  fileModel.getAllWhere({ "column": "created_at", "sort_type": "DESC" }, { "column_name": "user_id", "operator": "=", "column_value": user_results[0].id }, function(results){
+                    //console.log(results)
+                    let files_result = []
+                    results.forEach(function(file_item, file_index){
+                      if(parseInt(req.query.public_item) == 1 && file_item.permissions == "1"){
+                        files_result.push(file_item)
+                      }
+                      if(parseInt(req.query.private_item) == 1 && file_item.permissions == "2"){
+                        files_result.push(file_item)
+                      }
+                      if(parseInt(req.query.share_item) == 1 && file_item.permissions == "3"){
+                        files_result.push(file_item)
+                      }
+                    })
+                    res.json({msg: "success", files: files_result})
+                  })
+                }else{
+                  res.json({msg: wrong_msg, files: []})
+                }
+
+
+              }else{
+                res.json({msg: "沒有這個帳號", files: []})
+              }
+
+            })
+            break;
+
+          default:
+        }
+      })
+
+    })
+
+    // 圖片下載
+    app.post('/images/download', function(req, res){
+
+      //console.log(req.body.files)
+      //console.log(CONFIG.path.storage_temp)
+
+      if(req.body.files.length > 0){
+        if(!fs.existsSync(CONFIG.path.storage_temp)){ // 若資料夾不存在，就建立
+          fs.mkdirSync(CONFIG.path.storage_temp)
+        }
+
+        let parallel_func = []
+        req.body.files.forEach((file_id, i) => {
+          //console.log(file_id)
+          parallel_func.push(function(callback){
+            fileModel.getOne('id', parseInt(file_id), function(file_result){
+              //console.log(file_result)
+              callback(null, file_result[0])
+            })
+          })
+        })
+
+        async.parallel(parallel_func,
+          // optional callback
+          function(errs, results) { // parallel_func 全部的 functions 執行完，才會執行這個 function
+            if(errs) throw errs
+
+            //console.log(results)
+
+            let file_paths = [] // 取得圖片的路徑
+            results.forEach((item, i) => {
+              let file_data = JSON.parse(item.file_data)
+              file_data.forEach((fd, j) => {
+                if(fd.origin){
+                  file_paths.push(fd.url)
+                }
+              })
+            })
+            file_paths = file_paths.map(function(value, index){
+              return value.replace('/storage_uploads', '');;
+            });
+
+            //console.log(file_paths)
+
+            if(CONFIG.appenv.env == "local" || CONFIG.appenv.env == "staging"){
+              // 複製到 temp 資料夾裡
+
+              let d = new Date();
+              let dir_name = d.getFullYear() + functions.str_pad(d.getMonth() + 1, 2) + functions.str_pad(d.getDate(), 2) + "_" + d.getTime()
+              let dir_path = CONFIG.path.storage_temp + "/" + dir_name
+              fs.mkdirSync(dir_path)
+
+              let parallel_func2 = []
+              file_paths.forEach((file_id, i) => {
+                //console.log(file_id)
+                parallel_func2.push(function(callback){
+                  //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
+                  exec("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
+                    callback(null, "")
+                  })
+
+                })
+              })
+
+              // 將檔案都複製到 temp 資料夾裡的資料夾
+              async.parallel(parallel_func2,
+                // optional callback
+                function(errs, results) {
+                  console.log("複製完成")
+
+                  // 壓縮
+                  let zip = new AdmZip()
+                  //zip.addLocalFile(dir_path)
+                  fs.readdirSync(dir_path).forEach(file => {
+                    zip.addLocalFile(dir_path + "/" + file)
+                  })
+                  let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
+                  zip.writeZip(zip_file_name)
+                  console.log("壓縮完成")
+
+                  // 回傳
+                  //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
+                  res.json({msg: 1, download_filename: dir_name})
+                  console.log("回傳下載網址")
+                }
+              )
+
+
+
+            }
+
+          }
+        )
+
+
+      }else{
+        res.json({msg: 0})
+      }
+
+    })
 
   })
 

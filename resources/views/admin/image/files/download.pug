@@ -20,22 +20,32 @@ block append content_sl
               div.download_parent
                 if auth.user.role_id == 1
                   div.download_option
-                    input.check(type="radio" name="download_scope" id="download_all")
+                    input.check(type="radio" name="download_scope" id="download_all" value="by_all")
                     label.check_label(for="download_all") 全部
                 if auth.user.role_id == 1 || auth.user.role_id == 3
                   div.download_option
-                    input.check(type="radio" name="download_scope" id="organ_item")
+                    input.check(type="radio" name="download_scope" id="organ_item" value="by_organ")
                     label.check_label(for="organ_item") 局處
                     select.select_option.custom_select(name='organ_id')
-                      option(value='0') (無)
-                      each item, index in organs
-                        option(value=item.organ_id)= item.organ_name
+                      //-
+                        option(value='0') (無)
+                      if auth.user.role_id == 1
+                        each item, index in organs
+                          option(value=item.organ_id)= item.organ_name
+                      else
+                        each item, index in organs
+                          if item.organ_id == login_user_organ_id
+                            option(value=item.organ_id)= item.organ_name
                 
                 div.download_option
-                  input.check(type="radio" name="download_scope" id="account_item" checked)
+                  input.check(type="radio" name="download_scope" id="account_item" value="by_account" checked)
                   label.check_label(for="account_item") 帳號
-                  input.account_text(type="text" placeholder="輸入帳號")
-              
+                  
+                  if auth.user.role_id == 2
+                    input.account_text(type="text" placeholder="輸入帳號" name="user_account" value=login_user_account readonly)
+                  else
+                    input.account_text(type="text" placeholder="輸入帳號" name="user_account")
+
               h4.title4= "權限篩選"
               div.download_parent
                 div.download_option
@@ -50,9 +60,9 @@ block append content_sl
                   input.check(type="checkbox" id="share_item" value="3" checked)
                   label.check_label(for="share_item") 共用
                 
-              button.filter_images.btn.btn-secondary(type="button") 篩選
+              button.filter_images.btn.btn-primary(type="button") 篩選
               
-              div.preview 以下圖片有勾選的將進行移轉：
+              div.preview!= '以下圖片有勾選的將進行下載：<button type="button" class="btn btn-outline-info custom_btn">下載</button>'
               div.table-responsive
                 table#data_table.table.custom_table
                   thead
@@ -60,6 +70,7 @@ block append content_sl
                       th #
                       th 檔案
                       th 短網址
+                      th 權限
                       th
                         input#check_all(type="checkbox" checked)
                         label.check_all(for="check_all") 全選
@@ -82,101 +93,77 @@ block append body_end_others_sl
     }
     var transfer_from = '';
     */
+    
     $(function(){
       $('.custom_select').select2();
-      /*
-      $("button.account_check").on("click", function(){
+      
+      $("button.filter_images").on("click", function(){
         
-        let pid = ($("input.input_account").val()).trim();
-        
-        if(pid == ""){
-          $("#error_msg").html("請輸入帳號！");
-        }else{
-          $("#data_table").find("tbody").html("");
-          //if(pid == "#{auth.user.pid}"){
-            //$("#error_msg").html("不能轉移給自己！");
-          //}else{
-          //}
-          
-          $.ajax({
-            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/transfer-files/' + pid,
-            type: 'GET',
-            //data: data,
-            dataType: 'json',
-            statusCode: {
-              200: function (response) {
-                //console.log(response);
-              }
-            },
-            success: function(r_data){
-              //console.log(r_data);
-              $("div.transfer_to").addClass("-transparent");
-              $("#error_msg_to").html("");
-              $("input.to_account").val("");
-              
-              if(r_data.account_check == 1){
-                transfer_from = pid;
-                $("#error_msg").html("");
-                
-                var html = "";
-                $.each(r_data.files, function( index, item ) {
-                  //console.log(item);
-                  html += `
-                    <tr>
-                      <td>${index + 1}</td>
-                      <td>
-                  `;
-                      
-                  $.each(JSON.parse(item.file_data), function(j, file_item){
-                    if(file_item.width == 320){
-                      html += `<a href="#{config.appenv.domain}/${item.u_id}" target="_blank"><img class="w_32" src="#{config.appenv.storage.domain}${file_item.url}"></a>`;
-                    }
-                  });
-                      
-                  html += `
-                      </td>
-                      
-                      <td><a href="#{config.appenv.domain}/${item.u_id}" target="_blank">#{config.appenv.domain}/${item.u_id}</a></td>
-                      <td><input class="file_item" type="checkbox" data-file-id="${item.id}" checked></td>
-                      <td>
-                  `;
-                  
-                  if(item.transfer_log.length > 0){
-                    html += `<ul class="transfer_list">`;
-                    $.each(item.transfer_log, function(transfer_index, transfer_item){
-                      let d1 = new Date(transfer_item.created_at * 1000);
-                      html += ("<li>於 " + d1.getFullYear() + "/" + str_pad((d1.getMonth() + 1), 2) + "/" + str_pad(d1.getDate(), 2) + " " + str_pad(d1.getHours(), 2) + ":" + str_pad(d1.getMinutes(), 2) + ":" + str_pad(d1.getSeconds(), 2) + "，帳號從 " + transfer_item.user_from + " 轉移至 " + transfer_item.user_to + "。</li>");
-                    });
-                    html += `</ul>`;
-                  }
-                  
-                  html += `
-                      </td>
-                      
-                    </tr>
-                  `;
-                  
-                });
-                $("#data_table").find("tbody").html(html);
-                $("div.transfer_to").removeClass("-transparent");
-              }else if(r_data.account_check == 2){
-                $("#error_msg").html("請輸入您局處內的帳號！");
-              }else if(r_data.account_check == 3){
-                $("#error_msg").html("該帳號沒有圖片！");
-              }else{
-                $("#error_msg").html("找不到這個帳號！");
-              }
-              
-            }
-          });
-          
+        let filter_range = $("input[name='download_scope']:checked").val();
+        let send_obj = {
+          filter_range: filter_range,
+          public_item: ($("#public_item").prop("checked") ? 1 : 0),
+          private_item: ($("#private_item").prop("checked") ? 1: 0),
+          share_item: ($("#share_item").prop("checked") ? 1 : 0)
+        };
+        if(filter_range == "by_organ"){
+          send_obj.organ_id = $("select[name=organ_id]").val()
         }
+        if(filter_range == "by_account"){
+          send_obj.user_account = ($("input[name=user_account]").val()).trim();
+        }
+        
+        $.ajax({
+          url: '#{config.appenv.domain}' + '/api-ajax/v1.0/images/download-filter',
+          type: 'GET',
+          data: send_obj,
+          dataType: 'json',
+          statusCode: {
+            200: function (response) {
+              //console.log(response);
+            }
+          },
+          success: function(r_data){
+            //console.log(r_data);
+            if(r_data.msg != "success"){
+              alert(r_data.msg);
+            }
+            $("#data_table").find("tbody").html("");
+            
+            if(r_data.files.length > 0){
+              var html = "";
+              $.each(r_data.files, function( index, item ) {
+                html += `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                `;
+                    
+                $.each(JSON.parse(item.file_data), function(j, file_item){
+                  if(file_item.width == 320){
+                    html += `<a href="#{config.appenv.domain}/${item.u_id}" target="_blank"><img class="w_32" src="#{config.appenv.storage.domain}${file_item.url}"></a>`;
+                  }
+                });
+                    
+                html += `
+                    </td>
+                    
+                    <td><a href="#{config.appenv.domain}/${item.u_id}" target="_blank">#{config.appenv.domain}/${item.u_id}</a></td>
+                    <td>${(item.permissions == "1" ? "公開" : (item.permissions == "2" ? "隱藏" : "共用") )}</td>
+                    <td><input class="file_item" type="checkbox" data-file-id="${item.id}" checked></td>
+                  </tr>
+                `;
+              });
+              $("#data_table").find("tbody").html(html);
+            }else{
+              alert("無檔案！");
+            }
+          }
+        });
         
         
         
       });
-      
-      
       
       
       
@@ -191,7 +178,48 @@ block append body_end_others_sl
           $("#check_all").prop("checked", false);
         }
       });
-      */
+      
+      
+      $("button.custom_btn").on("click", function(){
+        let checked_file_arr = [];
+        
+        if($("input.file_item:checked").length > 0){
+          
+          $.each($("input.file_item:checked"), function(i, item){
+            checked_file_arr.push($(this).attr("data-file-id"));
+          });
+          console.log(checked_file_arr);
+          
+          let files_obj = {
+            files: checked_file_arr
+          };
+          
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/images/download',
+            type: 'POST',
+            data: files_obj,
+            dataType: 'json',
+            headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+            },
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              console.log(r_data);
+              if(r_data.msg == 1){
+                window.open('#{config.appenv.storage.domain}/download/trigger?download_filename=' + r_data.download_filename, "_blank");
+              }
+              
+            }
+          });
+          
+        }else{
+          alert("尚未勾選欲下載的檔案！");
+        }
+      });
       
       
     });
