@@ -22,6 +22,8 @@ var AdminFileCategory = require(CONFIG.path.controllers + '/admin/file_category.
 var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
 var AdminShortUrlManage = require(CONFIG.path.controllers + '/admin/short_url_manage.js')
 
+const exec = require('child_process').exec
+
 module.exports = function(app){
 
   // Custom Basic Auth
