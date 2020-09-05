@@ -103,24 +103,6 @@ app.use(require(CONFIG.path.logger + '/log_action').log_action(app))
 require(CONFIG.path.routes + '/api-ajax')(app)
 require(CONFIG.path.routes + '/web')(app)
 
-if(CONFIG.appenv.env == "staging"){
-  app.get('/download/trigger', function (req, res) {
-    res.download(CONFIG.path.storage_temp + "/" + req.query.download_filename + ".zip", function (err) {
-      if (err) {
-        console.log(err)
-        // Handle error, but keep in mind the response may be partially-sent, so check res.headersSent
-      } else {
-        console.log("下載完成")
-        //console.log((req.query.download_filename).indexOf("."))
-        if((req.query.download_filename).indexOf(".") == -1){
-          //console.log("yes | rm -r  " + CONFIG.path.storage_temp + "/" + req.query.download_filename + "*")
-          exec("yes | rm -r  " + CONFIG.path.storage_temp + "/" + req.query.download_filename + "*", function(error, stdout, stderr){})
-        }
-      }
-    })
-  })
-}
-
 // ========== Listen ========== //
 app.listen(app.get('port'), function(){
   console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain)
