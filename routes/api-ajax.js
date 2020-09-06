@@ -676,10 +676,10 @@ module.exports = function(app){
                           res.json({msg: 1, download_filename: dir_name})
                           console.log("回傳下載網址")
                         }).on('data', function(data) {
-                          console.log('STDOUT: ' + data);
+                          console.log('STDOUT: ' + data)
                         }).stderr.on('data', function(data) {
-                          console.log('STDERR: ' + data);
-                        });
+                          console.log('STDERR: ' + data)
+                        })
 
                       })
 
