@@ -657,7 +657,7 @@ module.exports = function(app){
                       if (err) throw err
                       stream.on('close', function(code, signal) {
                         console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                        conn.end()
+                        //conn.end()
                         callback2(null, "")
                       }).on('data', function(data) {
                         console.log('STDOUT: ' + data);
@@ -676,9 +676,8 @@ module.exports = function(app){
                     function(errs, results) {
                       console.log("複製完成")
                       //conn.end()
-                      res.json({msg: "test"})
+
                       // 壓縮
-                      /*
                       let zip_cmd = "zip -r -j " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
                       console.log(zip_cmd)
                       conn.exec(zip_cmd, function(err, stream2){
@@ -697,7 +696,6 @@ module.exports = function(app){
                         })
 
                       })
-                      */
 
                     }
                   )
