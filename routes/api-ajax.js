@@ -644,13 +644,47 @@ module.exports = function(app){
                 console.log("connect here")
                 // 複製到 temp 資料夾裡
                 let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                console.log(dir_path)
-                return client_ssh_sftp.mkdir(dir_path, true);
-                //console.log(delete_file_path)
+                client_ssh_sftp.mkdir(dir_path, true)
                 //client_ssh_sftp.delete(delete_file_path);
 
+                let parallel_func2 = []
+                file_paths.forEach((file_id, i) => {
+                  //console.log(file_id)
+                  parallel_func2.push(function(callback){
+                    //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
+                    // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
+                    //   callback(null, "")
+                    // })
+                    client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i], dir_path + '/' + file_paths[i])
+                    callback(null, "")
+                  })
+                })
+
+                // 將檔案都複製到 temp 資料夾裡的資料夾
+                async.parallel(parallel_func2,
+                  // optional callback
+                  function(errs, results) {
+                    console.log("複製完成")
+
+                    // 壓縮
+                    //let zip = new AdmZip()
+                    //zip.addLocalFile(dir_path)
+                    //fs.readdirSync(dir_path).forEach(file => {
+                      //zip.addLocalFile(dir_path + "/" + file)
+                    //})
+                    //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
+                    //zip.writeZip(zip_file_name)
+                    //console.log("壓縮完成")
+
+                    // 回傳
+                    //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
+                    //res.json({msg: 1, download_filename: dir_name})
+                    //console.log("回傳下載網址")
+                  }
+                )
+
               }).then(() => {
-                return client.client_ssh_sftp()
+                return client_ssh_sftp.end()
               }).catch((err) => {
                 console.log(err.message);
               })
