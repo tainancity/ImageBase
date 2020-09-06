@@ -19,8 +19,8 @@ const AdmZip = require('adm-zip')
 // let client_ssh = require('ssh2-sftp-client')
 // let client_ssh_sftp = new client_ssh()
 
-const NodeSSH = require('node-ssh')
-const ssh = new NodeSSH()
+//const NodeSSH = require('node-ssh')
+//const ssh = new NodeSSH()
 
 module.exports = function(app){
 
@@ -638,19 +638,19 @@ module.exports = function(app){
             }else if(CONFIG.appenv.env == "production"){
               console.log("正式機 download")
 
-              ssh.connect({
-                  host: CONFIG.appenv.storage.scp.ip,
-                  port: 22,
-                  username: CONFIG.appenv.storage.scp.user,
-                  password: CONFIG.appenv.storage.scp.password
-              }).then(() => {
-                console.log("connect here")
-                // 複製到 temp 資料夾裡
-                let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                //client_ssh_sftp.mkdir(dir_path, true)
-                ssh.exec('mkdir ' + dir_path).then(function(result) {
-                  console.log('STDOUT: ' + result)
-                })
+              //ssh.connect({
+                  //host: CONFIG.appenv.storage.scp.ip,
+                  //port: 22,
+                  //username: CONFIG.appenv.storage.scp.user,
+                  //password: CONFIG.appenv.storage.scp.password
+              //}).then(() => {
+                // console.log("connect here")
+                // // 複製到 temp 資料夾裡
+                // let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
+                // //client_ssh_sftp.mkdir(dir_path, true)
+                // ssh.exec('mkdir ' + dir_path).then(function(result) {
+                //   console.log('STDOUT: ' + result)
+                // })
                 //client_ssh_sftp.delete(delete_file_path);
 
                 // let parallel_func2 = []
@@ -692,7 +692,7 @@ module.exports = function(app){
                 //)
 
 
-              })
+              //})
 
             }else{
               res.json({msg: 0})
