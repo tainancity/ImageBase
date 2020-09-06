@@ -658,7 +658,7 @@ module.exports = function(app){
                       if (err) throw err
                       stream.on('close', function(code, signal) {
                         console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                        //conn.end();
+                        conn.end();
                         callback2(null, "")
                       }).on('data', function(data) {
                         console.log('STDOUT: ' + data);
