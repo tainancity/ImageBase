@@ -32,7 +32,6 @@
     "method-override": "^2.3.10",
     "moment": "^2.20.1",
     "mysql": "^2.15.0",
-    "node-ssh": "^11.0.0",
     "normalize.css": "^7.0.0",
     "pug": "^2.0.0-rc.4",
     "redis": "^2.8.0",
