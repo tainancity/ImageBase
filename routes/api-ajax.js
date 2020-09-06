@@ -19,8 +19,8 @@ const AdmZip = require('adm-zip')
 // let client_ssh = require('ssh2-sftp-client')
 // let client_ssh_sftp = new client_ssh()
 
-//const NodeSSH = require('node-ssh')
-//const ssh = new NodeSSH()
+const Client = require('ssh2').Client
+const conn = new Client();
 
 module.exports = function(app){
 
@@ -638,6 +638,36 @@ module.exports = function(app){
             }else if(CONFIG.appenv.env == "production"){
               console.log("正式機 download")
 
+              conn.on('ready', function() {
+                console.log('Client :: ready');
+                let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
+                conn.exec('mkdir ' + dir_path, function(err, stream) {
+                  if (err) throw err
+                  console.log("建立資料夾完成")
+                  // 複製到 temp 資料夾裡
+                  //let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
+                  // client_ssh_sftp.mkdir(dir_path, true)
+                  // ssh.exec('mkdir ' + dir_path).then(function(result) {
+                  //   console.log('STDOUT: ' + result)
+                  // })
+                  /*
+                  stream.on('close', function(code, signal) {
+                    console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+                    conn.end();
+                  }).on('data', function(data) {
+                    console.log('STDOUT: ' + data);
+                  }).stderr.on('data', function(data) {
+                    console.log('STDERR: ' + data);
+                  });
+                  */
+
+                });
+              }).connect({
+                host: CONFIG.appenv.storage.scp.ip,
+                port: 22,
+                username: CONFIG.appenv.storage.scp.user,
+                password: CONFIG.appenv.storage.scp.password
+              });
               //ssh.connect({
                   //host: CONFIG.appenv.storage.scp.ip,
                   //port: 22,
