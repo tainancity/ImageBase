@@ -655,7 +655,9 @@ module.exports = function(app){
                     // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
                     //   callback(null, "")
                     // })
-                    client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i], dir_path + '/' + file_paths[i])
+                    let each_file_name = ((file_paths[i]).split("/")).pop()
+                    console.log(each_file_name)
+                    client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + file_paths[i], dir_path + '/' + each_file_name)
                     callback(null, "")
                   })
                 })
