@@ -16,8 +16,11 @@ const async = require("async")
 const exec = require('child_process').exec
 const AdmZip = require('adm-zip')
 
-let client_ssh = require('ssh2-sftp-client')
-let client_ssh_sftp = new client_ssh();
+// let client_ssh = require('ssh2-sftp-client')
+// let client_ssh_sftp = new client_ssh()
+
+const NodeSSH = require('node-ssh')
+const ssh = new NodeSSH()
 
 module.exports = function(app){
 
@@ -635,7 +638,7 @@ module.exports = function(app){
             }else if(CONFIG.appenv.env == "production"){
               console.log("正式機 download")
 
-              client_ssh_sftp.connect({
+              ssh.connect({
                   host: CONFIG.appenv.storage.scp.ip,
                   port: 22,
                   username: CONFIG.appenv.storage.scp.user,
@@ -644,29 +647,32 @@ module.exports = function(app){
                 console.log("connect here")
                 // 複製到 temp 資料夾裡
                 let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                client_ssh_sftp.mkdir(dir_path, true)
+                //client_ssh_sftp.mkdir(dir_path, true)
+                ssh.exec('mkdir ' + dir_path).then(function(result) {
+                  console.log('STDOUT: ' + result)
+                })
                 //client_ssh_sftp.delete(delete_file_path);
 
-                let parallel_func2 = []
-                file_paths.forEach((file_id, i) => {
-                  //console.log(file_id)
-                  parallel_func2.push(function(callback){
-                    //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
-                    // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
-                    //   callback(null, "")
-                    // })
-                    let each_file_name = ((file_paths[i]).split("/")).pop()
-                    console.log(each_file_name)
-                    client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + file_paths[i], dir_path + '/' + each_file_name)
-                    callback(null, "")
-                  })
-                })
+                // let parallel_func2 = []
+                // file_paths.forEach((file_id, i) => {
+                //   //console.log(file_id)
+                //   parallel_func2.push(function(callback){
+                //     //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
+                //     // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
+                //     //   callback(null, "")
+                //     // })
+                //     let each_file_name = ((file_paths[i]).split("/")).pop()
+                //     console.log(each_file_name)
+                //     client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + file_paths[i], dir_path + '/' + each_file_name)
+                //     return callback(null, "")
+                //   })
+                // })
 
                 // 將檔案都複製到 temp 資料夾裡的資料夾
-                async.parallel(parallel_func2,
+                //async.parallel(parallel_func2,
                   // optional callback
-                  function(errs, results) {
-                    console.log("複製完成")
+                  //function(errs, results) {
+                    //console.log("複製完成")
 
                     // 壓縮
                     //let zip = new AdmZip()
@@ -682,13 +688,10 @@ module.exports = function(app){
                     //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
                     //res.json({msg: 1, download_filename: dir_name})
                     //console.log("回傳下載網址")
-                  }
-                )
+                  //}
+                //)
 
-              }).then(() => {
-                return client_ssh_sftp.end()
-              }).catch((err) => {
-                console.log(err.message);
+
               })
 
             }else{
