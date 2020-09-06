@@ -16,6 +16,9 @@ const async = require("async")
 const exec = require('child_process').exec
 const AdmZip = require('adm-zip')
 
+let client_ssh = require('ssh2-sftp-client')
+let client_ssh_sftp = new client_ssh();
+
 module.exports = function(app){
 
   var options = {}
@@ -583,11 +586,12 @@ module.exports = function(app){
 
             //console.log(file_paths)
 
-            if(CONFIG.appenv.env == "local" || CONFIG.appenv.env == "staging"){
-              // 複製到 temp 資料夾裡
+            let d = new Date();
+            let dir_name = d.getFullYear() + functions.str_pad(d.getMonth() + 1, 2) + functions.str_pad(d.getDate(), 2) + "_" + d.getTime()
 
-              let d = new Date();
-              let dir_name = d.getFullYear() + functions.str_pad(d.getMonth() + 1, 2) + functions.str_pad(d.getDate(), 2) + "_" + d.getTime()
+            if(CONFIG.appenv.env == "local" || CONFIG.appenv.env == "staging"){
+
+              // 複製到 temp 資料夾裡
               let dir_path = CONFIG.path.storage_temp + "/" + dir_name
               fs.mkdirSync(dir_path)
 
@@ -628,6 +632,30 @@ module.exports = function(app){
 
 
 
+            }else if(CONFIG.appenv.env == "production"){
+
+
+              client_ssh_sftp.connect({
+                  host: CONFIG.appenv.storage.scp.ip,
+                  port: 22,
+                  username: CONFIG.appenv.storage.scp.user,
+                  password: CONFIG.appenv.storage.scp.password
+              }).then(() => {
+                console.log("connect here")
+                // 複製到 temp 資料夾裡
+                let dir_path = CONFIG.appenv.storage_temp_path + "/" + dir_name
+                return client_ssh_sftp.mkdir(dir_path, true);
+                //console.log(delete_file_path)
+                //client_ssh_sftp.delete(delete_file_path);
+
+              }).then(() => {
+                return client.client_ssh_sftp()
+              }).catch((err) => {
+                console.log(err.message);
+              })
+
+            }else{
+              res.json({msg: 0})
             }
 
           }
