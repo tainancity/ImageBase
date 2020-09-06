@@ -20,7 +20,6 @@ const AdmZip = require('adm-zip')
 // let client_ssh_sftp = new client_ssh()
 
 const Client = require('ssh2').Client
-var conn = new Client();
 
 module.exports = function(app){
 
@@ -637,7 +636,7 @@ module.exports = function(app){
 
             }else if(CONFIG.appenv.env == "production"){
               console.log("正式機 download")
-
+              let conn = new Client();
               conn.on('ready', function() {
                 console.log('Client :: ready');
                 let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
