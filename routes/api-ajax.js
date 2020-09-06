@@ -20,7 +20,7 @@ const AdmZip = require('adm-zip')
 // let client_ssh_sftp = new client_ssh()
 
 const Client = require('ssh2').Client
-const conn = new Client();
+var conn = new Client();
 
 module.exports = function(app){
 
@@ -658,38 +658,18 @@ module.exports = function(app){
                       if (err) throw err
                       stream.on('close', function(code, signal) {
                         console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                        conn.end();
+                        conn.end()
                         callback2(null, "")
                       }).on('data', function(data) {
                         console.log('STDOUT: ' + data);
                       }).stderr.on('data', function(data) {
                         console.log('STDERR: ' + data);
-                      });
-
-                    })
-
-                  })
-                  /*
-                  file_paths.forEach((file_id, i) => {
-                    //console.log(file_id)
-                    parallel_func2.push(function(callback){
-                      let each_file_name = ((file_paths[i]).split("/")).pop()
-                      conn.exec("cp " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i] + " " + dir_path + '/' + each_file_name, function(err, stream){
-                        if (err) throw err
-                        stream.on('close', function(code, signal) {
-                          console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                          //conn.end();
-                          callback(null, "")
-                        }).on('data', function(data) {
-                          console.log('STDOUT: ' + data);
-                        }).stderr.on('data', function(data) {
-                          console.log('STDERR: ' + data);
-                        });
-
                       })
+
                     })
+
                   })
-                  */
+
 
                   // 將檔案都複製到 temp 資料夾裡的資料夾
                   async.parallel(parallel_func2,
