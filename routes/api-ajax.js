@@ -633,7 +633,7 @@ module.exports = function(app){
 
 
             }else if(CONFIG.appenv.env == "production"){
-
+              console.log("正式機 download")
 
               client_ssh_sftp.connect({
                   host: CONFIG.appenv.storage.scp.ip,
