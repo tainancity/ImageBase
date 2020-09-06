@@ -655,8 +655,11 @@ module.exports = function(app){
                       // })
                       let each_file_name = ((file_paths[i]).split("/")).pop()
                       console.log(each_file_name)
-                      conn.exec("cp " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i] + " " + dir_path + '/' + each_file_name)
-                      callback(null, "")
+                      conn.exec("cp " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i] + " " + dir_path + '/' + each_file_name, function(err, stream){
+                        if (err) throw err
+                        callback(null, "")
+                      })
+
                     })
                   })
 
