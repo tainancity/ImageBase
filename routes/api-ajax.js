@@ -647,7 +647,7 @@ module.exports = function(app){
                   console.log("建立資料夾完成")
 
                   let parallel_func2 = []
-                  parallel_func2.push(function(){
+                  parallel_func2.push(function(callback){
                     let cp_command = "cp"
                     file_paths.forEach((file_id, i) => {
                       cp_command += (" " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i])
