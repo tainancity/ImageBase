@@ -641,6 +641,7 @@ module.exports = function(app){
               conn.on('ready', function() {
                 console.log('Client :: ready');
                 let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
+                console.log("dir_name: " + dir_name)
                 conn.exec('mkdir ' + dir_path, function(err, stream) {
                   if (err) throw err
                   console.log("建立資料夾完成")
@@ -666,10 +667,10 @@ module.exports = function(app){
                       // 壓縮
                       let zip_cmd = "zip -r -j " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
                       //console.log(zip_cmd)
-                      conn.exec(zip_cmd, function(err, stream){
+                      conn.exec(zip_cmd, function(err, stream2){
                         if (err) throw err
                         console.log("壓縮完成")
-                        stream.on('close', function(code, signal) {
+                        stream2.on('close', function(code, signal) {
                           console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
                           conn.end();
                           // 回傳
