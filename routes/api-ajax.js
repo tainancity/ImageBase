@@ -665,8 +665,9 @@ module.exports = function(app){
                       console.log("複製完成")
 
                       // 壓縮
+                      /*
                       let zip_cmd = "zip -r -j " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                      //console.log(zip_cmd)
+                      console.log(zip_cmd)
                       conn.exec(zip_cmd, function(err, stream2){
                         if (err) throw err
                         console.log("壓縮完成")
@@ -683,6 +684,7 @@ module.exports = function(app){
                         })
 
                       })
+                      */
 
                     }
                   )
