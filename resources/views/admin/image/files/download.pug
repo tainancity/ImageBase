@@ -181,7 +181,7 @@ block append body_end_others_sl
       
       
       $("button.custom_btn").on("click", function(){
-        if($(this).hasClass("-disabled")){
+        if(!$(this).hasClass("-disabled")){
           let checked_file_arr = [];
           if($("input.file_item:checked").length > 0){
             $(this).addClass("-disabled");
