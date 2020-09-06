@@ -643,7 +643,7 @@ module.exports = function(app){
               }).then(() => {
                 console.log("connect here")
                 // 複製到 temp 資料夾裡
-                let dir_path = CONFIG.appenv.storage_temp_path + "/" + dir_name
+                let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
                 console.log(dir_path)
                 return client_ssh_sftp.mkdir(dir_path, true);
                 //console.log(delete_file_path)
