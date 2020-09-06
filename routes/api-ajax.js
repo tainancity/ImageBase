@@ -644,12 +644,44 @@ module.exports = function(app){
                 conn.exec('mkdir ' + dir_path, function(err, stream) {
                   if (err) throw err
                   console.log("建立資料夾完成")
-                  // 複製到 temp 資料夾裡
-                  //let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                  // client_ssh_sftp.mkdir(dir_path, true)
-                  // ssh.exec('mkdir ' + dir_path).then(function(result) {
-                  //   console.log('STDOUT: ' + result)
-                  // })
+
+                  let parallel_func2 = []
+                  file_paths.forEach((file_id, i) => {
+                    //console.log(file_id)
+                    parallel_func2.push(function(callback){
+                      //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
+                      // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
+                      //   callback(null, "")
+                      // })
+                      let each_file_name = ((file_paths[i]).split("/")).pop()
+                      console.log(each_file_name)
+                      conn.exec("cp " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i] + " " + dir_path + '/' + each_file_name)
+                      callback(null, "")
+                    })
+                  })
+
+                  // 將檔案都複製到 temp 資料夾裡的資料夾
+                  async.parallel(parallel_func2,
+                    // optional callback
+                    function(errs, results) {
+                      console.log("複製完成")
+
+                      // 壓縮
+                      //let zip = new AdmZip()
+                      //zip.addLocalFile(dir_path)
+                      //fs.readdirSync(dir_path).forEach(file => {
+                        //zip.addLocalFile(dir_path + "/" + file)
+                      //})
+                      //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
+                      //zip.writeZip(zip_file_name)
+                      //console.log("壓縮完成")
+
+                      // 回傳
+                      //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
+                      //res.json({msg: 1, download_filename: dir_name})
+                      //console.log("回傳下載網址")
+                    }
+                  )
                   /*
                   stream.on('close', function(code, signal) {
                     console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
@@ -668,61 +700,6 @@ module.exports = function(app){
                 username: CONFIG.appenv.storage.scp.user,
                 password: CONFIG.appenv.storage.scp.password
               });
-              //ssh.connect({
-                  //host: CONFIG.appenv.storage.scp.ip,
-                  //port: 22,
-                  //username: CONFIG.appenv.storage.scp.user,
-                  //password: CONFIG.appenv.storage.scp.password
-              //}).then(() => {
-                // console.log("connect here")
-                // // 複製到 temp 資料夾裡
-                // let dir_path = CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                // //client_ssh_sftp.mkdir(dir_path, true)
-                // ssh.exec('mkdir ' + dir_path).then(function(result) {
-                //   console.log('STDOUT: ' + result)
-                // })
-                //client_ssh_sftp.delete(delete_file_path);
-
-                // let parallel_func2 = []
-                // file_paths.forEach((file_id, i) => {
-                //   //console.log(file_id)
-                //   parallel_func2.push(function(callback){
-                //     //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
-                //     // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
-                //     //   callback(null, "")
-                //     // })
-                //     let each_file_name = ((file_paths[i]).split("/")).pop()
-                //     console.log(each_file_name)
-                //     client_ssh_sftp.put(CONFIG.appenv.storage.storage_uploads_path + file_paths[i], dir_path + '/' + each_file_name)
-                //     return callback(null, "")
-                //   })
-                // })
-
-                // 將檔案都複製到 temp 資料夾裡的資料夾
-                //async.parallel(parallel_func2,
-                  // optional callback
-                  //function(errs, results) {
-                    //console.log("複製完成")
-
-                    // 壓縮
-                    //let zip = new AdmZip()
-                    //zip.addLocalFile(dir_path)
-                    //fs.readdirSync(dir_path).forEach(file => {
-                      //zip.addLocalFile(dir_path + "/" + file)
-                    //})
-                    //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
-                    //zip.writeZip(zip_file_name)
-                    //console.log("壓縮完成")
-
-                    // 回傳
-                    //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
-                    //res.json({msg: 1, download_filename: dir_name})
-                    //console.log("回傳下載網址")
-                  //}
-                //)
-
-
-              //})
 
             }else{
               res.json({msg: 0})
