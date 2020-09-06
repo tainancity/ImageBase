@@ -601,10 +601,10 @@ module.exports = function(app){
               let parallel_func2 = []
               file_paths.forEach((file_id, i) => {
                 //console.log(file_id)
-                parallel_func2.push(function(callback){
+                parallel_func2.push(function(callback2){
                   //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
                   exec("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
-                    callback(null, "")
+                    callback2(null, "")
                   })
 
                 })
@@ -647,7 +647,7 @@ module.exports = function(app){
                   console.log("建立資料夾完成")
 
                   let parallel_func2 = []
-                  parallel_func2.push(function(callback){
+                  parallel_func2.push(function(callback2){
                     let cp_command = "cp"
                     file_paths.forEach((file_id, i) => {
                       cp_command += (" " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i])
@@ -659,7 +659,7 @@ module.exports = function(app){
                       stream.on('close', function(code, signal) {
                         console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
                         //conn.end();
-                        callback(null, "")
+                        callback2(null, "")
                       }).on('data', function(data) {
                         console.log('STDOUT: ' + data);
                       }).stderr.on('data', function(data) {
