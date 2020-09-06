@@ -649,17 +649,11 @@ module.exports = function(app){
                   file_paths.forEach((file_id, i) => {
                     //console.log(file_id)
                     parallel_func2.push(function(callback){
-                      //console.log("cp " + CONFIG.path.storage_uploads + file_paths[i] + " " + dir_path)
-                      // exec("cp " + CONFIG.appenv.storage.storage_uploads_path + "/" + file_paths[i] + " " + dir_path, function(error, stdout, stderr){
-                      //   callback(null, "")
-                      // })
                       let each_file_name = ((file_paths[i]).split("/")).pop()
-                      console.log(each_file_name)
                       conn.exec("cp " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i] + " " + dir_path + '/' + each_file_name, function(err, stream){
                         if (err) throw err
                         callback(null, "")
                       })
-
                     })
                   })
 
@@ -678,23 +672,17 @@ module.exports = function(app){
                       //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
                       //zip.writeZip(zip_file_name)
                       //console.log("壓縮完成")
+                      conn.exec("zip -r " + dir_path + "/" + dir_name + ".zip " + dir_path + "/" + dir_name, function(err, stream){
+                        if (err) throw err
+                        console.log("壓縮完成")
+                      })
 
                       // 回傳
-                      //res.json({msg: 1, download_path: CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path_temp + "/" + dir_name + ".zip"})
-                      //res.json({msg: 1, download_filename: dir_name})
-                      //console.log("回傳下載網址")
+                      res.json({msg: 1, download_filename: dir_name})
+                      console.log("回傳下載網址")
+
                     }
                   )
-                  /*
-                  stream.on('close', function(code, signal) {
-                    console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                    conn.end();
-                  }).on('data', function(data) {
-                    console.log('STDOUT: ' + data);
-                  }).stderr.on('data', function(data) {
-                    console.log('STDERR: ' + data);
-                  });
-                  */
 
                 });
               }).connect({
