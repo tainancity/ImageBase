@@ -664,23 +664,23 @@ module.exports = function(app){
                       console.log("複製完成")
 
                       // 壓縮
-                      //let zip = new AdmZip()
-                      //zip.addLocalFile(dir_path)
-                      //fs.readdirSync(dir_path).forEach(file => {
-                        //zip.addLocalFile(dir_path + "/" + file)
-                      //})
-                      //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
-                      //zip.writeZip(zip_file_name)
-                      //console.log("壓縮完成")
                       let zip_cmd = "zip -r -j " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
-                      console.log(zip_cmd)
+                      //console.log(zip_cmd)
                       conn.exec(zip_cmd, function(err, stream){
                         if (err) throw err
                         console.log("壓縮完成")
+                        stream.on('close', function(code, signal) {
+                          console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+                          conn.end();
+                          // 回傳
+                          res.json({msg: 1, download_filename: dir_name})
+                          console.log("回傳下載網址")
+                        }).on('data', function(data) {
+                          console.log('STDOUT: ' + data);
+                        }).stderr.on('data', function(data) {
+                          console.log('STDERR: ' + data);
+                        });
 
-                        // 回傳
-                        res.json({msg: 1, download_filename: dir_name})
-                        console.log("回傳下載網址")
                       })
 
                     }
