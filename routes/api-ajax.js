@@ -647,6 +647,29 @@ module.exports = function(app){
                   console.log("建立資料夾完成")
 
                   let parallel_func2 = []
+                  parallel_func2.push(function(){
+                    let cp_command = "cp"
+                    file_paths.forEach((file_id, i) => {
+                      cp_command += (" " + CONFIG.appenv.storage.storage_uploads_path + file_paths[i])
+                    })
+                    cp_command += (" " + dir_path)
+
+                    conn.exec(cp_command, function(err, stream){
+                      if (err) throw err
+                      stream.on('close', function(code, signal) {
+                        console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+                        //conn.end();
+                        callback(null, "")
+                      }).on('data', function(data) {
+                        console.log('STDOUT: ' + data);
+                      }).stderr.on('data', function(data) {
+                        console.log('STDERR: ' + data);
+                      });
+
+                    })
+
+                  })
+                  /*
                   file_paths.forEach((file_id, i) => {
                     //console.log(file_id)
                     parallel_func2.push(function(callback){
@@ -666,6 +689,7 @@ module.exports = function(app){
                       })
                     })
                   })
+                  */
 
                   // 將檔案都複製到 temp 資料夾裡的資料夾
                   async.parallel(parallel_func2,
