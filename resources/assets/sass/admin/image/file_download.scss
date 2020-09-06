@@ -89,6 +89,10 @@ div.preview{
   button.custom_btn{
     cursor: pointer;
     margin-left: 10px;
+    &.-disabled{
+      cursor: not-allowed;
+      background-color: lightgray;
+    }
   }
 }
 

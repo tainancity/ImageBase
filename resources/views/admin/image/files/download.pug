@@ -181,44 +181,50 @@ block append body_end_others_sl
       
       
       $("button.custom_btn").on("click", function(){
-        let checked_file_arr = [];
-        
-        if($("input.file_item:checked").length > 0){
-          
-          $.each($("input.file_item:checked"), function(i, item){
-            checked_file_arr.push($(this).attr("data-file-id"));
-          });
-          console.log(checked_file_arr);
-          
-          let files_obj = {
-            files: checked_file_arr
-          };
-          
-          $.ajax({
-            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/images/download',
-            type: 'POST',
-            data: files_obj,
-            dataType: 'json',
-            headers: {
-              'X-CSRF-Token':'#{csrfToken}'
-            },
-            statusCode: {
-              200: function (response) {
-                //console.log(response);
+        if($(this).hasClass("-disabled")){
+          let checked_file_arr = [];
+          if($("input.file_item:checked").length > 0){
+            $(this).addClass("-disabled");
+            var that = this;
+            $.each($("input.file_item:checked"), function(i, item){
+              checked_file_arr.push($(this).attr("data-file-id"));
+            });
+            console.log(checked_file_arr);
+            
+            let files_obj = {
+              files: checked_file_arr
+            };
+            
+            $.ajax({
+              url: '#{config.appenv.domain}' + '/api-ajax/v1.0/images/download',
+              type: 'POST',
+              data: files_obj,
+              dataType: 'json',
+              headers: {
+                'X-CSRF-Token':'#{csrfToken}'
+              },
+              statusCode: {
+                200: function (response) {
+                  //console.log(response);
+                }
+              },
+              success: function(r_data){
+                console.log(r_data);
+                if(r_data.msg == 1){
+                  $(that).removeClass("-disabled");
+                  window.open('#{config.appenv.storage.domain}/download/trigger?download_filename=' + r_data.download_filename, "_blank");
+                }
+                
               }
-            },
-            success: function(r_data){
-              console.log(r_data);
-              if(r_data.msg == 1){
-                window.open('#{config.appenv.storage.domain}/download/trigger?download_filename=' + r_data.download_filename, "_blank");
-              }
-              
-            }
-          });
-          
+            });
+            
+          }else{
+            alert("尚未勾選欲下載的檔案！");
+          }
         }else{
-          alert("尚未勾選欲下載的檔案！");
+          alert("請勿重覆點擊！");
         }
+        
       });
       
       
