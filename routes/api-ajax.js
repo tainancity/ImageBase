@@ -663,7 +663,8 @@ module.exports = function(app){
                     // optional callback
                     function(errs, results) {
                       console.log("複製完成")
-
+                      conn.end()
+                      res.json({msg: "test"})
                       // 壓縮
                       /*
                       let zip_cmd = "zip -r -j " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
