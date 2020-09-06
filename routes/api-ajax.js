@@ -672,7 +672,7 @@ module.exports = function(app){
                       //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
                       //zip.writeZip(zip_file_name)
                       //console.log("壓縮完成")
-                      let zip_cmd = "zip -r " + dir_path + "/" + dir_name + ".zip " + dir_path + "/" + dir_name
+                      let zip_cmd = "zip -r " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name + ".zip " + CONFIG.appenv.storage.storage_temp_path + "/" + dir_name
                       console.log(zip_cmd)
                       conn.exec(zip_cmd, function(err, stream){
                         if (err) throw err
