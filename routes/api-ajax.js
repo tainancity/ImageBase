@@ -672,14 +672,16 @@ module.exports = function(app){
                       //let zip_file_name = CONFIG.path.storage_temp + "/" + dir_name + ".zip"
                       //zip.writeZip(zip_file_name)
                       //console.log("壓縮完成")
-                      conn.exec("zip -r " + dir_path + "/" + dir_name + ".zip " + dir_path + "/" + dir_name, function(err, stream){
+                      let zip_cmd = "zip -r " + dir_path + "/" + dir_name + ".zip " + dir_path + "/" + dir_name
+                      console.log(zip_cmd)
+                      conn.exec(zip_cmd, function(err, stream){
                         if (err) throw err
                         console.log("壓縮完成")
-                      })
 
-                      // 回傳
-                      res.json({msg: 1, download_filename: dir_name})
-                      console.log("回傳下載網址")
+                        // 回傳
+                        res.json({msg: 1, download_filename: dir_name})
+                        console.log("回傳下載網址")
+                      })
 
                     }
                   )
