@@ -15,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  db.runSql("ALTER TABLE short_urls ADD COLUMN edit_log TEXT NOT NULL AFTER pageviews;");
+  db.runSql("ALTER TABLE short_urls ADD COLUMN edit_log TEXT DEFAULT NULL AFTER pageviews;");
   db.runSql("ALTER TABLE short_urls ADD COLUMN deleted_at INT DEFAULT NULL AFTER updated_at;");
   return db.runSql("ALTER TABLE short_urls ADD COLUMN is_active INT DEFAULT 1 AFTER pageviews;");
   //return null;
