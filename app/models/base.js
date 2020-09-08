@@ -48,11 +48,11 @@ exports.update = function(table_name, update_obj, where_obj, has_time, cb) {
   if(has_time){
     update_obj.updated_at = timestamp_now()
   }
-  conn.query('UPDATE ' + table_name + ' SET ? WHERE ?', [update_obj, where_obj], function (error, results, fields) {
+  let query = conn.query('UPDATE ' + table_name + ' SET ? WHERE ?', [update_obj, where_obj], function (error, results, fields) {
     if (error) throw error
     cb(results)
   })
-  //console.log(query.sql)
+  console.log(query.sql)
 }
 
 exports.getOne = function(table_name, u_id_col, u_id, cb) {

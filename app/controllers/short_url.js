@@ -8,13 +8,17 @@ exports.short_url_redirect = function(options) {
     //console.log(req.params.u_id)
     shortUrlModel.getOne('u_id', req.params.u_id, function(short_url_result){
       if(short_url_result.length > 0){
-        // 更新瀏覽量
-        var new_pageviews = short_url_result[0].pageviews + 1
-        var update_obj = {'pageviews': new_pageviews}
-        var where_obj = {'u_id': req.params.u_id}
-        shortUrlModel.update(update_obj, where_obj, true, function(result){
-          return res.status(302).redirect(short_url_result[0].long_url)
-        });
+        if(short_url_result[0].is_active == 1){ // 上架狀態
+          // 更新瀏覽量
+          var new_pageviews = short_url_result[0].pageviews + 1
+          var update_obj = {'pageviews': new_pageviews}
+          var where_obj = {'u_id': req.params.u_id}
+          shortUrlModel.update(update_obj, where_obj, true, function(result){
+            return res.status(302).redirect(short_url_result[0].long_url)
+          });
+        }else{ // 下架狀態
+          next()
+        }
       }else{
         next()
       }

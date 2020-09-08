@@ -95,6 +95,7 @@ module.exports = function(app){
 
     // 短網址
     app.get('/list', AdminShortUrlManage.short_url_list(options))
+    app.get('/is_active/:short_url_id', AdminShortUrlManage.short_url_is_active(options))
     app.post('/item', AdminShortUrlManage.short_url_post(options))
   })
 

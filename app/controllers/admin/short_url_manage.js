@@ -59,7 +59,17 @@ exports.short_url_list = function(options) {
                 })
 
               })
-              res.render('admin/short_url/list', {short_urls: results, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+
+              let url_on = []
+              let url_off = []
+              results.forEach(function(url_item, url_index){
+                if(url_item.is_active == 1){
+                  url_on.push(url_item)
+                }else{
+                  url_off.push(url_item)
+                }
+              })
+              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
             })
           })
         }else if(the_user_results[0].role_id == 3){ // 局處管理者
@@ -78,7 +88,16 @@ exports.short_url_list = function(options) {
                 })
               })
 
-              res.render('admin/short_url/list', {short_urls: show_urls, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+              let url_on = []
+              let url_off = []
+              show_urls.forEach(function(url_item, url_index){
+                if(url_item.is_active == 1){
+                  url_on.push(url_item)
+                }else{
+                  url_off.push(url_item)
+                }
+              })
+              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
             })
           })
         }else{
@@ -92,7 +111,16 @@ exports.short_url_list = function(options) {
 
         var where_obj = { column_name: 'user_id', operator: "=", column_value: the_user_results[0].id }
         shortUrlModel.getAllWhere(sort_obj, where_obj, function(results){
-          res.render('admin/short_url/list', {short_urls: results, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+          let url_on = []
+          let url_off = []
+          results.forEach(function(url_item, url_index){
+            if(url_item.is_active == 1){
+              url_on.push(url_item)
+            }else{
+              url_off.push(url_item)
+            }
+          })
+          res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
         })
 
       })
@@ -126,6 +154,26 @@ exports.short_url_post = function(options) {
       res.redirect('/admin/short_url/list')
     }
 
+
+  }
+}
+
+// 短網址上下架
+exports.short_url_is_active = function(options) {
+  return function(req, res) {
+    //console.log(req.params.short_url_id)
+    //console.log("狀態：" + req.query.on)
+
+    shortUrlModel.getOne('u_id', req.params.short_url_id, function(results_url){
+      if(results_url.length == 1){
+        shortUrlModel.update({ is_active: req.query.on }, { u_id: req.params.short_url_id }, true, function(result){
+          res.redirect('/admin/short_url/list')
+        })
+      }else{
+        res.redirect('/admin/short_url/list')
+      }
+
+    })
 
   }
 }
