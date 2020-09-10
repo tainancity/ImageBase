@@ -168,10 +168,12 @@ exports.short_url_is_active = function(options) {
     shortUrlModel.getOne('u_id', req.params.short_url_id, function(results_url){
       if(results_url.length == 1){
         shortUrlModel.update({ is_active: req.query.on }, { u_id: req.params.short_url_id }, true, function(result){
-          res.redirect('/admin/short_url/list')
+          //res.redirect('/admin/short_url/list')
+          res.redirect('back')
         })
       }else{
-        res.redirect('/admin/short_url/list')
+        //res.redirect('/admin/short_url/list')
+        res.redirect('back')
       }
 
     })
