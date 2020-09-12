@@ -181,7 +181,7 @@ module.exports = function(app){
     // 刪除短網址
     app.delete('/delete-short-url', function(req, res){
       userModel.getOne('u_id', req.session.u_id, function(user_results){
-
+        /*
         if( user_results[0].role_id == 1 ){ // 管理者
           shortUrlModel.deleteWhere('u_id', req.body.u_id, function(results){
             //res.json({result: '1'})
@@ -191,6 +191,7 @@ module.exports = function(app){
               res.json({delete_result: 0})
             }
           })
+
         }else{
           shortUrlModel.delete2Where('user_id', user_results[0].id, 'u_id', req.body.u_id, function(results){
             //res.json({result: '1'})
@@ -201,8 +202,17 @@ module.exports = function(app){
             }
           })
         }
+        */
+        shortUrlModel.deleteSoftWhere({'u_id': req.body.u_id}, function(results){
+          //res.json({result: '1'})
+          if(results.affectedRows > 0){
+            res.json({delete_result: 1})
+          }else{
+            res.json({delete_result: 0})
+          }
+        })
 
-      });
+      })
 
     })
 

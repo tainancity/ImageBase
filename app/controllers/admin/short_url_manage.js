@@ -45,7 +45,6 @@ exports.short_url_list = function(options) {
 
     if(show_uploader_and_organ){ // 管理者
 
-
       userModel.getOne('u_id', req.session.u_id, function(the_user_results){
         if(the_user_results[0].role_id == 1){ // 平台管理者
           userModel.getAll(sort_obj, function(user_results){
@@ -62,14 +61,20 @@ exports.short_url_list = function(options) {
 
               let url_on = []
               let url_off = []
+              let url_deleted = []
               results.forEach(function(url_item, url_index){
-                if(url_item.is_active == 1){
-                  url_on.push(url_item)
-                }else{
-                  url_off.push(url_item)
+                if(url_item.deleted_at == null){ // 未刪除
+                  if(url_item.is_active == 1){
+                    url_on.push(url_item)
+                  }else{
+                    url_off.push(url_item)
+                  }
+                }else{ // 已刪除
+                  url_deleted.push(url_item)
                 }
+
               })
-              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, short_urls_deleted: url_deleted, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
             })
           })
         }else if(the_user_results[0].role_id == 3){ // 局處管理者
@@ -90,14 +95,20 @@ exports.short_url_list = function(options) {
 
               let url_on = []
               let url_off = []
+              let url_deleted = []
               show_urls.forEach(function(url_item, url_index){
-                if(url_item.is_active == 1){
-                  url_on.push(url_item)
-                }else{
-                  url_off.push(url_item)
+                if(url_item.deleted_at == null){ // 未刪除
+                  if(url_item.is_active == 1){
+                    url_on.push(url_item)
+                  }else{
+                    url_off.push(url_item)
+                  }
+                }else{ // 已刪除
+                  url_deleted.push(url_item)
                 }
+
               })
-              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+              res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, short_urls_deleted: url_deleted, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
             })
           })
         }else{
@@ -113,14 +124,20 @@ exports.short_url_list = function(options) {
         shortUrlModel.getAllWhere(sort_obj, where_obj, function(results){
           let url_on = []
           let url_off = []
+          let url_deleted = []
           results.forEach(function(url_item, url_index){
-            if(url_item.is_active == 1){
-              url_on.push(url_item)
-            }else{
-              url_off.push(url_item)
+            if(url_item.deleted_at == null){ // 未刪除
+              if(url_item.is_active == 1){
+                url_on.push(url_item)
+              }else{
+                url_off.push(url_item)
+              }
+            }else{ // 已刪除
+              url_deleted.push(url_item)
             }
+
           })
-          res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+          res.render('admin/short_url/list', {short_urls_on: url_on, short_urls_off: url_off, short_urls_deleted: url_deleted, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
         })
 
       })

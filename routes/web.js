@@ -200,6 +200,7 @@ module.exports = function(app){
     app.get('/:u_id', File.item_iframe(options))
   })
 
+  // 短網址導向
   app.group('/u', (app) => {
     // short url
     app.get('/:u_id', ShortUrl.short_url_redirect(options))

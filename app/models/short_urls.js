@@ -53,3 +53,7 @@ exports.deleteWhere = function(u_id_col, u_id, cb){
 exports.delete2Where = function(u_id_col, u_id, u_id_col_2, u_id_2, cb) {
   baseModel.delete2Where(table_name, u_id_col, u_id, u_id_col_2, u_id_2, cb)
 }
+
+exports.deleteSoftWhere = function(where_obj, cb) {
+  baseModel.deleteSoftWhere(table_name, where_obj, cb)
+}

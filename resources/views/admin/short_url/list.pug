@@ -117,6 +117,49 @@ block append content_sl
                               a.btn-outline-warning.btn_url_on_off(href=config.appenv.domain + "/admin/short_url/is_active/" + item.u_id + "?on=1") 上架
                             li
                               button.btn_action.btn_delete_forever(type='button' title='刪除(無法復原)' data-id=item.u_id): i.fas.fa-times
+            
+          if show_uploader_and_organ
+            h5.mt-0 所有短網址列表(狀態：刪除)
+          
+            div.cardbox
+              div.cardbox-body
+                div.table-responsive
+                  table.table.custom_table
+                    thead
+                      tr
+                        th #
+                        if show_uploader_and_organ
+                          th 產生者帳號
+                        th 短網址
+                        th 原網址
+                        th 瀏覽量
+                        th 建立時間
+                        th
+                    tbody
+                      
+                      each item, index in short_urls_deleted
+                        tr
+                          
+                          td= index+1
+                          
+                          if show_uploader_and_organ
+                            td= item.pid
+                          
+                          if config.appenv.env == 'production'
+                            td
+                              input.short_url(type='text' value='https:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                          else
+                            td
+                              input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                          
+                          td
+                            input.original_url(type='text' value=item.long_url readonly)
+                          
+                          td= item.pageviews
+                          
+                          td= time.get_time_from_timestamp('zh-tw', item.created_at)
+                          
+                          td 已被刪除
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)

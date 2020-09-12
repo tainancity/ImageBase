@@ -52,7 +52,7 @@ exports.update = function(table_name, update_obj, where_obj, has_time, cb) {
     if (error) throw error
     cb(results)
   })
-  console.log(query.sql)
+  //console.log(query.sql)
 }
 
 exports.getOne = function(table_name, u_id_col, u_id, cb) {
@@ -114,6 +114,18 @@ exports.delete2Where = function(table_name, u_id_col, u_id, u_id_col_2, u_id_2, 
     cb(results)
   })
   //console.log(query.sql)
+}
+
+//var where_obj = { column_name: 'column_name_value' }
+exports.deleteSoftWhere = function(table_name, where_obj, cb) {
+  let update_obj = {
+    deleted_at: timestamp_now()
+  }
+
+  conn.query('UPDATE ' + table_name + ' SET ? WHERE ?', [update_obj, where_obj], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
 }
 
 // 計算某欄位的數量出現幾次
