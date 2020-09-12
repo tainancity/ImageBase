@@ -159,7 +159,7 @@ block append content_sl
                           
                           td= time.get_time_from_timestamp('zh-tw', item.created_at)
                           
-                          td 已被刪除
+                          td= "已被刪除( " + time.get_time_from_timestamp('zh-tw', item.deleted_at) + " )"
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
