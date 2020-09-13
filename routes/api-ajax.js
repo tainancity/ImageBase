@@ -216,6 +216,41 @@ module.exports = function(app){
 
     })
 
+    // 短網址的原網址更新
+    app.put('/update-short-url-original', (req, res) => {
+      userModel.getOne('u_id', req.session.u_id, function(user_results){
+        shortUrlModel.getOne("u_id", req.body.u_id, function(url_results){
+          //console.log(url_results[0])
+          let update_edit_log = []
+          if(url_results[0].edit_log == null || url_results[0].edit_log == ""){
+            // 將原來的放進 edit_log 中
+            update_edit_log.push({
+              url: url_results[0].long_url,
+              update_time: url_results[0].created_at
+            })
+          }else{
+            update_edit_log = JSON.parse(url_results[0].edit_log)
+          }
+          update_edit_log.push({
+            url: req.body.new_url,
+            update_time: parseInt(Date.now() / 1000)
+          })
+
+          shortUrlModel.update({edit_log: JSON.stringify(update_edit_log), long_url: req.body.new_url}, {u_id: req.body.u_id}, true, function(results){
+
+            if(results.affectedRows > 0){
+              res.json({update_result: 1})
+            }else{
+              res.json({update_result: 0})
+            }
+          })
+        })
+
+
+
+      })
+    })
+
     // 圖片權限移轉：列表
     app.get('/transfer-files/:account', function(req, res){
 
@@ -731,6 +766,9 @@ module.exports = function(app){
       }
 
     })
+
+
+
 
   })
 

@@ -31,6 +31,10 @@ table.custom_table{
           padding: 2px 5px;
           min-width: 220px;
         }
+        input.original_url.edit_now{
+          background-color: white;
+          border: 1px solid gray;
+        }
         ul.action_list{
           margin:0;
           padding:0;
@@ -65,7 +69,94 @@ table.custom_table{
     }
   }
 }
+span.icon_edit, span.icon_edit_now, span.icon_url_history{
+  display: inline-block;
+  margin-left: 6px;
+  cursor: pointer;
+  width: 14px;
+  &.-none{
+    display: none;
+  }
+}
+div.url_edit_log_block{
+  border: 1px solid black;
+  position: relative;
+  display: inline-block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsla(0, 0%, 0%, .5);
+  display: none;
+  z-index: 99;
+  padding: 20px;
+  &.-show{
+    display: block;
+  }
+  div.edit_log_content{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+    max-height: 600px;
+    width: 800px;
+    max-width: 100%;
+    overflow: auto;
+    span.title{
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+    button.btn_remove{
+      background: none;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 30px;
+      color: black;
+      border: 0;
+      line-height: 1;
+      cursor: pointer;
+      outline: none;
+    }
+    div.edit_log_content_ul{
+      ul.edit_log_list{
+        display: block;
+        > li{
+          margin-bottom: 6px;
+          &:last-child{
+            margin-bottom: 0;
+          }
+          span.left_str{
+            display: inline-block;
+            width: 190px;
+            vertical-align: top;
+            margin-right: 10px;
+          }
+          span.url{
+            display: inline-block;
+            vertical-align: top;
+            word-break: break-all;
+            background-color: #eee;
+            width: calc(100% - 190px - 10px);
+          }
+        }
+      }
+    }
+  }
 
+}
+ul.edit_log_list{
+  display: none;
+  margin: 0;
+  padding: 0;
+}
 /*
 div.paginator{
   ul.paginator_list{

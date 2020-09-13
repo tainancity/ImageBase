@@ -55,6 +55,20 @@ exports.update = function(table_name, update_obj, where_obj, has_time, cb) {
   //console.log(query.sql)
 }
 
+// var update_obj = { column_name: 'column_name_value' }
+// var where_obj1 = { column_name: 'column_name_value' }
+// var where_obj2 = { column_name: 'column_name_value' }
+exports.update2Where = function(table_name, update_obj, where_obj1, where_obj2, has_time, cb) {
+  if(has_time){
+    update_obj.updated_at = timestamp_now()
+  }
+  let query = conn.query('UPDATE ' + table_name + ' SET ? WHERE ? AND ?', [update_obj, where_obj1, where_obj2], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}
+
 exports.getOne = function(table_name, u_id_col, u_id, cb) {
   conn.query('SELECT * FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? LIMIT 1', [u_id], function (error, results, fields) {
     if (error) throw error

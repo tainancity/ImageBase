@@ -14,6 +14,10 @@ exports.update = function(update_obj, where_obj, has_time, cb) {
   baseModel.update(table_name, update_obj, where_obj, has_time, cb)
 }
 
+exports.update2Where = function(update_obj, where_obj1, where_obj2, has_time, cb) {
+  baseModel.update(table_name, update_obj, where_obj1, where_obj2, has_time, cb)
+}
+
 exports.getOne = function(u_id_col, u_id, cb) {
   baseModel.getOne(table_name, u_id_col, u_id, cb)
 }

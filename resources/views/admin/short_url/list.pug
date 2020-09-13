@@ -57,6 +57,13 @@ block append content_sl
                         
                         td
                           input.original_url(type='text' value=item.long_url readonly)
+                          span.icon_edit: i.fas.fa-lock
+                          span.icon_edit_now.-none: i.fas.fa-lock-open
+                          if item.edit_log != null && item.edit_log != ""
+                            ul.edit_log_list
+                              each url_item, j in JSON.parse(item.edit_log)
+                                li!= "<span class='left_str'>" + time.get_time_from_timestamp("zh-TW", url_item.update_time) + " " + (j == 0 ? "建立" : "更改為") + "</span><span class='url'>" + url_item.url + "</span>"
+                            span.icon_url_history: i.fas.fa-history
                         
                         td= item.pageviews
                         
@@ -106,6 +113,13 @@ block append content_sl
                         
                         td
                           input.original_url(type='text' value=item.long_url readonly)
+                          span.icon_edit: i.fas.fa-lock
+                          span.icon_edit_now.-none: i.fas.fa-lock-open
+                          if item.edit_log != null && item.edit_log != ""
+                            ul.edit_log_list
+                              each url_item, j in JSON.parse(item.edit_log)
+                                li!= "<span class='left_str'>" + time.get_time_from_timestamp("zh-TW", url_item.update_time) + " " + (j == 0 ? "建立" : "更改為") + "</span><span class='url'>" + url_item.url + "</span>"
+                            span.icon_url_history: i.fas.fa-history
                         
                         td= item.pageviews
                         
@@ -154,12 +168,23 @@ block append content_sl
                           
                           td
                             input.original_url(type='text' value=item.long_url readonly)
+                            if item.edit_log != null && item.edit_log != ""
+                              ul.edit_log_list
+                                each url_item, j in JSON.parse(item.edit_log)
+                                  li!= "<span class='left_str'>" + time.get_time_from_timestamp("zh-TW", url_item.update_time) + " " + (j == 0 ? "建立" : "更改為") + "</span><span class='url'>" + url_item.url + "</span>"
+                              span.icon_url_history: i.fas.fa-history
                           
                           td= item.pageviews
                           
                           td= time.get_time_from_timestamp('zh-tw', item.created_at)
                           
                           td= "已被刪除( " + time.get_time_from_timestamp('zh-tw', item.deleted_at) + " )"
+  
+  div.url_edit_log_block
+    div.edit_log_content
+      span.title 原網址的修改歷程
+      button.btn_remove(type="button") &times;
+      div.edit_log_content_ul
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
@@ -168,6 +193,16 @@ block append content_sl
         
 block append body_end_others_sl
   script.
+    var original_url_data = "";
+    function isURL(domain) {
+      var pattern = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/gm;
+      if( pattern.test(domain) ){
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
     $(function(){
       
       $("button.btn_delete_forever").on("click", function(){
@@ -212,5 +247,78 @@ block append body_end_others_sl
           alert("請輸入正確的網址格式！");
         }
       });
+      
+      // 原網址編輯
+      $("span.icon_edit").on("click", function(){
+        $(this).closest("td").find("input.original_url").removeAttr("readonly").addClass("edit_now");
+        $(this).closest("td").find("span.icon_edit").toggleClass("-none");
+        $(this).closest("td").find("span.icon_edit_now").toggleClass("-none");
+        original_url_data = $(this).closest("td").find("input.original_url").val();
+      });
+      $("span.icon_edit_now").on("click", function(){
+        var that = this;
+        $(this).closest("td").find("input.original_url").attr("readonly", true).removeClass("edit_now");
+        $(this).closest("td").find("span.icon_edit").toggleClass("-none");
+        $(this).closest("td").find("span.icon_edit_now").toggleClass("-none");
+        
+        var input_field = $(this).closest("td").find("input.original_url");
+        var user_input = ($(input_field).val()).trim();
+        
+        if( isURL(user_input) ){
+          
+          
+          if(original_url_data != user_input){ // 更新
+            
+            $.ajax({
+              url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-short-url-original',
+              type: 'put',
+              data: 'u_id=' + $(this).closest("tr").find("button.btn_delete_forever").attr("data-id") + "&new_url=" + encodeURIComponent(user_input),
+              dataType: 'json',
+              headers: {
+                "X-CSRF-Token": '#{csrfToken}'
+              },
+              statusCode: {
+                200: function (response) {
+                  //console.log(response);
+                }
+              },
+              success: function(r_data){
+                //console.log(r_data)
+                if(r_data.update_result == 1){
+                  alert("更新成功");
+                  $(input_field).val(user_input);
+                  location.reload();
+                }
+                
+              }
+            });
+            
+            
+          }else{
+            alert("與原網址相同。");
+            $(input_field).val(original_url_data);
+          }
+          
+          
+        }else{
+          alert("網址有誤");
+          $(input_field).val(original_url_data);
+        }
+        
+      });
+      
+      // 編輯記錄
+      $("span.icon_url_history").on("click", function(){
+        let the_html = $(this).closest("td").find("ul.edit_log_list").clone();
+        $("div.url_edit_log_block").find("div.edit_log_content_ul").html("");
+        $("div.url_edit_log_block").find("div.edit_log_content_ul").append(the_html);
+        $("div.url_edit_log_block").addClass("-show");
+      });
+      
+      $("button.btn_remove").on("click", function(){
+        $("div.url_edit_log_block").removeClass("-show");
+        $("div.url_edit_log_block").find("div.edit_log_content_ul").html("");
+      });
+      
       
     });
