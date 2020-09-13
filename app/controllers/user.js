@@ -4,6 +4,7 @@ var soap = require('soap')
 var CONFIG = require('../config/global.js')
 
 var userModel = require(CONFIG.path.models + '/user.js')
+var fileModel = require(CONFIG.path.models + '/file.js')
 var logLoginModel = require(CONFIG.path.models + '/log_login.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
@@ -147,7 +148,11 @@ exports.login_post = function(options) {
 
             userModel.getOne('pid', result.SSO_Auth_ValidateResult.VerifiedAccount, function(results){
               if(results.length == 1){ // 帳號已存在於 db
-                userModel.update(update_obj, {"pid": result.SSO_Auth_ValidateResult.VerifiedAccount}, true, function(){})
+                userModel.update(update_obj, {"pid": result.SSO_Auth_ValidateResult.VerifiedAccount}, true, function(){
+                  //console.log("這")
+                  //console.log(results[0].id)
+                  fileModel.update({organ_id: update_obj.organ_id}, {user_id: results[0].id}, false, function(){})
+                })
                 req.session.u_id = results[0].u_id
 
                 // log_login
