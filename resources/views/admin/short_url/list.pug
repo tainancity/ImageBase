@@ -48,12 +48,12 @@ block append content_sl
                         if show_uploader_and_organ
                           td= item.pid
                         
-                        if config.appenv.env == 'production'
-                          td
+                        td
+                          if config.appenv.env == 'production'
                             input.short_url(type='text' value='https:' + config.appenv.domain + '/u/' + item.u_id readonly)
-                        else
-                          td
+                          else
                             input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                          span.icon_qrcode: i.fas.fa-qrcode
                         
                         td
                           input.original_url(type='text' value=item.long_url readonly)
@@ -185,6 +185,14 @@ block append content_sl
       span.title 原網址的修改歷程
       button.btn_remove(type="button") &times;
       div.edit_log_content_ul
+  
+  div#qrcode
+    div.content_block
+      button.btn_close(type="button") &times;
+      canvas#canvas
+        img#image
+      div.download_block
+        button.qrcode_download(type="button") 下載
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)
@@ -192,8 +200,11 @@ block append content_sl
             
         
 block append body_end_others_sl
+  script(src=asset_path('vendors/plugins/qrcode-with-logos/QRcode-with-logo.js'))
   script.
     var original_url_data = "";
+    var current_qrcode = "";
+    var url_u_id = "";
     function isURL(domain) {
       var pattern = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/gm;
       if( pattern.test(domain) ){
@@ -318,6 +329,37 @@ block append body_end_others_sl
       $("button.btn_remove").on("click", function(){
         $("div.url_edit_log_block").removeClass("-show");
         $("div.url_edit_log_block").find("div.edit_log_content_ul").html("");
+      });
+      
+      // qrcode
+      $("span.icon_qrcode").on("click", function(){
+        url_u_id = (($(this).closest("tr").find("input.short_url").val()).split("/")).pop();
+        current_qrcode = new QrCodeWithLogo({
+          canvas: document.getElementById("canvas"),
+          content: $(this).closest("tr").find("input.short_url").val(),
+          width: 500,
+          //download: true,
+          image: document.getElementById("image"),
+          logo: {
+            src: '#{asset_path('images/logo_simple.png')}'
+            // src: "https://avatars1.githubusercontent.com/u/28730619?s=460&v=4"
+          }
+        });
+        
+        current_qrcode.toCanvas().then(() => {
+          current_qrcode.toImage().then(() => {
+            $("#qrcode").addClass("-show");
+            //setTimeout(() => {
+              //current_qrcode.downloadImage("hello world");
+            //}, 2000);
+          });
+        });
+      });
+      $("button.btn_close").on("click", () => {
+        $("div#qrcode").removeClass("-show");
+      });
+      $("button.qrcode_download").on("click", () => {
+        current_qrcode.downloadImage(url_u_id);
       });
       
       
