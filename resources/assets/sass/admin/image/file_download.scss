@@ -4,6 +4,9 @@ div.download_parent{
   margin-bottom: 20px;
   div.download_option{
     margin-right: 20px;
+    &.-none{
+      display: none;
+    }
     input.check{
       position: relative;
       top: 1px;

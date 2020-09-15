@@ -15,7 +15,8 @@ block append content_sl
           p.mt-0 圖片下載
           div.cardbox
             div.cardbox-body
-              h4.title4.-first= "下載範圍"
+              if auth.user.role_id == 1 || auth.user.role_id == 3
+                h4.title4.-first= "下載範圍"
               
               div.download_parent
                 if auth.user.role_id == 1
@@ -37,7 +38,7 @@ block append content_sl
                           if item.organ_id == login_user_organ_id
                             option(value=item.organ_id)= item.organ_name
                 
-                div.download_option
+                div(class="download_option " + (auth.user.role_id == 2 ? "-none" : ""))
                   input.check(type="radio" name="download_scope" id="account_item" value="by_account" checked)
                   label.check_label(for="account_item") 帳號
                   
