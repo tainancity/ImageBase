@@ -236,6 +236,15 @@ module.exports = function(app){
         }
       })
     })
+    // 下載單張
+    app.get('/download/onepicture', function (req, res) {
+      //console.log(req.query.download_filename)
+      res.download(CONFIG.path.public + "/" + decodeURIComponent(req.query.download_filename), function (err) {
+        if (err) throw err
+
+        console.log("單張下載完成")
+      })
+    })
   }
 
 
