@@ -591,7 +591,6 @@ module.exports = function(app){
 
     // 圖片下載
     app.post('/images/download', function(req, res){
-      console.log("測試")
       //console.log(req.body.files)
       //console.log(CONFIG.path.storage_temp)
 

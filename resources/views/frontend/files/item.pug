@@ -88,8 +88,9 @@ block append content
                     span.icon_span: i.fas.fa-crosshairs
                     span.meta_item 圖片尺吋：
                     each item, index in JSON.parse(file_obj.file_data)
-                      if !item.origin
-                        span.item_size= item.width + ' x ' + item.height
+                      //-
+                        if !item.origin
+                      span(data-src=item.url).item_size.trigger_download= item.width + ' x ' + item.height
                   li
                     span.icon_span: i.fas.fa-file-alt
                     span.meta_item 圖片格式：
@@ -216,5 +217,9 @@ block append body_end_others
           }
         });
       }
+      
+      $("span.trigger_download").on("click", function(){
+        window.open('#{config.appenv.storage.domain}/download/onepicture?download_filename=' + encodeURIComponent($(this).attr("data-src")), "_blank");
+      });
       
     });

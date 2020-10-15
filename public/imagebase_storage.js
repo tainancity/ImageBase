@@ -31,6 +31,16 @@ app.get('/download/trigger', function (req, res) {
   })
 })
 
+// 下載單張
+app.get('/download/onepicture', function (req, res) {
+  //console.log(req.query.download_filename)
+  res.download(CONFIG.path.public + "/" + decodeURIComponent(req.query.download_filename), function (err) {
+    if (err) throw err
+
+    console.log("單張下載完成")
+  })
+})
+
 app.listen(CONFIG.appenv.storage.port, function(){
   console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.storage.domain);
 })
