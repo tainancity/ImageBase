@@ -131,14 +131,14 @@ script.
   };
   
   var loop_files = function(){
-    if(user_prepare_upload_files.length > 10){
-      alert("請勿一次傳超過 10 個檔案！");
-    }else{
+    //if(user_prepare_upload_files.length > 10){
+      //alert("請勿一次傳超過 10 個檔案！");
+    //}else{
       file_index = 0;
       loop_file_each(user_prepare_upload_files[file_index]);
       
       $(article_upload_block).find("span.hint").addClass("display_none");
-    }
+    //}
   };
 
   $(function(){
