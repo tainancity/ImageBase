@@ -1174,6 +1174,7 @@ exports.image_crop = function(options){
                     username: CONFIG.appenv.storage.scp.user,
                     password: CONFIG.appenv.storage.scp.password
                 }).then(() => {
+                  console.log("這裡裁")
                   //console.log(delete_file_path)
                   client_ssh_sftp.delete(delete_file_path);
 
