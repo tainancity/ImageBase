@@ -990,6 +990,7 @@ exports.image_soft_delete_undo = function(options){
 // 將檔案刪除
 exports.image_hard_delete = function(options){
   return function(req, res){
+    console.log("這裡1")
     if(req.query.api_key == undefined){
       return res.status(403).json({code: 403, msg:'未提供 API Key'})
     }
@@ -1011,6 +1012,7 @@ exports.image_hard_delete = function(options){
         }
 
         fileModel.getOne('u_id', req.params.u_id, function(files){
+          console.log("這裡2")
           if(files.length == 0){
             return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
           }else{
