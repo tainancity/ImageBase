@@ -1119,6 +1119,7 @@ exports.image_hard_delete = function(options){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
                               redisFileDataModel.import_to_redis()
+                              client_ssh_sftp.end()
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
                           //}
