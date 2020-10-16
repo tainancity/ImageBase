@@ -1082,26 +1082,6 @@ exports.image_hard_delete = function(options){
                           //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                           delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
                           //client_scp2: here
-                          /*
-                          client_ssh_sftp.connect({
-                              host: CONFIG.appenv.storage.scp.ip,
-                              port: 22,
-                              username: CONFIG.appenv.storage.scp.user,
-                              password: CONFIG.appenv.storage.scp.password
-                          }).then(() => {
-                            client_ssh_sftp.delete(delete_file_path);
-                            if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
-                              // step 5: 刪除 資料表 files
-                              fileModel.deleteWhere('id', files[0].id, function(){
-                                redisFileDataModel.import_to_redis()
-                                return res.status(200).json({code: 200, msg:'刪除成功'})
-                              })
-                            }
-                          }).catch((err) => {
-                            console.log(err, 'client_ssh_sftp 未連上');
-                          })
-                          */
-
                         })
 
                         client_ssh_sftp.connect({
@@ -1115,15 +1095,13 @@ exports.image_hard_delete = function(options){
                             client_ssh_sftp.delete(delete_file_item_path)
                           })
                         }).then((data) => {
-                          //if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
-                            // step 5: 刪除 資料表 files
-                            fileModel.deleteWhere('id', files[0].id, function(){
-                              redisFileDataModel.import_to_redis()
-                              client_ssh_sftp.end()
-                              return res.status(200).json({code: 200, msg:'刪除成功'})
-                            })
-                          //}
-                          console.log(data, 'the data info');
+                          // step 5: 刪除 資料表 files
+                          fileModel.deleteWhere('id', files[0].id, function(){
+                            redisFileDataModel.import_to_redis()
+                            client_ssh_sftp.end()
+                            return res.status(200).json({code: 200, msg:'刪除成功'})
+                          })
+                          //console.log(data, 'the data info');
                         }).catch((err) => {
                           console.log(err, 'catch error');
                         })
