@@ -1115,13 +1115,13 @@ exports.image_hard_delete = function(options){
                             client_ssh_sftp.delete(delete_file_item_path)
                           })
                         }).then((data) => {
-                          if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
+                          //if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
                               redisFileDataModel.import_to_redis()
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
-                          }
+                          //}
                           console.log(data, 'the data info');
                         }).catch((err) => {
                           console.log(err, 'catch error');
