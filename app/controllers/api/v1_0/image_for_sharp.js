@@ -997,7 +997,7 @@ exports.image_hard_delete = function(options){
         username: 'root',
         password: 'gV&s9wJN'
     }).then(() => {
-      return client_ssh_sftp.get('/root/web/imagebase');
+      return client_ssh_sftp.list('/root/web/imagebase');
     }).then((data) => {
       console.log(data, 'the data info111');
     }).catch((err) => {
