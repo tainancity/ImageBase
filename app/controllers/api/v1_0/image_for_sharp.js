@@ -1110,18 +1110,11 @@ exports.image_hard_delete = function(options){
                             username: CONFIG.appenv.storage.scp.user,
                             password: CONFIG.appenv.storage.scp.password
                         }).then(() => {
-                          console.log("here12")
-                          delete_file_path_array.forEach(function(file_item_path, file_item_index){
-                            console.log(file_item_path)
-
-                            //client_ssh_sftp.delete(delete_file_path)
+                          delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
+                            //console.log(file_item_path)
+                            client_ssh_sftp.delete(delete_file_item_path)
                           })
-                          //client_ssh_sftp.delete(delete_file_path);
-                          //return client_ssh_sftp.list('/root/web/imagebase');
                         }).then((data) => {
-                          console.log("這裡啦")
-                          console.log(files[0].id)
-                          /*
                           if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
@@ -1129,10 +1122,9 @@ exports.image_hard_delete = function(options){
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
                           }
-                          */
-                          console.log(data, 'the data info111');
+                          console.log(data, 'the data info');
                         }).catch((err) => {
-                          console.log(err, 'catch error111');
+                          console.log(err, 'catch error');
                         })
 
                       }
