@@ -990,7 +990,7 @@ exports.image_soft_delete_undo = function(options){
 // 將檔案刪除
 exports.image_hard_delete = function(options){
   return function(req, res){
-
+    /*
     client_ssh_sftp.connect({
         host: CONFIG.appenv.storage.scp.ip,
         port: 22,
@@ -1003,6 +1003,7 @@ exports.image_hard_delete = function(options){
     }).catch((err) => {
       console.log(err, 'catch error111');
     });
+    */
 
     if(req.query.api_key == undefined){
       return res.status(403).json({code: 403, msg:'未提供 API Key'})
@@ -1081,7 +1082,18 @@ exports.image_hard_delete = function(options){
                           var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                           console.log("這裡11")
                           //client_scp2: here
-
+                          client_ssh_sftp.connect({
+                              host: CONFIG.appenv.storage.scp.ip,
+                              port: 22,
+                              username: CONFIG.appenv.storage.scp.user,
+                              password: CONFIG.appenv.storage.scp.password
+                          }).then(() => {
+                            return client_ssh_sftp.list('/root/web/imagebase');
+                          }).then((data) => {
+                            console.log(data, 'the data info111');
+                          }).catch((err) => {
+                            console.log(err, 'catch error111');
+                          });
                           /*
                           client_ssh_sftp.connect({
                               host: CONFIG.appenv.storage.scp.ip,
