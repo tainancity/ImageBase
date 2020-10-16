@@ -1055,7 +1055,6 @@ exports.image_hard_delete = function(options){
                       }else{ // 非 local 端，刪除遠端路徑
                         console.log(files[0])
                         JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
-                          console.log("這裡10")
                           // 取得欲刪除的檔案路徑
                           var file_path_split = files[0].file_path.split('/')
                           file_path_split.splice(0, 1)
@@ -1085,7 +1084,7 @@ exports.image_hard_delete = function(options){
                               })
                             }
                           }).catch((err) => {
-                            console.log(err, 'catch error');
+                            console.log(err, 'client_ssh_sftp 未連上');
                           })
 
 
