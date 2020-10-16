@@ -1159,6 +1159,7 @@ exports.image_crop = function(options){
           var file_width_arr = [] // 縮放的寬度，應該都是 320、640、960
 
           // 取得原主檔名，並刪除
+          let delete_file_path_array = []
           file_data.forEach(function(file_item, file_index){
             if(!file_item.origin){
               //file_item.url
@@ -1181,9 +1182,10 @@ exports.image_crop = function(options){
 
                 var will_del_file_name = file_item.url.split('/').pop()  // 檔名
 
-                var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
-
+                //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+                delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
                 //client_scp2: here
+                /*
                 client_ssh_sftp.connect({
                     host: CONFIG.appenv.storage.scp.ip,
                     port: 22,
@@ -1196,12 +1198,32 @@ exports.image_crop = function(options){
                 }).catch((err) => {
                   console.log(err, 'catch error');
                 })
+                */
 
               }
             }else{
               new_file_data.push(file_item)
             }
           })
+
+          client_ssh_sftp.connect({
+              host: CONFIG.appenv.storage.scp.ip,
+              port: 22,
+              username: CONFIG.appenv.storage.scp.user,
+              password: CONFIG.appenv.storage.scp.password
+          }).then(() => {
+            delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
+              //console.log(file_item_path)
+              client_ssh_sftp.delete(delete_file_item_path)
+            })
+          }).then((data) => {
+            // step 5: 刪除 資料表 files
+            client_ssh_sftp.end()
+            //console.log(data, 'the data info');
+          }).catch((err) => {
+            console.log(err, 'catch error');
+          })
+
 
           var to_file_path = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id
           sharp(savePath).resize(file_width_arr[0], null).toFile(to_file_path + '/' + file_name_arr[0] + '.png', function(err, file0_sharp) {
