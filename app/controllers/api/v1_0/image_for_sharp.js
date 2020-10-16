@@ -999,9 +999,9 @@ exports.image_hard_delete = function(options){
     }).then(() => {
       return client_ssh_sftp.list('/root/web/imagebase');
     }).then((data) => {
-      console.log(data, 'the data info');
+      console.log(data, 'the data info111');
     }).catch((err) => {
-      console.log(err, 'catch error');
+      console.log(err, 'catch error111');
     });
 
     if(req.query.api_key == undefined){
