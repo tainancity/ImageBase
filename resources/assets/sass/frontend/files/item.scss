@@ -118,6 +118,20 @@ section.pic_sec{
           display: inline-block;
           margin-right: 10px;
         }
+        span.item_size{
+          cursor: pointer;
+          border: 1px solid #666;
+          border-radius: 3px;
+          padding: 0 5px;
+          transition: border .5s;
+        }
+        span.item_size:hover{
+          border: 1px solid #FFF;
+        }
+        span.icon_download{
+          display: inline-block;
+          margin-left: 5px;
+        }
       }
     }
   }
