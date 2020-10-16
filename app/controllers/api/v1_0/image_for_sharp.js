@@ -1068,29 +1068,7 @@ exports.image_hard_delete = function(options){
                           console.log("這裡11")
                           //client_scp2: here
 
-                          client_ssh_sftp.connect({
-                            host: CONFIG.appenv.storage.scp.ip,
-                            port: '22',
-                            username: CONFIG.appenv.storage.scp.user,
-                            password: CONFIG.appenv.storage.scp.password
-                          }).then(() => {
-                            //return sftp.list('/pathname');
-                            console.log("這裡12")
-                            console.log(delete_file_path)
-                            client_ssh_sftp.delete(delete_file_path);
-                            if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
-                              // step 5: 刪除 資料表 files
-                              fileModel.deleteWhere('id', files[0].id, function(){
-                                redisFileDataModel.import_to_redis()
-                                return res.status(200).json({code: 200, msg:'刪除成功'})
-                              })
-                            }
-                          }).then(data => {
-                            console.log(data, 'test the data info');
-                          }).catch(err => {
-                            console.log(err, 'test catch error');
-                          });
-                          /*
+
                           client_ssh_sftp.connect({
                               host: CONFIG.appenv.storage.scp.ip,
                               port: 22,
@@ -1110,7 +1088,6 @@ exports.image_hard_delete = function(options){
                           }).catch((err) => {
                             console.log(err, 'client_ssh_sftp 未連上');
                           })
-                          */
 
 
 
