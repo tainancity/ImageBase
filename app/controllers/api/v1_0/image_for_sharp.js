@@ -995,7 +995,7 @@ exports.image_hard_delete = function(options){
         host: '10.7.101.16',
         port: '22',
         username: 'root',
-        password: 'gV&s9wJN'
+        password: 'gV&s9wJNa'
     }).then(() => {
       return client_ssh_sftp.list('/root/web/imagebase');
     }).then((data) => {
