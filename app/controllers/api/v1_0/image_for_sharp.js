@@ -1081,7 +1081,6 @@ exports.image_hard_delete = function(options){
 
                           //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                           delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
-                          console.log("這裡11")
                           //client_scp2: here
                           /*
                           client_ssh_sftp.connect({
@@ -1128,7 +1127,11 @@ exports.image_hard_delete = function(options){
                             password: CONFIG.appenv.storage.scp.password
                         }).then(() => {
                           console.log("here12")
-                          return client_ssh_sftp.list('/root/web/imagebase');
+                          delete_file_path_array.forEach(function(file_item_path, file_item_index){
+                            console.log(file_item_path)
+                          })
+                          //client_ssh_sftp.delete(delete_file_path);
+                          //return client_ssh_sftp.list('/root/web/imagebase');
                         }).then((data) => {
                           console.log(data, 'the data info111');
                         }).catch((err) => {
