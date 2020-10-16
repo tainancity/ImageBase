@@ -990,6 +990,20 @@ exports.image_soft_delete_undo = function(options){
 // 將檔案刪除
 exports.image_hard_delete = function(options){
   return function(req, res){
+
+    client_ssh_sftp.connect({
+        host: '10.7.101.16',
+        port: '22',
+        username: 'root',
+        password: 'gV&s9wJN'
+    }).then(() => {
+      return client_ssh_sftp.list('/root/web/imagebase');
+    }).then((data) => {
+      console.log(data, 'the data info');
+    }).catch((err) => {
+      console.log(err, 'catch error');
+    });
+
     if(req.query.api_key == undefined){
       return res.status(403).json({code: 403, msg:'未提供 API Key'})
     }
