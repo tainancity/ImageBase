@@ -997,7 +997,7 @@ exports.image_hard_delete = function(options){
         username: 'root',
         password: 'gV&s9wJN'
     }).then(() => {
-      return client_ssh_sftp.list('/root/web/imagebase');
+      return client_ssh_sftp.get('/root/web/imagebase');
     }).then((data) => {
       console.log(data, 'the data info111');
     }).catch((err) => {
@@ -1082,7 +1082,7 @@ exports.image_hard_delete = function(options){
                           console.log("這裡11")
                           //client_scp2: here
 
-
+                          /*
                           client_ssh_sftp.connect({
                               host: CONFIG.appenv.storage.scp.ip,
                               port: 22,
@@ -1102,6 +1102,7 @@ exports.image_hard_delete = function(options){
                           }).catch((err) => {
                             console.log(err, 'client_ssh_sftp 未連上');
                           })
+                          */
 
 
 
