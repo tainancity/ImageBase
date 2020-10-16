@@ -30,8 +30,8 @@ var client_scp2 = new Client({
   password: CONFIG.appenv.storage.scp.password
 })
 
-var client_ssh = require('ssh2-sftp-client')
-var client_ssh_sftp = new client_ssh()
+let client_ssh = require('ssh2-sftp-client')
+let client_ssh_sftp = new client_ssh()
 
 var u_id_duplicate_times = 0
 var code_num = 4 // 資料庫裡 u_id 的位數
@@ -1068,7 +1068,7 @@ exports.image_hard_delete = function(options){
                         })
 
                       }else{ // 非 local 端，刪除遠端路徑
-                        console.log(files[0])
+                        let delete_file_path_array = []
                         JSON.parse(files[0].file_data).forEach(function(file_item, file_index){
                           // 取得欲刪除的檔案路徑
                           var file_path_split = files[0].file_path.split('/')
@@ -1079,9 +1079,11 @@ exports.image_hard_delete = function(options){
 
                           var will_del_file_name = file_item.url.split('/').pop()  // 檔名
 
-                          var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+                          //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
+                          delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
                           console.log("這裡11")
                           //client_scp2: here
+                          /*
                           client_ssh_sftp.connect({
                               host: CONFIG.appenv.storage.scp.ip,
                               port: 22,
@@ -1093,7 +1095,8 @@ exports.image_hard_delete = function(options){
                             console.log(data, 'the data info111');
                           }).catch((err) => {
                             console.log(err, 'catch error111');
-                          });
+                          })
+                          */
                           /*
                           client_ssh_sftp.connect({
                               host: CONFIG.appenv.storage.scp.ip,
@@ -1116,9 +1119,22 @@ exports.image_hard_delete = function(options){
                           })
                           */
 
-
-
                         })
+
+                        client_ssh_sftp.connect({
+                            host: CONFIG.appenv.storage.scp.ip,
+                            port: 22,
+                            username: CONFIG.appenv.storage.scp.user,
+                            password: CONFIG.appenv.storage.scp.password
+                        }).then(() => {
+                          console.log("here12")
+                          return client_ssh_sftp.list('/root/web/imagebase');
+                        }).then((data) => {
+                          console.log(data, 'the data info111');
+                        }).catch((err) => {
+                          console.log(err, 'catch error111');
+                        })
+
                       }
 
                     })
