@@ -26,7 +26,7 @@ var yamlApiSpec = require(CONFIG.path.yaml + '/api_spec.js')
 app.set('view engine', 'pug')
 app.set('views', CONFIG.path.views)
 app.set('port', CONFIG.appenv.port)
-app.set('trust proxy', '10.7.101.19')
+app.set('trust proxy', '10.7.101.18')
 
 // 檢查 public/yaml/api_spec.yaml 是否存在，若不存在，則建立
 fs.access(CONFIG.path.public + '/yaml/api_spec.yaml', (err) => {
