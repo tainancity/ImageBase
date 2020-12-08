@@ -80,11 +80,11 @@ app.use(session({
   secret: CONFIG.appenv.cookieSessionSecret,
   store: new RedisStore({ host: CONFIG.appenv.redis.host, port: CONFIG.appenv.redis.port, pass: CONFIG.appenv.redis.password}),
   resave: false,
-  saveUninitialized: false
-  // cookie: {
-  //   httpOnly: true,
-  //   secure: true
-  // }
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true
+    //secure: true
+  }
 }))
 
 // 放在這裡的原因是此圖片 api 不需要經過 csrfToken。
