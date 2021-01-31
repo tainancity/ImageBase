@@ -10,11 +10,11 @@ app.use(cors()) // allow cors
 var CONFIG = require('../app/config/global.js')
 // ========== Global Middlewares ========== //
 app.use(express.static(CONFIG.path.public))
-/*
-app.get('storage_uploads', function (req, res) {
-  res.send('Hello World Storage!')
+
+app.get('/', function (req, res) {
+  res.send('')
 })
-*/
+
 app.get('/download/trigger', function (req, res) {
   res.download(CONFIG.path.storage_temp + "/" + req.query.download_filename + ".zip", function (err) {
     if (err) {
