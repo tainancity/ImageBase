@@ -136,7 +136,7 @@
   "js/admin/vendor/typeahead.js/dist/typeahead.bundle.js": "js/admin/vendor/typeahead.js/dist/typeahead.bundle-6111f4305e.js",
   "js/admin/vendor/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js": "js/admin/vendor/x-editable/dist/bootstrap3-editable/js/bootstrap-editable-6b198eb2b8.js",
   "js/all.js": "js/all-ab41f61a9c.js",
-  "vendors/common/v.js": "vendors/common/v-9ea0d795b3.js",
+  "vendors/common/v.js": "vendors/common/v-b16f10b6fb.js",
   "vendors/plugins/cropit/jquery.cropit.js": "vendors/plugins/cropit/jquery.cropit-fd685673d9.js",
   "vendors/plugins/cropper/cropper.min.css": "vendors/plugins/cropper/cropper.min-d82d834ed3.css",
   "vendors/plugins/cropper/cropper.min.js": "vendors/plugins/cropper/cropper.min-28927a1e6b.js",
