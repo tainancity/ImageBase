@@ -783,12 +783,21 @@ exports.image_get_by_data = function(options){
                           }
                         }
 
+                        // 複製新的陣列
+                        var all_files_result = data_files.slice()
+
                         // total_files_count 取得全部頁面的資料總數
                         var total_files_count = data_files.length
                         // 取得該頁碼的資料
                         data_files = data_files.slice( (current_page-1)*items_per_page, (current_page * items_per_page) )
 
-                        return res.status(200).json({ code: 200, files: data_files, total_files_count: total_files_count, previous_page: p_page, next_page: n_page})
+                        if(req.query.get_all){
+                          return res.status(200).json({ code: 200, files: data_files, total_files_count: total_files_count, previous_page: p_page, next_page: n_page, all_files: all_files_result})
+                        }else{
+                          return res.status(200).json({ code: 200, files: data_files, total_files_count: total_files_count, previous_page: p_page, next_page: n_page})
+                        }
+
+
                       }
 
                     })

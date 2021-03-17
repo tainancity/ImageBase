@@ -157,6 +157,7 @@ block append body_end_others
       
       var original_query_obj_sort_type = query_obj.sort_type;
       var original_query_obj_sort_value = query_obj.sort_value;
+      query_obj.get_all = true;
       $.ajax({
         url: '#{config.appenv.domain}' + '/api/v1.0/image' + objectToQuerystring(query_obj) + '&api_key=#{config.appenv.full_api_key}',
         type: 'GET',
@@ -178,10 +179,13 @@ block append body_end_others
             $("section.paginator_sec, section.search_result").removeClass("-none");
           }
           
+          $(r_data.all_files).each(function(index, item){
+            files_id_list.push(item.id);
+          });
+          
           var html = '';
           $(r_data.files).each(function(index, item){
             //console.log(item)
-            files_id_list.push(item.id);
             
             html += '<li>';
             html +=   '<div class="each_block each_file" data-id="' + item.id + '">';
