@@ -210,49 +210,76 @@ section.search_result{
   &.-none{
     display: none;
   }
-  div.sort_block{
+  div.function_block{
     border-top: 2px solid $white;
-    padding-top:20px;
-    span.sort_text_span{
-      display: inline-block;
-      vertical-align: top;
-      color: $white;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    @media screen and (max-width:575px){
+      flex-direction: column;
+      align-items: flex-start;
     }
-    ul.sort_list{
-      margin:0;
-      padding:0;
-      list-style: none;
-      display: inline-block;
-      vertical-align: top;
-      > li{
+    div.sort_block{
+      @media screen and (max-width:575px){
+        order: 2;
+      }
+      span.sort_text_span{
         display: inline-block;
-        margin:0 20px 0 0;
-        padding:0;
         vertical-align: top;
-        > a{
-          color: $white;
+        color: $white;
+      }
+      ul.sort_list{
+        margin:0;
+        padding:0;
+        list-style: none;
+        display: inline-block;
+        vertical-align: top;
+        > li{
           display: inline-block;
-          text-decoration: none;
-          &:hover, &.on{
-            color: $orange;
-          }
-          span.sort_text{
+          margin:0 20px 0 0;
+          padding:0;
+          vertical-align: top;
+          > a{
+            color: $white;
             display: inline-block;
-            margin-right: 3px;
+            text-decoration: none;
+            &:hover, &.on{
+              color: $orange;
+            }
+            span.sort_text{
+              display: inline-block;
+              margin-right: 3px;
+            }
           }
-          /*
-          span.icon_span{
-            display: inline-block;
-            position: absolute;
-            right:-15px;
-            top: calc(50% - 2px);
-            line-height: 1;
-            transform: translateY(-50%);
-          }*/
         }
       }
     }
+    button.btn_download{
+      cursor: pointer;
+      border: 0;
+      border-radius: 5px;
+      min-width: 128px;
+      &.-loading{
+        span.text{
+          display: none;
+        }
+        span.icon{
+          display: inline;
+        }
+      }
+      &.-none{
+        display: none;
+      }
+      span.icon{
+        display: none;
+      }
+      @media screen and (max-width:575px){
+        order: 1;
+        margin-bottom: 20px;
+      }
+    }
   }
+
   div.pic_block{
     padding-top: 20px;
     ul.more_list{

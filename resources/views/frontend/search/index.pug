@@ -70,21 +70,25 @@ block append content
     div.container
       div.row
         div.col
-          div.sort_block
-            span.sort_text_span 排序：
-            ul.sort_list
-              li
-                a.sort_type(data-sort-type='created_at' data-sort-value='' href='#')
-                  span.sort_text 建立時間
-                  span.icon_span
-              li
-                a.sort_type(data-sort-type='pageviews' data-sort-value='' href='#')
-                  span.sort_text 瀏覽人次
-                  span.icon_span
-              li
-                a.sort_type(data-sort-type='like' data-sort-value='' href='#')
-                  span.sort_text 按讚數
-                  span.icon_span
+          div.function_block
+            div.sort_block
+              span.sort_text_span 排序：
+              ul.sort_list
+                li
+                  a.sort_type(data-sort-type='created_at' data-sort-value='' href='#')
+                    span.sort_text 建立時間
+                    span.icon_span
+                li
+                  a.sort_type(data-sort-type='pageviews' data-sort-value='' href='#')
+                    span.sort_text 瀏覽人次
+                    span.icon_span
+                li
+                  a.sort_type(data-sort-type='like' data-sort-value='' href='#')
+                    span.sort_text 按讚數
+                    span.icon_span
+            button.btn_download.-none(type="button")
+              span.text 下載搜尋結果圖片
+              span.icon: i.fa.fa-spinner.fa-spin
             
       div.row
         div.col
@@ -114,6 +118,7 @@ block append body_end_others
     script(src=asset_path('vendors/plugins/select2/select2.full.min.js'))
   script(src=asset_path('vendors/plugins/jsurl/url.min.js'))
   script.
+    var files_id_list = [];
     function objectToQuerystring (obj) {
       return Object.keys(obj).reduce(function (str, key, i) {
         var delimiter, val;
@@ -133,24 +138,23 @@ block append body_end_others
       }
       if(query_obj.title != undefined){
         $("input[name=title]").val(query_obj.title);
+        $("button.btn_download").removeClass("-none");
       }
       if(query_obj.category_id != undefined){
         //$("select[name=category_id]").val(query_obj.category_id);
         $("select[name=category_id]").data('select2').trigger('select', {
             data: {"id": query_obj.category_id }
         });
+        $("button.btn_download").removeClass("-none");
       }
       if(query_obj.organ_id != undefined){
         //$("select[name=organ_id]").val(query_obj.organ_id);
         $("select[name=organ_id]").data('select2').trigger('select', {
             data: {"id": query_obj.organ_id }
         });
+        $("button.btn_download").removeClass("-none");
       }
-      // if(query_obj.tag != undefined){
-      //   $("select[name=tag]").data('select2').trigger('select', {
-      //       data: {"id": query_obj.tag }
-      //   });
-      // }
+      
       var original_query_obj_sort_type = query_obj.sort_type;
       var original_query_obj_sort_value = query_obj.sort_value;
       $.ajax({
@@ -177,6 +181,8 @@ block append body_end_others
           var html = '';
           $(r_data.files).each(function(index, item){
             //console.log(item)
+            files_id_list.push(item.id);
+            
             html += '<li>';
             html +=   '<div class="each_block each_file" data-id="' + item.id + '">';
             html +=     '<div class="top_block">';
@@ -386,6 +392,49 @@ block append body_end_others
             }
           }
           
+        }
+        
+        
+      });
+      
+      $("button.btn_download").on("click", function(){
+        if($(this).hasClass("-loading")){
+          alert("勿重覆點擊");
+          return;
+        }
+        
+        var r = confirm("請確認是否下載所有搜尋結果的圖片？");
+        if (r) {
+          var that = this;
+          
+          $.ajax({
+            url: '#{config.appenv.domain}' + '/api-ajax/v1.0/images/download',
+            type: 'POST',
+            data: {files: files_id_list},
+            dataType: 'json',
+            headers: {
+              'X-CSRF-Token':'#{csrfToken}'
+            },
+            beforeSend: function(){
+              $(that).addClass("-loading");
+            },
+            statusCode: {
+              200: function (response) {
+                //console.log(response);
+              }
+            },
+            success: function(r_data){
+              //console.log(r_data);
+              if(r_data.msg == 1){
+                $(that).removeClass("-disabled");
+                window.open('#{config.appenv.storage.domain}/download/trigger?download_filename=' + r_data.download_filename, "_blank");
+              }
+              
+            },
+            complete: function(){
+              $(that).removeClass("-loading");
+            }
+          });
         }
         
         
