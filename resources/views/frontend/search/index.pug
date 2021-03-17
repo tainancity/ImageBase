@@ -407,7 +407,7 @@ block append body_end_others
           return;
         }
         
-        var r = confirm("請確認是否下載所有搜尋結果的圖片？");
+        var r = confirm(`請確認是否下載所有搜尋結果的圖片？(共 ${files_id_list.length} 張)`);
         if (r) {
           var that = this;
           
