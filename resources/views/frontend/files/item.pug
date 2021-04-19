@@ -164,11 +164,12 @@ block append content
 
 block append body_end_others
   script.
+    let file_u_id = '#{encodeURIComponent( (file_u_id).replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "") )}';
     function setCookie(cname, cvalue, exdays) {
       var d = new Date();
       d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
       var expires = "expires="+d.toUTCString();
-      var path = '/#{file_u_id}';
+      var path = '/' + file_u_id;
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=" + path;
     }
     function getCookie(cname) {
@@ -200,12 +201,12 @@ block append body_end_others
         $("textarea#" + $(this).attr("data-copytarget")).blur();
       });
       
-      if(getCookie("v_#{file_u_id}") == ''){
-        setCookie('v_#{file_u_id}', '1', 1)
+      if(getCookie(`v_${file_u_id}`) == ''){
+        setCookie(`v_${file_u_id}`, '1', 1)
         $.ajax({
           url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-pageviews',
           type: 'put',
-          data: 'u_id=' + '#{file_u_id}',
+          data: 'u_id=' + `v_${file_u_id}`,
           dataType: 'json',
           headers: {
             "X-CSRF-Token":"#{csrfToken}"
