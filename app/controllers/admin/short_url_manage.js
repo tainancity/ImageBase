@@ -160,7 +160,8 @@ exports.short_url_post = function(options) {
           user_id: the_user_results[0].id,
           long_url: req.body.long_url,
           pageviews: 0,
-          is_active: 1
+          is_active: 1,
+          url_desc: req.body.url_desc
         }
 
         check_u_id(req, res, save_obj, function(){

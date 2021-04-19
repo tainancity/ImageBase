@@ -17,8 +17,15 @@ block append content_sl
               div.cardbox-body
                 form.generate_short_url_form(action=config.appenv.domain + '/admin/short_url/item' method='post')
                   input(type='hidden' name='_csrf' value=csrfToken)
-                  input.original_url_text(type='text' name='long_url')
-                  button.btn.btn-secondary.btn_generate(type='submit') 短網址產生
+                  div.item
+                    label.label_text 網址：
+                    input.original_url_text(type='url' name='long_url')
+                  div.item
+                    label.label_text 簡易描述：
+                    input.url_desc(type='text' name='url_desc' placeholder='(非必填)')
+                  div.item
+                    label.label_text
+                    button.btn.btn-secondary.btn_generate(type='submit') 產生短網址
           
           if show_uploader_and_organ
             h5.mt-0 所有短網址列表(狀態：上架)
@@ -54,6 +61,9 @@ block append content_sl
                           else
                             input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
                           span.icon_qrcode: i.fas.fa-qrcode
+                          div.url_desc_block
+                            p.url_desc(contenteditable="false")= item.url_desc
+                            span.icon_edit_url_desc(title="編輯簡易描述"): i.fas.fa-edit
                         
                         td
                           input.original_url(type='text' value=item.long_url readonly)
@@ -107,9 +117,15 @@ block append content_sl
                         if config.appenv.env == 'production'
                           td
                             input.short_url(type='text' value='https:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                            div.url_desc_block
+                              p.url_desc(contenteditable="false")= item.url_desc
+                              span.icon_edit_url_desc(title="編輯簡易描述"): i.fas.fa-edit
                         else
                           td
                             input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                            div.url_desc_block
+                              p.url_desc(contenteditable="false")= item.url_desc
+                              span.icon_edit_url_desc(title="編輯簡易描述"): i.fas.fa-edit
                         
                         td
                           input.original_url(type='text' value=item.long_url readonly)
@@ -162,9 +178,15 @@ block append content_sl
                           if config.appenv.env == 'production'
                             td
                               input.short_url(type='text' value='https:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                              div.url_desc_block
+                                p.url_desc(contenteditable="false")= item.url_desc
+                                span.icon_edit_url_desc(title="編輯簡易描述"): i.fas.fa-edit
                           else
                             td
                               input.short_url(type='text' value='http:' + config.appenv.domain + '/u/' + item.u_id readonly)
+                              div.url_desc_block
+                                p.url_desc(contenteditable="false")= item.url_desc
+                                span.icon_edit_url_desc(title="編輯簡易描述"): i.fas.fa-edit
                           
                           td
                             input.original_url(type='text' value=item.long_url readonly)
@@ -362,5 +384,14 @@ block append body_end_others_sl
         current_qrcode.downloadImage(url_u_id + ".png");
       });
       
+      $("span.icon_edit_url_desc").on("click", function(){
+        let editable = $(this).closest("div.url_desc_block").find("p.url_desc").attr("contenteditable");
+        if(editable == "true"){
+          $(this).closest("div.url_desc_block").find("p.url_desc").attr("contenteditable", false);
+        }else{
+          $(this).closest("div.url_desc_block").find("p.url_desc").attr("contenteditable", true).focus();
+        }
+        
+      });
       
     });

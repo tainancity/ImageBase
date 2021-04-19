@@ -1,16 +1,35 @@
 form.generate_short_url_form{
-  input.original_url_text{
-    border-radius: 5px;
-    min-width: 280px;
-    box-shadow: none;
-    outline: none;
-    padding: 2px 5px;
-    height: 32px;
-    border: 1px solid #eee;
-  }
-  button.btn_generate{
-    cursor: pointer;
-    margin-left: 10px;
+  div.item{
+    line-height: 1;
+    margin-bottom: 8px;
+    &:last-child{
+      margin-bottom: 0;
+    }
+    label.label_text{
+      display: inline-block;
+      width: 75px;
+      text-align: right;
+      margin-right: 10px;
+      margin-bottom: 0;
+      vertical-align: middle;
+    }
+    input.original_url_text, input.url_desc{
+      display: inline-block;
+      border-radius: 5px;
+      min-width: 280px;
+      box-shadow: none;
+      outline: none;
+      padding: 2px 5px;
+      height: 32px;
+      border: 1px solid #eee;
+      vertical-align: middle;
+    }
+    input.original_url_text::placeholder, input.url_desc::placeholder{
+      color: #ddd;
+    }
+    button.btn_generate{
+      cursor: pointer;
+    }
   }
 }
 table.custom_table{
@@ -24,11 +43,41 @@ table.custom_table{
   tbody{
     tr{
       td{
+        vertical-align: top;
         span.icon_qrcode{
           display: inline-block;
           margin-left: 6px;
           cursor: pointer;
         }
+        div.url_desc_block{
+          margin-top: 2px;
+          p.url_desc{
+            margin: 0;
+            font-size: 14px;
+            display: inline-block;
+            vertical-align: top;
+            min-width: 50px;
+            min-height: 25px;
+
+
+            border-radius: 5px;
+            padding: 1px 5px;
+            width: 220px;
+            &[contenteditable="true"]{
+              background-color: white;
+              outline: none;
+              border: 1px solid blue;
+            }
+            &[contenteditable="false"]{
+              background-color: #eee;
+              border: 1px solid #eee;
+            }
+          }
+          span.icon_edit_url_desc{
+            vertical-align: top;
+          }
+        }
+
         input.short_url, input.original_url{
           background-color: #eee;
           border-radius: 5px;
@@ -74,7 +123,7 @@ table.custom_table{
     }
   }
 }
-span.icon_edit, span.icon_edit_now, span.icon_url_history{
+span.icon_edit, span.icon_edit_now, span.icon_url_history, span.icon_edit_url_desc{
   display: inline-block;
   margin-left: 6px;
   cursor: pointer;
@@ -212,36 +261,3 @@ ul.edit_log_list{
     }
   }
 }
-/*
-div.paginator{
-  ul.paginator_list{
-    margin:0;
-    padding:0;
-    > li{
-      display: inline-block;
-      list-style: none;
-      margin:0;
-      padding:0;
-      &:first-child{
-        > a.page_link{
-          border-left: 1px solid gray;
-        }
-      }
-      > a.page_link{
-        display: inline-block;
-        padding: 5px 10px;
-        text-align: center;
-        border-top: 1px solid gray;
-        border-bottom: 1px solid gray;
-        border-right: 1px solid gray;
-        text-decoration: none;
-        color: gray;
-        &.-on, &:hover{
-          background-color: #263238;
-          color: white;
-        }
-      }
-    }
-  }
-}
-*/
