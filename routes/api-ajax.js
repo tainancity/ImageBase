@@ -251,6 +251,20 @@ module.exports = function(app){
       })
     })
 
+    // 更新短網址的簡易描述
+    app.put('/update-short-url-desc', (req, res) => {
+      //console.log(req.body.u_id);
+      //console.log(req.body.url_desc);
+      shortUrlModel.update({url_desc: req.body.url_desc}, {u_id: req.body.u_id}, true, function(results){
+
+        if(results.affectedRows > 0){
+          res.json({update_result: 1})
+        }else{
+          res.json({update_result: 0})
+        }
+      })
+    })
+
     // 圖片權限移轉：列表
     app.get('/transfer-files/:account', function(req, res){
 

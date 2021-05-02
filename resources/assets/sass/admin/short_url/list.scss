@@ -1,3 +1,22 @@
+input.url_desc_search{
+  display: inline-block;
+  border-radius: 5px;
+  min-width: 280px;
+  box-shadow: none;
+  outline: none;
+  padding: 2px 5px;
+  height: 32px;
+  border: 1px solid #eee;
+  vertical-align: middle;
+}
+label.label_text.search{
+  width: 70px;
+  display: inline-block;
+}
+button.btn_search{
+  cursor: pointer;
+  margin-top: 8px;
+}
 form.generate_short_url_form{
   div.item{
     line-height: 1;
@@ -51,6 +70,19 @@ table.custom_table{
         }
         div.url_desc_block{
           margin-top: 2px;
+          &[data-edit="false"]{
+            span.icon_edit_url_desc.lock_open{
+              display: none;
+            }
+          }
+          &[data-edit="true"]{
+            span.icon_edit_url_desc.lock_close{
+              display: none;
+            }
+            span.icon_edit_url_desc.lock_open{
+              display: inline-block;
+            }
+          }
           p.url_desc{
             margin: 0;
             font-size: 14px;
@@ -66,7 +98,7 @@ table.custom_table{
             &[contenteditable="true"]{
               background-color: white;
               outline: none;
-              border: 1px solid blue;
+              border: 1px solid gray;
             }
             &[contenteditable="false"]{
               background-color: #eee;
@@ -75,6 +107,7 @@ table.custom_table{
           }
           span.icon_edit_url_desc{
             vertical-align: top;
+            display: inline-block;
           }
         }
 
@@ -260,4 +293,7 @@ ul.edit_log_list{
       }
     }
   }
+}
+.my_d_none{
+  display: none;
 }
