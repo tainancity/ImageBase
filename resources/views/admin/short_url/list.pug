@@ -449,8 +449,8 @@ block append body_end_others_sl
         $(trs).each(function(i, item){
           let url_desc_text = ($(this).find("p.url_desc").text()).trim();
           let original_url_address = ($(this).find("input.original_url").val()).trim();
-          console.log(url_desc_text);
-          console.log(original_url_address);
+          //console.log(url_desc_text);
+          //console.log(original_url_address);
           if(url_desc_text.includes(search_text) || original_url_address.includes(search_text)){
             $(item).removeClass("my_d_none");
           }else{
