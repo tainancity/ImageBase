@@ -206,7 +206,7 @@ block append body_end_others
         $.ajax({
           url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-pageviews',
           type: 'put',
-          data: 'u_id=' + `v_${file_u_id}`,
+          data: 'u_id=' + `${file_u_id}`,
           dataType: 'json',
           headers: {
             "X-CSRF-Token":"#{csrfToken}"
