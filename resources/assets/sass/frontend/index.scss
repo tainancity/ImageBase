@@ -83,6 +83,7 @@ section.slick_slider_sec{
   div.slick_slider_container{
     position: relative;
     height: 400px;
+    overflow: hidden;
   }
   div.slick_slider{
     margin-bottom: 0;
