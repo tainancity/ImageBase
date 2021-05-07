@@ -8,7 +8,7 @@ block append head_end_tag
   meta(property='og:title' content=(file_obj == null ? '' : (file_obj.title == null ? "" : file_obj.title) ))
   if file_obj != null
     each item, index in JSON.parse(file_obj.file_data)
-      if (item.width == 960)
+      if (item.width == 960 && item.width == 960 && !item.origin)
         meta(property='og:image' content=config.appenv.storage.domain + item.url)
   link(href=asset_path('css/frontend/files/item.css') rel='stylesheet')
 
@@ -65,7 +65,7 @@ block append content
         div.row
           div.col-sm-12.col-md-8
             each item, index in JSON.parse(file_obj.file_data)
-              if (item.width == 960)
+              if (item.width == 960 && !item.origin)
                 figure: img(src=config.appenv.storage.domain + item.url)
             div.meta_list_block
               ul.meta_list
