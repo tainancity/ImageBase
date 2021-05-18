@@ -74,7 +74,7 @@ app.use(methodOverride(function (req, res) {
     return method
   }
 }))
-
+app.set('trust proxy', 1)
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
   secret: CONFIG.appenv.cookieSessionSecret,
@@ -83,7 +83,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false
+    secure: true
   }
 }))
 
