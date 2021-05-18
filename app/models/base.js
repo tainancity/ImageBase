@@ -93,6 +93,39 @@ exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
   //console.log(query.sql)
 }
 
+
+exports.getAll2WhereLimit = function(table_name, sort_obj, where_obj, where_obj2, limit_number_arr, cb){
+  if(where_obj2 == ""){
+    conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type + ' LIMIT ' + limit_number_arr[0] + "," + limit_number_arr[1], function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
+  }else{
+    conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type + ' LIMIT ' + limit_number_arr[0] + "," + limit_number_arr[1], function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
+  }
+
+  //console.log(query.sql)
+}
+exports.getAll2WhereLimitCOUNT = function(table_name, sort_obj, where_obj, where_obj2, cb){
+  if(where_obj2 == ""){
+    conn.query('SELECT COUNT(*) AS total_count FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
+  }else{
+    conn.query('SELECT COUNT(*) AS total_count FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
+  }
+
+  //console.log(query.sql)
+}
+
+
 exports.getAll2Where = function(table_name, sort_obj, where_obj1, where_obj2, cb){
   var query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj1.column_name + ' ' + where_obj1.operator + ' ' + where_obj1.column_value + ' AND ' + where_obj2.column_name + ' ' + where_obj2.operator + ' ' + where_obj2.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
     if (error) throw error

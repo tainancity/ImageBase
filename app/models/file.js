@@ -35,6 +35,15 @@ exports.getAllWhere = function(sort_obj, where_obj, cb) {
   baseModel.getAllWhere(table_name, sort_obj, where_obj, cb)
 }
 
+
+exports.getAll2WhereLimit = function(sort_obj, where_obj, where_obj2, limit_number_arr, cb) {
+  baseModel.getAll2WhereLimit(table_name, sort_obj, where_obj, where_obj2, limit_number_arr, cb)
+}
+
+exports.getAll2WhereLimitCOUNT = function(sort_obj, where_obj, where_obj2, cb) {
+  baseModel.getAll2WhereLimitCOUNT(table_name, sort_obj, where_obj, where_obj2, cb)
+}
+
 /**
  * sort_obj = { column: 'id', sort_type: 'DESC' }
  * where_obj1 = { column_name: 'file_id', operator: '=', column_value: 0 }
