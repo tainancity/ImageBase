@@ -17,6 +17,7 @@ var functions = require(CONFIG.path.helpers + '/functions.js')
 
 exports.index = function(options) {
   return function(req, res) {
+
     announcementModel.getAllWhere({ column: 'sort_index', sort_type: 'ASC' }, { column_name: 'is_draft', operator: '=', column_value: 0 }, function(announcement_results){
 
 
@@ -28,7 +29,7 @@ exports.index = function(options) {
 
             organizationModel.getAllWhere({ column: 'sort_index', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(organizations){
 
-              fileModel.getAll2Where({ column: 'pageviews', sort_type: 'ASC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, function(files_pageviews){
+              fileModel.getAll2Where({ column: 'pageviews', sort_type: 'DESC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, function(files_pageviews){
 
                 fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
