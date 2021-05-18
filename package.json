@@ -11,7 +11,7 @@
   "dependencies": {
     "adm-zip": "^0.4.16",
     "async": "^3.2.0",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.2",
     "connect-redis": "^3.3.3",
     "cookie-parser": "^1.4.3",
