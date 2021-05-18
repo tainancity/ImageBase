@@ -57,8 +57,8 @@ exports.file_list = function(options) {
                     //console.log(files);
 
                     fileModel.getAll2WhereLimitCOUNT(sort_obj, where_obj, where_obj2, function(files_count){
-                      console.log("總筆數")
-                      console.log(files_count[0].total_count)
+                      //console.log("總筆數")
+                      //console.log(files_count[0].total_count)
                       let files_total_count = files_count[0].total_count;
 
                       fileLikeModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_like_result){
