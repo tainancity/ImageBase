@@ -52,7 +52,7 @@ exports.file_list = function(options) {
                 fileCarouselModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_carousel_result){
 
                   //fileModel.getAllWhere(sort_obj, where_obj, function(files){
-                  fileModel.getAll2WhereLimit(sort_obj, where_obj, where_obj2, [(c_page - 1) * 5, items_per_page], function(files){
+                  fileModel.getAll2WhereLimit(sort_obj, where_obj, where_obj2, [(c_page - 1) * 10, items_per_page], function(files){
                     //console.log("資料")
                     //console.log(files);
 
@@ -299,6 +299,13 @@ exports.file_upload = function(options) {
 // 檔案列表：垃圾桶
 exports.file_list_trash = function(options) {
   return function(req, res) {
+
+    var c_page = parseInt(req.query.page)
+    var items_per_page = 10;
+    if(c_page == undefined || !Number.isInteger(c_page)){
+      c_page = 1;
+    }
+
     // csrfToken: req.csrfToken()
     var show_uploader_and_organ = false
     if(req.originalUrl == '/admin/management/file/trash' || req.originalUrl == '/admin/organization/file/trash'){
@@ -309,111 +316,141 @@ exports.file_list_trash = function(options) {
     var where_obj = { column_name: "deleted_at", operator: "", column_value: 'IS NOT NULL' }
     var prepare_data = []
 
-    organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
-      //console.log(all_organs)
-      userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
-        //console.log(all_users)
-        fileCategoryModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_categories){
-          //console.log(all_categories)
+    userModel.getOne('u_id', req.session.u_id, function(specific_user){
+      if( (req.originalUrl).includes('/admin/management/file/list') ){ // 平台管理者
+        var where_obj2 = "";
+      }else if( (req.originalUrl).includes('/admin/organization/file/list')){ // 局處管理者
+        var where_obj2 = { "column_name": "organ_id", "operator": "=", "column_value": "'" + specific_user[0].organ_id + "'" };
+      }else{ // 一般公務帳號
+        var where_obj2 = { "column_name": "user_id", "operator": "=", "column_value": specific_user[0].id };
+      }
 
-          tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
-            //console.log(all_tags)
-            fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_tags_result){
-              //console.log(files_tags_result)
+      organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
+        //console.log(all_organs)
+        userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
+          //console.log(all_users)
+          fileCategoryModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_categories){
+            //console.log(all_categories)
 
-              fileModel.getAllWhere(sort_obj, where_obj, function(files){
+            tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
+              //console.log(all_tags)
+              fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_tags_result){
+                //console.log(files_tags_result)
 
-                fileLikeModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_like_result){
+                //fileModel.getAllWhere(sort_obj, where_obj, function(files){
+                fileModel.getAll2WhereLimit(sort_obj, where_obj, where_obj2, [(c_page - 1) * 10, items_per_page], function(files){
+                  //console.log("資料")
+                  //console.log(files);
+                  fileModel.getAll2WhereLimitCOUNT(sort_obj, where_obj, where_obj2, function(files_count){
+                    //console.log("總筆數")
+                    //console.log(files_count[0].total_count)
+                    let files_total_count = files_count[0].total_count;
 
-                  if(files.length == 0){
-                    return res.render('admin/image/files/trash', {files: [], show_uploader_and_organ: show_uploader_and_organ})
-                  }
+                    fileLikeModel.getAll({column: 'id', sort_type: 'DESC'}, function(files_like_result){
 
-                  files.forEach(function(item, index) {
-                    var file_tags_arr = []
-                    files_tags_result.forEach(function(tags_result_item, tags_result_index){
-                      all_tags.forEach(function(the_tag, tag_index){
-                        if(tags_result_item.file_id == item.id && tags_result_item.tag_id == the_tag.id){
-                          file_tags_arr.push(the_tag.tag_name)
-                        }
-                      })
-                    })
-                    item.tags = file_tags_arr
 
-                    item.like_num = 0;
-                    files_like_result.forEach(function(file_like_item, file_like_index){
-                      if(item.id == file_like_item.file_id){
-                        item.like_num += 1
+
+
+
+
+                      if(files.length == 0){
+                        return res.render('admin/image/files/trash', {files: [], show_uploader_and_organ: show_uploader_and_organ})
                       }
-                    })
 
-                    // 找出所屬組織名稱
-                    all_organs.forEach(function(the_organ, organ_index){
-                      if(item.organ_id == the_organ.organ_id){
-                        item.organ_name = the_organ.organ_name
-                        prepare_data.push(item)
-                      }
-                    })
-                    // 找出使用者名稱
-                    all_users.forEach(function(the_user, user_index){
-                      if(item.user_id == the_user.id){
-                        item.pid = the_user.pid
-                        prepare_data.push(item)
-                      }
-                    })
-                    // 找出分類名稱
-                    all_categories.forEach(function(the_category, category_index){
-                      if(item.category_id == the_category.id){
-                        item.category_name = the_category.category_name
-                        prepare_data.push(item)
-                      }
-                    })
-
-                    if(files.length == index + 1){
-                      if(!show_uploader_and_organ){ // 一般公務帳號
-                        userModel.getOne('u_id', req.session.u_id, function(user_results){
-                          //console.log(files)
-                          var ori_files = files.slice()
-                          ori_files.forEach(function(each_item, each_index){
-                            if(each_item.user_id != user_results[0].id){
-                              files.forEach(function(each_files_item, each_files_index){
-                                if(each_files_item.user_id != user_results[0].id){
-                                  files.splice(each_files_index, 1)
-                                }
-                              })
-                            }
-                            if(each_index+1 == ori_files.length){
-                              res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
+                      files.forEach(function(item, index) {
+                        var file_tags_arr = []
+                        files_tags_result.forEach(function(tags_result_item, tags_result_index){
+                          all_tags.forEach(function(the_tag, tag_index){
+                            if(tags_result_item.file_id == item.id && tags_result_item.tag_id == the_tag.id){
+                              file_tags_arr.push(the_tag.tag_name)
                             }
                           })
                         })
-                      }else{ // 管理者
+                        item.tags = file_tags_arr
 
-                        userModel.getOne('u_id', req.session.u_id, function(user_results){
-                          //console.log("here: " + user_results[0].role_id)
-                          if(user_results[0].role_id == 3){ // 局處管理者
-
-                            let show_files = []
-                            files.forEach(function(each_files_item, each_files_index){
-                              if(each_files_item.organ_id == user_results[0].organ_id){
-                                //files.splice(each_files_index, 1)
-                                show_files.push(each_files_item)
-                              }
-                            })
-
-                            res.render('admin/image/files/trash', {files: show_files, show_uploader_and_organ: show_uploader_and_organ})
-
-                          }else if(user_results[0].role_id == 1){ // 平台管理者
-
-                            res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
-                          }else{
-
+                        item.like_num = 0;
+                        files_like_result.forEach(function(file_like_item, file_like_index){
+                          if(item.id == file_like_item.file_id){
+                            item.like_num += 1
                           }
                         })
 
+                        // 找出所屬組織名稱
+                        all_organs.forEach(function(the_organ, organ_index){
+                          if(item.organ_id == the_organ.organ_id){
+                            item.organ_name = the_organ.organ_name
+                            prepare_data.push(item)
+                          }
+                        })
+                        // 找出使用者名稱
+                        all_users.forEach(function(the_user, user_index){
+                          if(item.user_id == the_user.id){
+                            item.pid = the_user.pid
+                            prepare_data.push(item)
+                          }
+                        })
+                        // 找出分類名稱
+                        all_categories.forEach(function(the_category, category_index){
+                          if(item.category_id == the_category.id){
+                            item.category_name = the_category.category_name
+                            prepare_data.push(item)
+                          }
+                        })
 
-                      }
-                    }
+                        if(files.length == index + 1){
+
+                          var total_pages = Math.ceil(files_total_count / items_per_page)
+                          res.render('admin/image/files/trash', {files: files, total_pages: total_pages, c_page: c_page, show_uploader_and_organ: show_uploader_and_organ, csrfToken: req.csrfToken()})
+                          /*
+                          if(!show_uploader_and_organ){ // 一般公務帳號
+                            userModel.getOne('u_id', req.session.u_id, function(user_results){
+                              //console.log(files)
+                              var ori_files = files.slice()
+                              ori_files.forEach(function(each_item, each_index){
+                                if(each_item.user_id != user_results[0].id){
+                                  files.forEach(function(each_files_item, each_files_index){
+                                    if(each_files_item.user_id != user_results[0].id){
+                                      files.splice(each_files_index, 1)
+                                    }
+                                  })
+                                }
+                                if(each_index+1 == ori_files.length){
+                                  res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
+                                }
+                              })
+                            })
+                          }else{ // 管理者
+
+                            userModel.getOne('u_id', req.session.u_id, function(user_results){
+                              //console.log("here: " + user_results[0].role_id)
+                              if(user_results[0].role_id == 3){ // 局處管理者
+
+                                let show_files = []
+                                files.forEach(function(each_files_item, each_files_index){
+                                  if(each_files_item.organ_id == user_results[0].organ_id){
+                                    //files.splice(each_files_index, 1)
+                                    show_files.push(each_files_item)
+                                  }
+                                })
+
+                                res.render('admin/image/files/trash', {files: show_files, show_uploader_and_organ: show_uploader_and_organ})
+
+                              }else if(user_results[0].role_id == 1){ // 平台管理者
+
+                                res.render('admin/image/files/trash', {files: files, show_uploader_and_organ: show_uploader_and_organ})
+                              }else{
+
+                              }
+                            })
+
+
+                          }
+                          */
+                        }
+
+                      })
+
+                    })
 
                   })
 
@@ -424,10 +461,10 @@ exports.file_list_trash = function(options) {
             })
 
           })
-
         })
       })
-    })
+
+    });
 
   }
 }

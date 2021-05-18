@@ -89,7 +89,13 @@ block append content_sl
                             li
                               button.btn_action.btn_delete_forever(type='button' title='刪除(無法復原)' data-id=item.u_id): i.fas.fa-times
                           
-                        
+              div.paginator
+                - var n = 0;
+                  ul.paginator_list
+                    while n < total_pages
+                      li
+                        a(class=(c_page == (n+1)? '-on' : '') href='?page='+(n+1)).page_link= (n+1)
+                      - n++
           
           //-
             p.mb-4= i18n('webcloud_account.account_created_at') + time.get_time_from_timestamp(CurrentLang, auth.user.created_at)

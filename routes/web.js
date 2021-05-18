@@ -76,10 +76,8 @@ module.exports = function(app){
 
     // 檔案上傳
     app.get('/upload', AdminFileManage.file_upload(options))
-    // 垃圾桶
-    app.get('/trash', AdminFileManage.file_list_trash(options))
 
-    // 短網址
+    // 垃圾桶
     app.get('/trash', AdminFileManage.file_list_trash(options))
 
     // 檔案下載
