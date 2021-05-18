@@ -20,7 +20,7 @@ var static = require(CONFIG.path.helpers + '/static.js')
 var time = require(CONFIG.path.helpers + '/time.js')
 
 var yamlApiSpec = require(CONFIG.path.yaml + '/api_spec.js')
-
+const { v4: uuidv4 } = require('uuid');
 // ========== Settings ========== //
 
 app.set('view engine', 'pug')
@@ -74,16 +74,19 @@ app.use(methodOverride(function (req, res) {
     return method
   }
 }))
-app.set('trust proxy', 1)
+
 app.use(session({
   key: CONFIG.appenv.sessionCookieName,
+  genid: function(req) {
+    return uuidv4(); // use UUIDs for session IDs
+  },
   secret: CONFIG.appenv.cookieSessionSecret,
   store: new RedisStore({ host: CONFIG.appenv.redis.host, port: CONFIG.appenv.redis.port, pass: CONFIG.appenv.redis.password}),
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: true
+    secure: false
   }
 }))
 
