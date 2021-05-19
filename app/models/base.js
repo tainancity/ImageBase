@@ -134,6 +134,32 @@ exports.getAll2Where = function(table_name, sort_obj, where_obj1, where_obj2, cb
   //console.log(query.sql)
 }
 
+exports.getAllWhereOrArray = function(table_name, sort_obj, where_array, or_array, cb){
+  // console.log("這裡");
+  // console.log(where_array);
+  // console.log(or_array);
+  let all_where_str = "";
+  if(where_array.length > 0){
+    where_array.forEach(function(item, i){
+      all_where_str += (i == 0 ? "": " AND ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
+    });
+  }
+  if(or_array.length > 0){
+    all_where_str += " AND (";
+    or_array.forEach(function(item, i){
+      all_where_str += (i == 0 ? "": " OR ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
+    });
+    all_where_str += ")";
+  }
+  //console.log(all_where_str);
+  var query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + all_where_str + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+
+  //console.log(query.sql)
+}
+
 // ========== 刪除相關 ========== //
 exports.deleteOne = function(table_name, u_id_col, u_id, cb) {
   conn.query('DELETE FROM `' + table_name + '` WHERE `' + u_id_col + '` = ? LIMIT 1', [u_id], function (error, results, fields) {

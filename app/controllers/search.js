@@ -7,10 +7,9 @@ var tagModel = require(CONFIG.path.models + '/tag.js')
 
 exports.index = function(options) {
   return function(req, res) {
-    
+
     fileCategoryModel.getAll({column: 'level', sort_type: 'ASC'}, function(all_categories){
       organizationModel.getAll({column: 'id', sort_type: 'ASC'}, function(all_organs){
-
         res.render('frontend/search/index', {
           categories: all_categories,
           organs: all_organs,

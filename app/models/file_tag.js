@@ -27,6 +27,19 @@ exports.getAllWhere = function(sort_obj, where_obj, cb) {
 }
 
 /**
+ * sort_obj = { "column": "created_at", "sort_type": "DESC" }
+ * where_obj = { "column_name": "user_id", "operator": ">=", "column_value": 0 }
+ */
+exports.getAllWhereSkip = function(sort_obj, where_obj, skip, cb) {
+  if(skip){
+    cb([])
+  }else{
+    baseModel.getAllWhere(table_name, sort_obj, where_obj, cb)
+  }
+
+}
+
+/**
  * sort_obj = { "column": "id", "sort_type": "DESC" }
  * where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": 0 }
  * where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": 0 }

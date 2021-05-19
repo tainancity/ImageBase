@@ -533,6 +533,7 @@ exports.image_get = function(options){
 
 exports.image_get_by_data = function(options){
   return function(req, res){
+    //console.log("哈囉哈囉");
     if(req.query.api_key == undefined){
       return res.status(403).json({code: 403, msg:'未提供 API Key'})
     }
@@ -561,10 +562,47 @@ exports.image_get_by_data = function(options){
             //console.log(all_users)
             fileCategoryModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_categories){
               //console.log(all_categories)
-              tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
-                //console.log(all_tags)
-                fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_file_tags){
-                  //console.log(all_file_tags)
+
+              //tagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_tags){
+              tagModel.getAllWhere({column: 'id', sort_type: 'DESC'}, {column_name: 'tag_name', operator: 'LIKE', column_value: "'%" + req.query.title + "%'"}, function(all_tags){
+                //console.log("符合的tags");
+                //console.log(all_tags);
+                let all_tags_string = ""; // 將 tag_id 用逗號做分隔
+                if(all_tags.length > 0){
+                  all_tags.forEach(function(tag_item, tag_index){
+                    if(tag_index == 0){
+                      all_tags_string += tag_item.id
+                    }else{
+                      all_tags_string += "," + tag_item.id
+                    }
+                  })
+                }
+                //console.log(all_tags_string);
+                let file_tag_model_bool = true;
+                if(all_tags_string == ""){
+                }else{
+                  file_tag_model_bool = false;
+                }
+
+                //fileTagModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_file_tags){
+                fileTagModel.getAllWhereSkip({column: 'id', sort_type: 'DESC'}, {column_name: 'tag_id', operator: 'IN', column_value: "(" + all_tags_string + ")"}, file_tag_model_bool, function(all_file_tags){
+                  //console.log("file 符合的tags");
+                  //console.log(all_file_tags);
+
+                  let all_file_withtag_string = ""; // 將 tag_id 用逗號做分隔
+                  if(all_file_tags.length > 0){
+                    all_file_tags.forEach(function(file_tag_item, file_tag_index){
+                      if(file_tag_index == 0){
+                        all_file_withtag_string += file_tag_item.file_id
+                      }else{
+                        all_file_withtag_string += "," + file_tag_item.file_id
+                      }
+                    })
+                  }
+                  // 將符合 tag 的 file ，抓出來
+                  //console.log("符合 tag 的 file：");
+                  //console.log(all_file_withtag_string);
+
                   var sort_type = ''
                   if(req.query.sort_type == undefined || req.query.sort_type == 'like'){
                     sort_type = 'created_at'
@@ -574,7 +612,34 @@ exports.image_get_by_data = function(options){
                   if(req.query.sort_value == undefined){
                     req.query.sort_value = 'DESC'
                   }
-                  fileModel.getAll2Where({ column: sort_type, sort_type: req.query.sort_value }, { column_name: 'permissions', operator: '=', column_value: '1' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(all_files){
+
+                  // req.query.items_per_page、req.query.page、req.query.title、req.query.category_id、req.query.organ_id
+                  //console.log("分類id" + req.query.category_id);
+                  //console.log("組織id" + req.query.organ_id);
+
+                  let where_array = [
+                    { column_name: 'permissions', operator: '=', column_value: '1' },
+                    { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }
+                  ];
+                  if(req.query.category_id != undefined){
+                    where_array.push({ column_name: 'category_id', operator: '=', column_value: req.query.category_id})
+                  }
+                  if(req.query.organ_id != undefined){
+                    where_array.push({ column_name: 'organ_id', operator: '=', column_value: "'" + req.query.organ_id + "'"})
+                  }
+
+                  let or_array = [];
+                  if(req.query.title != undefined){
+                    or_array.push({ column_name: 'title', operator: 'LIKE', column_value: "'%" + req.query.title + "%'" });
+                  }
+                  if(all_file_withtag_string != ""){ // 這表示的是輸入的關鍵字，有對應到 tag，然後 file 有該 tag 的抓出來，這邊會是 file_id，然後逗號分隔
+                    or_array.push({ column_name: 'id', operator: 'IN', column_value: "(" + all_file_withtag_string + ")"})
+                  }
+
+                  //fileModel.getAll2Where({ column: sort_type, sort_type: req.query.sort_value }, { column_name: 'permissions', operator: '=', column_value: '1' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, function(all_files){
+                  fileModel.getAllWhereOrArray({ column: sort_type, sort_type: req.query.sort_value }, where_array, or_array, function(all_files){
+                    //console.log("抓取出的檔案：")
+                    //console.log(all_files);
 
                     fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: req.query.sort_value }, function(files_like){
 
@@ -614,47 +679,8 @@ exports.image_get_by_data = function(options){
                           })
                         }
 
-                        var data_files = []
-
-                        // 標題(title)的 filter
-                        all_files.forEach(function(file_item, file_index){
-
-                          // 將每張圖片，加上 tags
-                          file_item.tags = []
-                          all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
-                            if(file_tag_item.file_id == file_item.id){
-                              all_tags.forEach(function(the_tag, tag_index){
-                                if(file_tag_item.tag_id == the_tag.id){
-                                  file_item.tags.push(the_tag.tag_name)
-                                }
-                              })
-                            }
-                          })
-                          //console.log("標籤：")
-                          //console.log(file_item.tags)
-                          if(req.query.title == '' || req.query.title == undefined){ // 如果 title 是空的，或 undefined
-                            data_files.push(file_item)
-                          }else{
-                            let temp_title_array = req.query.title.split(" ")
-                            let title_array = []
-                            temp_title_array.forEach(function(temp_title_item, temp_title_index){
-                              if(temp_title_item != ""){
-                                title_array.push(temp_title_item)
-                              }
-                            })
-                            //console.log(title_array)
-                            let put_in = true
-                            title_array.forEach(function(title_item, title_index){
-                              if(put_in){
-                                if( file_item.title != null && (((file_item.title).toLowerCase()).includes((title_item).toLowerCase()) || file_item.tags.some(value => value.toLowerCase().includes(title_item.toLowerCase()) ) ) ){
-                                  data_files.push(file_item)
-                                  put_in = false
-                                }
-                              }
-                            })
-
-                          }
-                        })
+                        //var data_files = []
+                        var data_files = all_files.slice();
 
                         // 替上述的圖片，再找出以下資料
                         data_files.forEach(function(file_item, file_index){
@@ -686,62 +712,9 @@ exports.image_get_by_data = function(options){
                           })
                           data_files[file_index].file_data = new_file_data
 
-                          // tags
-                          // data_files[file_index].tags = []
-                          // all_file_tags.forEach(function(file_tag_item, file_tag_item_index){
-                          //   if(file_tag_item.file_id == file_item.id){
-                          //     all_tags.forEach(function(the_tag, tag_index){
-                          //       if(file_tag_item.tag_id == the_tag.id){
-                          //         data_files[file_index].tags.push(the_tag.tag_name)
-                          //       }
-                          //     })
-                          //   }
-                          // })
-
                           // short url
                           data_files[file_index].short_url = CONFIG.appenv.domain + '/' + file_item.u_id
                         })
-
-                        // 不回傳 id
-                        //data_files.forEach(function(file_item, file_index){
-                          //delete file_item.id
-                        //})
-
-                        // tags filter
-                        // var new_data_files = []
-                        // if(req.query.tag == '' || req.query.tag == undefined){
-                        // }else{
-                        //   data_files.forEach(function(file_item, file_index){
-                        //     if( file_item.tags != null && (file_item.tags).includes(req.query.tag) ){
-                        //       new_data_files.push(file_item)
-                        //     }
-                        //   })
-                        //   data_files = new_data_files;
-                        // }
-
-                        // 分類(category_id)的 filter
-                        var new_data_files = []
-                        if(req.query.category_id == '' || req.query.category_id == undefined){
-                        }else{
-                          data_files.forEach(function(file_item, file_index){
-                            if( file_item.category_id != null && file_item.category_id == req.query.category_id ){
-                              new_data_files.push(file_item)
-                            }
-                          })
-                          data_files = new_data_files;
-                        }
-
-                        // 組織名稱(organ_id)的 filter
-                        new_data_files = []
-                        if(req.query.organ_id == '' || req.query.organ_id == undefined){
-                        }else{
-                          data_files.forEach(function(file_item, file_index){
-                            if( file_item.organ_id != null && file_item.organ_id == req.query.organ_id ){
-                              new_data_files.push(file_item)
-                            }
-                          })
-                          data_files = new_data_files;
-                        }
 
                         // 瀏覽量(pageviews)的 filter
                         new_data_files = []
