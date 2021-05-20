@@ -53,8 +53,12 @@ exports.getAll2Where = function(sort_obj, where_obj1, where_obj2, cb) {
   baseModel.getAll2Where(table_name, sort_obj, where_obj1, where_obj2, cb)
 }
 
-exports.getAllWhereOrArray = function(sort_obj, where_array, or_array, cb) {
-  baseModel.getAllWhereOrArray(table_name, sort_obj, where_array, or_array, cb)
+exports.getAllWhereOrArrayOnlyId = function(sort_obj, where_array, or_array, cb) {
+  baseModel.getAllWhereOrArrayOnlyId(table_name, sort_obj, where_array, or_array, cb)
+}
+
+exports.getAllWhereOrArrayLimit = function(sort_obj, where_array, or_array, limit_number_arr, cb) {
+  baseModel.getAllWhereOrArrayLimit(table_name, sort_obj, where_array, or_array, limit_number_arr, cb)
 }
 
 exports.deleteWhere = function(u_id_col, u_id, cb){
