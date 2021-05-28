@@ -1,6 +1,4 @@
 var formidable = require('formidable')
-var fs = require('fs')
-var util = require('util')
 
 var CONFIG = require('../config/global.js')
 var announcementModel = require(CONFIG.path.models + '/announcement.js')
@@ -29,7 +27,7 @@ exports.index = function(options) {
 
             organizationModel.getAllWhere({ column: 'sort_index', sort_type: 'ASC' }, { column_name: 'show_index', operator: '=', column_value: 1 }, function(organizations){
 
-              fileModel.getAll2Where({ column: 'pageviews', sort_type: 'DESC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, function(files_pageviews){
+              fileModel.getAll2WhereLimit({ column: 'pageviews', sort_type: 'DESC' }, { column_name: 'deleted_at', operator: '', column_value: 'IS NULL' }, { column_name: 'permissions', operator: '=', column_value: '1' }, [0, 4], function(files_pageviews){
 
                 fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
@@ -69,6 +67,8 @@ exports.index = function(options) {
                         }
                       })
                     })
+
+                    // 按讚最高 files_pageviews
                     files_pageviews.forEach(function(file_item, file_index){
                       files_pageviews[file_index].like_num = 0
                       files_like.forEach(function(like_item, like_index){
@@ -90,14 +90,14 @@ exports.index = function(options) {
 
 
                     // 瀏覽量最高前 4 個
-                    var pageviews_highest_files = []
-                    files_pageviews.forEach(function(file_item, file_index){
-                      if(pageviews_highest_files.length < 4){
-                        if(file_item.permissions == '1' && file_item.file_type == '1'){
-                          pageviews_highest_files.push(file_item)
-                        }
-                      }
-                    })
+                    // var pageviews_highest_files = []
+                    // files_pageviews.forEach(function(file_item, file_index){
+                    //   if(pageviews_highest_files.length < 4){
+                    //     if(file_item.permissions == '1' && file_item.file_type == '1'){
+                    //       pageviews_highest_files.push(file_item)
+                    //     }
+                    //   }
+                    // })
 
 
                     // 按讚最高 files_like
@@ -160,7 +160,7 @@ exports.index = function(options) {
                       newest_files: newest_files,
                       categories: categories,
                       organizations: organizations,
-                      pageviews_highest_files: pageviews_highest_files,
+                      pageviews_highest_files: files_pageviews,
                       files_like_total: files_like_total,
                       //client_ip: '1.1.1.1'
                       client_ip: req.headers['x-forwarded-for'] || req.ip
