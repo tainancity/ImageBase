@@ -9,6 +9,9 @@ input.url_desc_search{
   border: 1px solid #eee;
   vertical-align: middle;
 }
+input.url_desc_search::placeholder{
+  color: #ddd;
+}
 label.label_text.search{
   width: 70px;
   display: inline-block;

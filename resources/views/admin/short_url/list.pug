@@ -32,7 +32,7 @@ block append content_sl
             div.cardbox-body
               div.item
                 label.label_text.search 簡易描述：
-                input.url_desc_search(type='text' name='url_desc_search')
+                input.url_desc_search(type='text' name='url_desc_search' placeholder="會篩選 簡易描述 及 原網址")
               div.item
                 label.label_text.search
                 button.btn.btn-secondary.btn_search(type='button') 搜尋
@@ -443,12 +443,17 @@ block append body_end_others_sl
       });
       
       // search
+      $("input.url_desc_search").on("keydown", (e) => {
+        if(e.which == 13){
+          $("button.btn_search").click();
+        }
+      });
       $("button.btn_search").on("click", function(){
-        let search_text = ($("input.url_desc_search").val()).trim();
+        let search_text = (($("input.url_desc_search").val()).trim()).toLowerCase();
         let trs = $("table.custom_table").children("tbody").find("tr");
         $(trs).each(function(i, item){
-          let url_desc_text = ($(this).find("p.url_desc").text()).trim();
-          let original_url_address = ($(this).find("input.original_url").val()).trim();
+          let url_desc_text = (($(this).find("p.url_desc").text()).trim()).toLowerCase();
+          let original_url_address = (($(this).find("input.original_url").val()).trim()).toLowerCase();
           //console.log(url_desc_text);
           //console.log(original_url_address);
           if(url_desc_text.includes(search_text) || original_url_address.includes(search_text)){
