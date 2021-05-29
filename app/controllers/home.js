@@ -197,7 +197,9 @@ exports.index = function(options) {
           // 取前四個
           let file_like_most = [];
           files_like_copy.forEach(function(item, i){
-            file_like_most.push(item.file_id);
+            if(file_like_most.length < 4){
+              file_like_most.push(item.file_id);
+            }
           });
           let file_like_most_str = file_like_most.join(",");
 
