@@ -1,4 +1,4 @@
-var fs = require('fs')
+var fs = require('graceful-fs')
 var crypto = require('crypto')
 var CONFIG = require('../config/global.js')
 const BCRYPT = require('bcrypt')
@@ -103,7 +103,7 @@ module.exports = {
     while(my_num_str.length < digits){
       my_num_str = "0" + my_num_str;
     }
-    
+
     return my_num_str;
   },
 

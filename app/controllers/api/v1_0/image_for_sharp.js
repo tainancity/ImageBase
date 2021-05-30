@@ -1,5 +1,5 @@
 var formidable = require('formidable')
-var fs = require('fs')
+var fs = require('graceful-fs')
 
 const sharp = require('sharp')
 sharp.cache(false)

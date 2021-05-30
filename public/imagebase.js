@@ -2,7 +2,7 @@ var express = require('express')
 require('express-group-routes')
 var app = express()
 
-var fs = require('fs')
+var fs = require('graceful-fs')
 
 var path = require('path')
 var cookieParser = require('cookie-parser')

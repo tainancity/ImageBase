@@ -3,7 +3,7 @@ var CONFIG = require('../../config/global.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 var formidable = require('formidable')
 var csv = require('csv-parser')
-var fs = require('fs')
+var fs = require('graceful-fs')
 var organizationModel = require(CONFIG.path.models + '/organization.js')
 
 exports.import_data = function(options) {

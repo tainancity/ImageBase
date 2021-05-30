@@ -1,5 +1,5 @@
 var CONFIG = require('../config/global.js')
-var fs = require('fs')
+var fs = require('graceful-fs')
 
 exports.log_action = function(app){
   return function(req, res, next){
@@ -27,7 +27,7 @@ exports.log_action = function(app){
           fs.closeSync(fs.openSync(log_filename, 'w'))
         }
       }
-      
+
       logger.info(req.headers['x-forwarded-for'] || req.ip, '瀏覽了', req.originalUrl, '頁面，使用的 User-Agent：', req.headers['user-agent']);
     })
 

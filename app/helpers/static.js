@@ -1,4 +1,4 @@
-var fs = require('fs')
+var fs = require('graceful-fs')
 var crypto = require('crypto')
 var CONFIG = require('../config/global.js')
 

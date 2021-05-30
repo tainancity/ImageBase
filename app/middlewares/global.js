@@ -1,7 +1,7 @@
 var CONFIG = require('../config/global.js')
 var settingModel = require(CONFIG.path.models + '/setting.js')
 const fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
-var fs = require('fs')
+var fs = require('graceful-fs')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
 

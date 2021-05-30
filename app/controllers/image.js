@@ -1,5 +1,5 @@
 var formidable = require('formidable')
-var fs = require('fs')
+var fs = require('graceful-fs')
 var util = require('util')
 
 var CONFIG = require('../config/global.js')

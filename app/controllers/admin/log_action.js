@@ -2,7 +2,7 @@ var CONFIG = require('../../config/global.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 
 var path = require('path')
-var fs = require('fs')
+var fs = require('graceful-fs')
 
 exports.log_action = function(options){
   return function(req, res){

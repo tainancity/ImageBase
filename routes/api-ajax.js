@@ -10,7 +10,7 @@ var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
 
-const fs = require("fs")
+const fs = require("graceful-fs")
 const http = require('http')
 const async = require("async")
 const exec = require('child_process').exec
