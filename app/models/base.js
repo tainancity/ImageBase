@@ -160,28 +160,38 @@ exports.getAllWhereOrArrayOnlyId = function(table_name, sort_obj, where_array, o
   //console.log(query.sql)
 }
 
-exports.getAllWhereOrArrayLimit = function(table_name, sort_obj, where_array, or_array, limit_number_arr, cb){
-  // console.log("這裡");
+exports.getAllWhereOrArrayLimit = function(table_name, sort_obj, where_array, or_array, limit_number_arr, where_in_obj, cb){
+  //console.log("這裡");
   // console.log(where_array);
   // console.log(or_array);
-  let all_where_str = "";
-  if(where_array.length > 0){
-    where_array.forEach(function(item, i){
-      all_where_str += (i == 0 ? "": " AND ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
-    });
+  if(where_in_obj.column_value.length > 0){ // 如果是按讚排序
+
+    //console.log("here");
+    let query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_in_obj.column_name + ' ' + where_in_obj.operator + ' (' + (where_in_obj.column_value).join(",") + ')', function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
+    //console.log(query.sql)
+  }else{
+    let all_where_str = "";
+    if(where_array.length > 0){
+      where_array.forEach(function(item, i){
+        all_where_str += (i == 0 ? "": " AND ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
+      });
+    }
+    if(or_array.length > 0){
+      all_where_str += " AND (";
+      or_array.forEach(function(item, i){
+        all_where_str += (i == 0 ? "": " OR ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
+      });
+      all_where_str += ")";
+    }
+    //console.log(all_where_str);
+    let query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + all_where_str + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type + ' LIMIT ' + limit_number_arr[0] + "," + limit_number_arr[1], function (error, results, fields) {
+      if (error) throw error
+      cb(results)
+    })
   }
-  if(or_array.length > 0){
-    all_where_str += " AND (";
-    or_array.forEach(function(item, i){
-      all_where_str += (i == 0 ? "": " OR ") + item.column_name + ' ' + item.operator + ' ' + item.column_value
-    });
-    all_where_str += ")";
-  }
-  //console.log(all_where_str);
-  var query = conn.query('SELECT * FROM `' + table_name + '` WHERE ' + all_where_str + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type + ' LIMIT ' + limit_number_arr[0] + "," + limit_number_arr[1], function (error, results, fields) {
-    if (error) throw error
-    cb(results)
-  })
 
   //console.log(query.sql)
 }

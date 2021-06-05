@@ -405,6 +405,43 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
   })
 }
 
+
+// 為每個檔案加上按讚數
+var file_add_like = function(files_arr, files_like_arr){
+  files_arr.forEach(function(file_item, file_index){
+    files_arr[file_index].like_num = 0
+    files_like_arr.forEach(function(like_item, like_index){
+      if(file_item.id == like_item.file_id){
+        files_arr[file_index].like_num = like_item.file_id_total
+      }
+    })
+  });
+  return files_arr;
+};
+// 排序
+var files_sort = function(files_arr, sort_value){
+  files_arr.sort(function(a, b){
+    var comparison = 0
+    if(sort_value == 'DESC'){
+      if(a.like_num > b.like_num){
+        comparison = -1
+      }else{
+        comparison = 1
+      }
+    }
+    if(sort_value == 'ASC'){
+      if(a.like_num > b.like_num){
+        comparison = 1
+      }else{
+        comparison = -1
+      }
+    }
+    return comparison
+  });
+  return files_arr;
+};
+
+
 exports.image_get = function(options){
   return function(req, res){
     if(req.query.api_key == undefined){
@@ -555,7 +592,6 @@ exports.image_get_by_data = function(options){
         }
 
         //req.query.title
-
         organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
           //console.log(all_organs)
           userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
@@ -641,46 +677,37 @@ exports.image_get_by_data = function(options){
                     //console.log("抓取出的檔案(欄位只抓 id)：")
                     //console.log(all_files_only_id);
 
-                    fileModel.getAllWhereOrArrayLimit({ column: sort_type, sort_type: req.query.sort_value }, where_array, or_array, [(parseInt(req.query.page) - 1) * parseInt(req.query.items_per_page), parseInt(req.query.items_per_page)], function(all_files){
-                      //console.log("抓取出的檔案：")
-                      //console.log(all_files);
+                    fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: req.query.sort_value }, function(files_like){
 
-                      fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: req.query.sort_value }, function(files_like){
+                      //console.log(all_files_only_id);
+                      let match_liks_id = [];
+                      if(req.query.sort_type == 'like'){ // 依讚排序
+
+                        // 為每個檔案加上按讚數
+                        all_files_only_id = file_add_like(all_files_only_id, files_like);
+                        // 排序
+                        all_files_only_id = files_sort(all_files_only_id, req.query.sort_value);
+
+                        match_liks_id = all_files_only_id.slice((parseInt(req.query.page) - 1) * parseInt(req.query.items_per_page), (parseInt(req.query.page) - 1) * parseInt(req.query.items_per_page) + parseInt(req.query.items_per_page));
+                        match_liks_id = match_liks_id.map((item, index) => item.id);
+                      }
+
+                      //console.log(match_liks_id);
+
+                      fileModel.getAllWhereOrArrayLimit({ column: sort_type, sort_type: req.query.sort_value }, where_array, or_array, [(parseInt(req.query.page) - 1) * parseInt(req.query.items_per_page), parseInt(req.query.items_per_page)], { column_name: 'id', operator: 'IN', column_value: match_liks_id }, function(all_files){
+                        //console.log("抓取出的檔案：")
+                        //console.log(all_files);
 
                         if(all_files.length == 0){
                           return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
                         }else{
 
                           // 為每個檔案加上按讚數
-                          all_files.forEach(function(file_item, file_index){
-                            all_files[file_index].like_num = 0
-                            files_like.forEach(function(like_item, like_index){
-                              if(file_item.id == like_item.file_id){
-                                all_files[file_index].like_num = like_item.file_id_total
-                              }
-                            })
-                          })
+                          all_files = file_add_like(all_files, files_like);
 
                           if(req.query.sort_type == 'like'){ // 依讚排序
-                            all_files.sort(function(a, b){
-                              var comparison = 0
-                              if(req.query.sort_value == 'DESC'){
-                                if(a.like_num > b.like_num){
-                                  comparison = -1
-                                }else{
-                                  comparison = 1
-                                }
-                              }
-                              if(req.query.sort_value == 'ASC'){
-                                if(a.like_num > b.like_num){
-                                  comparison = 1
-                                }else{
-                                  comparison = -1
-                                }
-                              }
-
-                              return comparison
-                            })
+                            // 排序
+                            all_files = files_sort(all_files, req.query.sort_value);
                           }
 
                           //var data_files = []
@@ -780,8 +807,7 @@ exports.image_get_by_data = function(options){
 
                       })
 
-                    })
-
+                    });
 
 
                   })
