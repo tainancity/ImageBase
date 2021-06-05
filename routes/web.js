@@ -253,14 +253,13 @@ module.exports = function(app){
     res.status(404).render('frontend/errors/404.pug')
   })
 
-  /*
   // ========== 500 ========== //
   app.use(function (err, req, res, next) {
     console.error(err.stack)
-    res.status(500).send("500 Error!")
-    //res.status(500).render('errors/500')
+    exec("pm2 restart imagebase", function(error, stdout, stderr){
+      res.status(500).send("500 Error!")
+    })
   })
-  */
 
 
 }
