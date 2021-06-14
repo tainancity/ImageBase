@@ -243,7 +243,10 @@ block append body_end_others_sl
           },
           success: function(r_data){
             if(r_data.code == 200){
-              location.reload();
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+              
             }
           }
         });
