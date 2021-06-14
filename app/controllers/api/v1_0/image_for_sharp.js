@@ -918,7 +918,9 @@ exports.image_soft_delete = function(options){
                 var update_obj = { deleted_at: time_now }
                 var where_obj = { u_id: req.params.u_id }
                 fileModel.update(update_obj, where_obj, false, function(delete_results){
+                  console.log("測試1");
                   redisFileDataModel.import_to_redis()
+                  console.log("測試2");
                   return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, deleted_at: time_now } })
                 })
               }else{
