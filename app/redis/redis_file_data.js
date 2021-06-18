@@ -68,25 +68,31 @@ module.exports = {
                     }
 
                     //redisClient.hset("foo1", "OK");
-                    redisClient.hmset([item.u_id,
-                      'title', item.title,
-                      'user_id', item.user_id,
-                      'user_name', user_name,
-                      'category_id', item.category_id,
-                      'category_name', category_name,
-                      'organ_id', item.organ_id,
-                      'organization_name', organization_name,
-                      'file_type', item.file_type,
-                      'file_path', item.file_path,
-                      'file_ext', item.file_ext,
-                      'file_data', item.file_data,
-                      'pageviews', item.pageviews,
-                      'permissions', item.permissions,
-                      'tags', tag_arr.join(','),
-                      'created_at', item.created_at,
-                      'updated_at', item.updated_at,
-                      'deleted_at', item.deleted_at
-                    ])
+                    try{
+                      redisClient.hmset([item.u_id,
+                        'title', item.title,
+                        'user_id', item.user_id,
+                        'user_name', user_name,
+                        'category_id', item.category_id,
+                        'category_name', category_name,
+                        'organ_id', item.organ_id,
+                        'organization_name', organization_name,
+                        'file_type', item.file_type,
+                        'file_path', item.file_path,
+                        'file_ext', item.file_ext,
+                        'file_data', item.file_data,
+                        'pageviews', item.pageviews,
+                        'permissions', item.permissions,
+                        'tags', tag_arr.join(','),
+                        'created_at', item.created_at,
+                        'updated_at', item.updated_at,
+                        'deleted_at', item.deleted_at
+                      ])
+                    }catch(error){
+                      console.log("這裡錯誤")
+                      console.log(error);
+                    }
+
                   })
                 })
 
