@@ -61,17 +61,19 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
     if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
       save_tags((fields.tags).trim(), save_results.insertId)
     }
-    redisFileDataModel.import_to_redis()
-    //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
-    res.status(200).json({
-      code: 200,
-      data:{
-        short_url: CONFIG.appenv.domain + '/' + unique_id,
-        short_id: unique_id,
-        original_filename: original_filename,
-        files: data_files
-      }
+    redisFileDataModel.import_to_redis_for_post_temp(function(){
+      //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
+      res.status(200).json({
+        code: 200,
+        data:{
+          short_url: CONFIG.appenv.domain + '/' + unique_id,
+          short_id: unique_id,
+          original_filename: original_filename,
+          files: data_files
+        }
+      })
     })
+
 
   })
 }
