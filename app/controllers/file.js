@@ -17,58 +17,75 @@ exports.item = function(options) {
 
       function(callback) { // 取得檔案
         fileModel.getOne("u_id", req.params.u_id, function(files){
-          callback(null, files[0]);
-        });
-      },
-      function(file, callback) { // 取得 tags
-
-        fileTagModel.getAllWhere({ "column": "id", "sort_type": "DESC" }, { "column_name": "file_id", "operator": "=", "column_value": file.id }, function(file_tags){
-          //console.log("file id: " + file.id);
-          //console.log(file_tags);
-          if(file_tags.length > 0){
-            let tags_id_str = "";
-            file_tags.forEach((item, i) => {
-              tags_id_str += ((i == 0) ? "" : ",") + item.tag_id;
-            });
-
-            tagModel.getAllWhere({"column": "id", "sort_type": "DESC"}, { "column_name": "id", "operator": "IN", "column_value": "(" + tags_id_str + ")" }, function(tags){
-              let tags_str = "";
-              tags.forEach((item, i) => {
-                tags_str += ((i == 0) ? "" : ",") + item.tag_name;
-              });
-              file.tags = tags_str;
-              callback(null, file);
-            });
-
+          if(files.length > 0){
+            callback(null, files[0]);
           }else{
-            file.tags = "";
-            callback(null, file);
+            callback(null, null);
           }
 
         });
+      },
+      function(file, callback) { // 取得 tags
+        if(file == null){
+          callback(null, null);
+        }else{
+          fileTagModel.getAllWhere({ "column": "id", "sort_type": "DESC" }, { "column_name": "file_id", "operator": "=", "column_value": file.id }, function(file_tags){
+            //console.log("file id: " + file.id);
+            //console.log(file_tags);
+            if(file_tags.length > 0){
+              let tags_id_str = "";
+              file_tags.forEach((item, i) => {
+                tags_id_str += ((i == 0) ? "" : ",") + item.tag_id;
+              });
 
+              tagModel.getAllWhere({"column": "id", "sort_type": "DESC"}, { "column_name": "id", "operator": "IN", "column_value": "(" + tags_id_str + ")" }, function(tags){
+                let tags_str = "";
+                tags.forEach((item, i) => {
+                  tags_str += ((i == 0) ? "" : ",") + item.tag_name;
+                });
+                file.tags = tags_str;
+                callback(null, file);
+              });
+
+            }else{
+              file.tags = "";
+              callback(null, file);
+            }
+
+          });
+        }
       },
       function(file, callback){ // 取得 分類
-        fileCategoryModel.getOne("id", file.category_id, function(file_category){
-          file.category_name = file_category[0].category_name;
-          //console.log(file);
-          callback(null, file);
-        });
+        if(file == null){
+          callback(null, null);
+        }else{
+          fileCategoryModel.getOne("id", file.category_id, function(file_category){
+            file.category_name = file_category[0].category_name;
+            //console.log(file);
+            callback(null, file);
+          });
+        }
       },
       function(file, callback){ // 取得 組織
-        organizationModel.getOne("organ_id", file.organ_id, function(file_organ){
-          file.organization_name = file_organ[0].organ_name;
-          callback(null, file);
-        });
+        if(file == null){
+          callback(null, null);
+        }else{
+          organizationModel.getOne("organ_id", file.organ_id, function(file_organ){
+            file.organization_name = file_organ[0].organ_name;
+            callback(null, file);
+          });
+        }
       }
     ], function (err, file) {
+      if(file != null){
+        if(file.deleted_at == null){
+          file.deleted_at = ''
+        }
+        if(file.title == null){
+          file.title = ''
+        }
+      }
 
-      if(file.deleted_at == null){
-        file.deleted_at = ''
-      }
-      if(file.title == null){
-        file.title = ''
-      }
       res.render('frontend/files/item', {
         file_u_id: req.params.u_id,
         file_obj: file,
