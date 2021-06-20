@@ -17,7 +17,7 @@ var organizationModel = require(CONFIG.path.models + '/organization.js')
 var fileCategoryModel = require(CONFIG.path.models + '/file_category.js')
 var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
 
-var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
+//var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 
 var functions = require(CONFIG.path.helpers + '/functions.js')
 var static = require(CONFIG.path.helpers + '/static.js')
@@ -61,6 +61,7 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
     if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
       save_tags((fields.tags).trim(), save_results.insertId)
     }
+    /*
     redisFileDataModel.import_to_redis_for_post_temp(function(){
       //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
       res.status(200).json({
@@ -72,6 +73,16 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
           files: data_files
         }
       })
+    })
+    */
+    res.status(200).json({
+      code: 200,
+      data:{
+        short_url: CONFIG.appenv.domain + '/' + unique_id,
+        short_id: unique_id,
+        original_filename: original_filename,
+        files: data_files
+      }
     })
 
 
@@ -920,7 +931,7 @@ exports.image_soft_delete = function(options){
                 var update_obj = { deleted_at: time_now }
                 var where_obj = { u_id: req.params.u_id }
                 fileModel.update(update_obj, where_obj, false, function(delete_results){
-                  redisFileDataModel.import_to_redis()
+                  //redisFileDataModel.import_to_redis()
                   return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, deleted_at: time_now } })
                 })
               }else{
@@ -984,7 +995,7 @@ exports.image_soft_delete_undo = function(options){
                 var update_obj = { deleted_at: null }
                 var where_obj = { u_id: req.params.u_id }
                 fileModel.update(update_obj, where_obj, false, function(delete_results){
-                  redisFileDataModel.import_to_redis()
+                  //redisFileDataModel.import_to_redis()
                   return res.status(200).json({ code: 200, data: { u_id : req.params.u_id, message: '已復原' } })
                 })
               }
@@ -1079,7 +1090,7 @@ exports.image_hard_delete = function(options){
                           if( (JSON.parse(files[0].file_data)).length == (file_index + 1)){
                             // step 5: 刪除 資料表 files
                             fileModel.deleteWhere('id', files[0].id, function(){
-                              redisFileDataModel.import_to_redis()
+                              //redisFileDataModel.import_to_redis()
                               return res.status(200).json({code: 200, msg:'刪除成功'})
                             })
                           }
@@ -1116,7 +1127,7 @@ exports.image_hard_delete = function(options){
                         }).then((data) => {
                           // step 5: 刪除 資料表 files
                           fileModel.deleteWhere('id', files[0].id, function(){
-                            redisFileDataModel.import_to_redis()
+                            //redisFileDataModel.import_to_redis()
                             client_ssh_sftp.end()
                             return res.status(200).json({code: 200, msg:'刪除成功'})
                           })
@@ -1280,7 +1291,7 @@ exports.image_crop = function(options){
                 var where_obj = {u_id: file_result[0].u_id}
                 fileModel.update(update_obj, where_obj, true, function(file_update_result){
 
-                  redisFileDataModel.import_to_redis()
+                  //redisFileDataModel.import_to_redis()
 
                   if (fs.existsSync(savePath)) {
                     fs.unlinkSync(savePath)
@@ -1365,7 +1376,7 @@ exports.image_put_data = function(options){
             var update_obj = { title: modify_title, category_id: fields.category, permissions: fields.permissions }
             var where_obj = { u_id: req.params.u_id }
             fileModel.update(update_obj, where_obj, true, function(update_results){
-              redisFileDataModel.import_to_redis()
+              //redisFileDataModel.import_to_redis()
               return res.status(200).json({code: 200, msg:'更新成功'})
             })
 

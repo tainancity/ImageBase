@@ -6,7 +6,7 @@ var fileModel = require(CONFIG.path.models + '/file.js')
 var shortUrlModel = require(CONFIG.path.models + '/short_urls.js')
 var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
-var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
+//var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
 
@@ -172,7 +172,7 @@ module.exports = function(app){
         var where_obj = {'u_id': req.body.u_id}
         fileModel.update(update_obj, where_obj, true, function(result){
           //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
-          redisFileDataModel.import_to_redis()
+          //redisFileDataModel.import_to_redis()
           res.json({new_pageviews:new_pageviews})
         });
       })
@@ -408,7 +408,7 @@ module.exports = function(app){
                           //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
 
                           if(files.length == file_index + 1){
-                            redisFileDataModel.import_to_redis()
+                            //redisFileDataModel.import_to_redis()
                             res.json({account_check: 1})
                           }
                         });
@@ -417,7 +417,7 @@ module.exports = function(app){
                       })
                     }else{
                       if(files.length == file_index + 1){
-                        redisFileDataModel.import_to_redis()
+                        //redisFileDataModel.import_to_redis()
                         res.json({account_check: 1})
                       }
                     }
@@ -457,7 +457,7 @@ module.exports = function(app){
                             //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
 
                             if(files.length == file_index + 1){
-                              redisFileDataModel.import_to_redis()
+                              //redisFileDataModel.import_to_redis()
                               res.json({account_check: 1})
                             }
                           });
@@ -466,7 +466,7 @@ module.exports = function(app){
                         })
                       }else{
                         if(files.length == file_index + 1){
-                          redisFileDataModel.import_to_redis()
+                          //redisFileDataModel.import_to_redis()
                           res.json({account_check: 1})
                         }
                       }
