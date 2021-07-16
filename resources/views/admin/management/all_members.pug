@@ -33,12 +33,14 @@ block append content_sl
                       th 指派為局處管理者
                   tbody
                     each item, index in members
-                      tr
+                      tr(data-u-id=item.u_id)
                         td= index+1
                         td= item.pid
                         td
                           img(src=item.portrait_url class='portrait_url')
                           span.name= decrypt(item.name)
+                          br
+                          button.btn_update_info(type="button") 更新
                         td= item.organ_name + '(' + item.organ_id + ')'
                         td= decrypt(item.email)
                         td= item.job_title
@@ -111,6 +113,24 @@ block append body_end_others_sl
               alert("更新失敗");
             }
             location.reload()
+      		}
+      	});
+        
+      });
+      
+      $("button.btn_update_info").on("click", function(){
+        let u_id = $(this).closest("tr").attr("data-u-id");
+        
+        $.ajax({
+      		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-user-info',
+      		type: 'PUT',
+      		data: {u_id: u_id},
+      		dataType: 'json',
+          headers: {
+            "X-CSRF-Token": '#{csrfToken}'
+          },
+      		success: function(data){
+            console.log(data);
       		}
       	});
         

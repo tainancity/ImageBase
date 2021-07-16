@@ -8,7 +8,7 @@ var fileLikeModel = require(CONFIG.path.models + '/file_like.js')
 var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
 //var redisFileDataModel = require(CONFIG.path.redis + '/redis_file_data.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
-
+var static = require(CONFIG.path.helpers + '/static.js')
 
 const fs = require("graceful-fs")
 const http = require('http')
@@ -777,6 +777,74 @@ module.exports = function(app){
       }else{
         res.json({msg: 0})
       }
+
+    }),
+
+    // 暫時：因應加密方式的改變
+    app.put('/update-user-info', function(req, res){
+      //console.log("哈囉：" + req.body.u_id);
+
+      userModel.getOne('u_id', req.body.u_id, function(user_results){
+        // req.body.u_id
+        let name_obj = {
+          original_encrypt: "原加密(name)：" + user_results[0].name,
+          original_encrypt_decrypt: "原加密進行解密(name)：" + static.decrypt(user_results[0].name),
+          new_encrypt: "新加密(name)：" + functions.encrypt(static.decrypt(user_results[0].name)),
+          new_encrypt_decrypt: "新加密進行解密(name)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].name)))
+        };
+        let email_obj = {
+          original_encrypt: "原加密(email)：" + user_results[0].email,
+          original_encrypt_decrypt: "原加密進行解密(email)：" + static.decrypt(user_results[0].email),
+          new_encrypt: "新加密(email)：" + functions.encrypt(static.decrypt(user_results[0].email)),
+          new_encrypt_decrypt: "新加密進行解密(email)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].email)))
+        };
+        let tel_office_obj = {
+          original_encrypt: "原加密(tel_office)：" + user_results[0].tel_office,
+          original_encrypt_decrypt: "原加密進行解密(tel_office)：" + static.decrypt(user_results[0].tel_office),
+          new_encrypt: "新加密(tel_office)：" + functions.encrypt(static.decrypt(user_results[0].tel_office)),
+          new_encrypt_decrypt: "新加密進行解密(tel_office)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_office)))
+        };
+        let tel_personal_obj = {
+          original_encrypt: "原加密(tel_personal)：" + user_results[0].tel_personal,
+          original_encrypt_decrypt: "原加密進行解密(tel_personal)：" + static.decrypt(user_results[0].tel_personal),
+          new_encrypt: "新加密(tel_personal)：" + functions.encrypt(static.decrypt(user_results[0].tel_personal)),
+          new_encrypt_decrypt: "新加密進行解密(tel_personal)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_personal)))
+        };
+
+        var update_obj = {
+          "name": functions.encrypt(static.decrypt(user_results[0].name)),
+          "email": functions.encrypt(static.decrypt(user_results[0].email)),
+          "tel_office": functions.encrypt(static.decrypt(user_results[0].tel_office)),
+          "tel_personal": functions.encrypt(static.decrypt(user_results[0].tel_personal))
+        };
+        var where_obj = {"u_id": req.body.u_id};
+        userModel.update(update_obj, where_obj, true, function(result){
+          res.json({
+            name_obj: name_obj,
+            email_obj: email_obj,
+            tel_office_obj: tel_office_obj,
+            tel_personal_obj: tel_personal_obj
+          });
+        });
+
+      });
+      /*
+      fileModel.getOne('u_id', req.body.u_id, function(file_resule){
+        if(file_resule.length > 0){
+          if(req.body.checked == 'true'){
+            fileCarouselModel.save({file_id: file_resule[0].id, sort_index: 0}, false, function(save_result){
+              res.json({checked: req.body.checked, u_id: req.body.u_id})
+            })
+          }else{
+            fileCarouselModel.deleteWhere('file_id', file_resule[0].id, function(del_result){
+              res.json({checked: req.body.checked, u_id: req.body.u_id})
+            })
+          }
+        }else{
+          res.json({result: false})
+        }
+      })
+      */
 
     })
 

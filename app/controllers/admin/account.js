@@ -124,7 +124,7 @@ exports.all_members = function(options){
             })
           })
           //console.log(results)
-          res.render('admin/management/all_members', {members: results})
+          res.render('admin/management/all_members', {members: results, csrfToken: req.csrfToken()})
         })
 
 
