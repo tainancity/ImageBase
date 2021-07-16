@@ -103,7 +103,7 @@ exports.all_members = function(options){
       c_page = req.query.page;
     }
 
-    let items_per_page = 50;
+    let items_per_page = 20;
     let limit_number_arr = [items_per_page * (parseInt(c_page) - 1), items_per_page];
 
     userModel.getAllCount(function(result){
