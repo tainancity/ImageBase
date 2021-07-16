@@ -33,14 +33,14 @@ block append content_sl
                       th 指派為局處管理者
                   tbody
                     each item, index in members
-                      tr(data-u-id=item.u_id)
+                      tr
                         td= index+1
                         td= item.pid
                         td
                           img(src=item.portrait_url class='portrait_url')
                           span.name= decrypt(item.name)
-                          br
-                          button.btn_update_info(type="button") 更新
+                          //-
+                            button.btn_update_info(type="button") 更新
                         td= item.organ_name + '(' + item.organ_id + ')'
                         td= decrypt(item.email)
                         td= item.job_title
@@ -68,6 +68,13 @@ block append content_sl
                             span.disabled_text 此測試帳號無法變更
                           else
                             input.admin_check(type='checkbox' data-role-id="3" data-uid=item.u_id checked=(item.role_id == 3))
+                div.paginator
+                  - var n = 0;
+                    ul.paginator_list
+                      while n < total_pages
+                        li
+                          a(class=(c_page == (n+1)? '-on' : '') href='?page='+(n+1)).page_link= (n+1)
+                        - n++
               
           
           
@@ -117,7 +124,7 @@ block append body_end_others_sl
       	});
         
       });
-      
+      /*
       $("button.btn_update_info").on("click", function(){
         let u_id = $(this).closest("tr").attr("data-u-id");
         
@@ -135,6 +142,7 @@ block append body_end_others_sl
       	});
         
       });
+      */
       
       $("input.api_key_text").on("focus", function(){
         $(this).select();

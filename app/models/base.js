@@ -85,6 +85,14 @@ exports.getAll = function(table_name, sort_obj, cb) {
   //console.log(query.sql)
 }
 
+exports.getAllCount = function(table_name, cb) {
+  conn.query('SELECT COUNT(*) AS total_count FROM `' + table_name + '`', function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}
+
 exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
   conn.query('SELECT * FROM `' + table_name + '` WHERE ' + where_obj.column_name + ' ' + where_obj.operator + ' ' + where_obj.column_value + ' ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type, function (error, results, fields) {
     if (error) throw error
@@ -93,6 +101,13 @@ exports.getAllWhere = function(table_name, sort_obj, where_obj, cb){
   //console.log(query.sql)
 }
 
+exports.getAllLimit = function(table_name, sort_obj, limit_number_arr, cb){
+  conn.query('SELECT * FROM `' + table_name + '` ORDER BY ' + sort_obj.column + ' ' + sort_obj.sort_type + ' LIMIT ' + limit_number_arr[0] + "," + limit_number_arr[1], function (error, results, fields) {
+    if (error) throw error
+    cb(results)
+  })
+  //console.log(query.sql)
+}
 
 exports.getAll2WhereLimit = function(table_name, sort_obj, where_obj, where_obj2, limit_number_arr, cb){
   if(where_obj2 == ""){

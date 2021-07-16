@@ -23,3 +23,15 @@ exports.getOne = function(u_id_col, u_id, cb) {
 exports.getAll = function(sort_obj, cb) {
   baseModel.getAll(table_name, sort_obj, cb)
 }
+
+exports.getAllCount = function(cb) {
+  baseModel.getAllCount(table_name, cb)
+}
+
+/**
+ * sort_obj = { "column": "created_at", "sort_type": "DESC" }
+ *
+ */
+exports.getAllLimit = function(sort_obj, limit_number_arr, cb) {
+  baseModel.getAllLimit(table_name, sort_obj, limit_number_arr, cb)
+}

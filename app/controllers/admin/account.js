@@ -97,39 +97,56 @@ exports.apply_api_key = function(options){
 // 所有公務帳號
 exports.all_members = function(options){
   return function(req, res){
-    var sort_obj = { "column": "created_at", "sort_type": "DESC" }
-    userModel.getAll(sort_obj, function(results){
 
-      // 取得 organ_id 對應的 organ_name
-      var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
-      organizationModel.getAll(sort_obj_for_organ, function(results_organ){
-        results.forEach(function(element, index, arr) {
-          // arr 是原來的 results 陣列
-          results_organ.forEach(function(organ, i, arra_organ){
-            if(element.organ_id == organ.organ_id){
-              results[index].organ_name = organ.organ_name
-            }
-          })
-        })
+    let c_page = 1;
+    if(req.query.page != undefined && req.query.page != ""){
+      c_page = req.query.page;
+    }
 
-        var sort_obj_for_api_key = { "column": "created_at", "sort_type": "DESC" }
-        apiKeyModel.getAll(sort_obj_for_api_key, function(results_apikey){
+    let items_per_page = 50;
+    let limit_number_arr = [items_per_page * (parseInt(c_page) - 1), items_per_page];
+
+    userModel.getAllCount(function(result){
+      // console.log(result[0].total_count);
+      let total_count = result[0].total_count;
+      let total_pages = Math.ceil(total_count / items_per_page);
+      //console.log("共" + total_pages);
+
+      let sort_obj = { "column": "created_at", "sort_type": "DESC" };
+      userModel.getAllLimit(sort_obj, limit_number_arr, function(results){
+
+        // 取得 organ_id 對應的 organ_name
+        var sort_obj_for_organ = { "column": "created_at", "sort_type": "DESC" }
+        organizationModel.getAll(sort_obj_for_organ, function(results_organ){
           results.forEach(function(element, index, arr) {
             // arr 是原來的 results 陣列
-            results_apikey.forEach(function(api_key_item, i){
-              if(element.id == api_key_item.user_id){
-                results[index].api_key = api_key_item.api_key
-                results[index].api_request_times = api_key_item.request_times
+            results_organ.forEach(function(organ, i, arra_organ){
+              if(element.organ_id == organ.organ_id){
+                results[index].organ_name = organ.organ_name
               }
             })
           })
-          //console.log(results)
-          res.render('admin/management/all_members', {members: results, csrfToken: req.csrfToken()})
-        })
 
+          var sort_obj_for_api_key = { "column": "created_at", "sort_type": "DESC" }
+          apiKeyModel.getAll(sort_obj_for_api_key, function(results_apikey){
+            results.forEach(function(element, index, arr) {
+              // arr 是原來的 results 陣列
+              results_apikey.forEach(function(api_key_item, i){
+                if(element.id == api_key_item.user_id){
+                  results[index].api_key = api_key_item.api_key
+                  results[index].api_request_times = api_key_item.request_times
+                }
+              })
+            })
+            //console.log(results)
+            res.render('admin/management/all_members', {members: results, total_pages: total_pages, c_page: c_page, csrfToken: req.csrfToken()})
+          })
+
+
+        })
 
       })
 
-    })
+    });
   }
 }
