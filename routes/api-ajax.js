@@ -781,64 +781,56 @@ module.exports = function(app){
     })
 
     // 暫時：因應加密方式的改變
-    app.put('/update-user-info', function(req, res){
-      //console.log("哈囉：" + req.body.u_id);
-
-      userModel.getOne('u_id', req.body.u_id, function(user_results){
-        // req.body.u_id
-        let name_obj = {
-          original_encrypt: "原加密(name)：" + user_results[0].name,
-          original_encrypt_decrypt: "原加密進行解密(name)：" + static.decrypt(user_results[0].name),
-          new_encrypt: "新加密(name)：" + functions.encrypt(static.decrypt(user_results[0].name)),
-          new_encrypt_decrypt: "新加密進行解密(name)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].name)))
-        };
-        let email_obj = {
-          original_encrypt: "原加密(email)：" + user_results[0].email,
-          original_encrypt_decrypt: "原加密進行解密(email)：" + static.decrypt(user_results[0].email),
-          new_encrypt: "新加密(email)：" + functions.encrypt(static.decrypt(user_results[0].email)),
-          new_encrypt_decrypt: "新加密進行解密(email)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].email)))
-        };
-        let tel_office_obj = {
-          original_encrypt: "原加密(tel_office)：" + user_results[0].tel_office,
-          original_encrypt_decrypt: "原加密進行解密(tel_office)：" + static.decrypt(user_results[0].tel_office),
-          new_encrypt: "新加密(tel_office)：" + functions.encrypt(static.decrypt(user_results[0].tel_office)),
-          new_encrypt_decrypt: "新加密進行解密(tel_office)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_office)))
-        };
-        let tel_personal_obj = {
-          original_encrypt: "原加密(tel_personal)：" + user_results[0].tel_personal,
-          original_encrypt_decrypt: "原加密進行解密(tel_personal)：" + static.decrypt(user_results[0].tel_personal),
-          new_encrypt: "新加密(tel_personal)：" + functions.encrypt(static.decrypt(user_results[0].tel_personal)),
-          new_encrypt_decrypt: "新加密進行解密(tel_personal)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_personal)))
-        };
-
-        var update_obj = {
-          "name": functions.encrypt(static.decrypt(user_results[0].name)),
-          "email": functions.encrypt(static.decrypt(user_results[0].email)),
-          "tel_office": functions.encrypt(static.decrypt(user_results[0].tel_office)),
-          "tel_personal": functions.encrypt(static.decrypt(user_results[0].tel_personal))
-        };
-        /*
-        return res.json({
-          name_obj: name_obj,
-          email_obj: email_obj,
-          tel_office_obj: tel_office_obj,
-          tel_personal_obj: tel_personal_obj
-        });
-        */
-        
-        var where_obj = {"u_id": req.body.u_id};
-        userModel.update(update_obj, where_obj, true, function(result){
-          res.json({
-            name_obj: name_obj,
-            email_obj: email_obj,
-            tel_office_obj: tel_office_obj,
-            tel_personal_obj: tel_personal_obj
-          });
-        });
-
-      });
-
-    })
+    // app.put('/update-user-info', function(req, res){
+    //   //console.log("哈囉：" + req.body.u_id);
+    //
+    //   userModel.getOne('u_id', req.body.u_id, function(user_results){
+    //     // req.body.u_id
+    //     let name_obj = {
+    //       original_encrypt: "原加密(name)：" + user_results[0].name,
+    //       original_encrypt_decrypt: "原加密進行解密(name)：" + static.decrypt(user_results[0].name),
+    //       new_encrypt: "新加密(name)：" + functions.encrypt(static.decrypt(user_results[0].name)),
+    //       new_encrypt_decrypt: "新加密進行解密(name)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].name)))
+    //     };
+    //     let email_obj = {
+    //       original_encrypt: "原加密(email)：" + user_results[0].email,
+    //       original_encrypt_decrypt: "原加密進行解密(email)：" + static.decrypt(user_results[0].email),
+    //       new_encrypt: "新加密(email)：" + functions.encrypt(static.decrypt(user_results[0].email)),
+    //       new_encrypt_decrypt: "新加密進行解密(email)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].email)))
+    //     };
+    //     let tel_office_obj = {
+    //       original_encrypt: "原加密(tel_office)：" + user_results[0].tel_office,
+    //       original_encrypt_decrypt: "原加密進行解密(tel_office)：" + static.decrypt(user_results[0].tel_office),
+    //       new_encrypt: "新加密(tel_office)：" + functions.encrypt(static.decrypt(user_results[0].tel_office)),
+    //       new_encrypt_decrypt: "新加密進行解密(tel_office)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_office)))
+    //     };
+    //     let tel_personal_obj = {
+    //       original_encrypt: "原加密(tel_personal)：" + user_results[0].tel_personal,
+    //       original_encrypt_decrypt: "原加密進行解密(tel_personal)：" + static.decrypt(user_results[0].tel_personal),
+    //       new_encrypt: "新加密(tel_personal)：" + functions.encrypt(static.decrypt(user_results[0].tel_personal)),
+    //       new_encrypt_decrypt: "新加密進行解密(tel_personal)：" + static.decrypt(functions.encrypt(static.decrypt(user_results[0].tel_personal)))
+    //     };
+    //
+    //     var update_obj = {
+    //       "name": functions.encrypt(static.decrypt(user_results[0].name)),
+    //       "email": functions.encrypt(static.decrypt(user_results[0].email)),
+    //       "tel_office": functions.encrypt(static.decrypt(user_results[0].tel_office)),
+    //       "tel_personal": functions.encrypt(static.decrypt(user_results[0].tel_personal))
+    //     };
+    //
+    //     var where_obj = {"u_id": req.body.u_id};
+    //     userModel.update(update_obj, where_obj, true, function(result){
+    //       res.json({
+    //         name_obj: name_obj,
+    //         email_obj: email_obj,
+    //         tel_office_obj: tel_office_obj,
+    //         tel_personal_obj: tel_personal_obj
+    //       });
+    //     });
+    //
+    //   });
+    //
+    // })
 
 
   })

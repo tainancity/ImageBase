@@ -12,39 +12,20 @@ module.exports = {
   // decrypt text
   decrypt: function(text) {
 
-
     if(text.includes(":")){ // 新的方式加密
-      let textParts = text.split(':');
-      let iv = Buffer.from(textParts.shift(), 'hex');
-      //let iv = Buffer.alloc(16, 0);
-      let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-      let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-      let decipher = crypto.createDecipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-      let decrypted = decipher.update(encryptedText);
-      decrypted = Buffer.concat([decrypted, decipher.final()]);
-      return decrypted.toString();
+      // let textParts = text.split(':');
+      // let iv = Buffer.from(textParts.shift(), 'hex');
+      // //let iv = Buffer.alloc(16, 0);
+      // let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+      // let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
+      // let decipher = crypto.createDecipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
+      // let decrypted = decipher.update(encryptedText);
+      // decrypted = Buffer.concat([decrypted, decipher.final()]);
+      // return decrypted.toString();
     }else{ // 舊的方式解密
-      /*
-      var decipher = crypto.createDecipher(CONFIG.appenv.cipher.algorithm, CONFIG.appenv.cipher.password)
-      var dec = decipher.update(text,'hex','utf8')
-      dec += decipher.final('utf8')
-      return dec
-      */
-      return text;
     }
+    return text;
 
   }
-  /*
-  decrypt_new: function(text) {
-    let textParts = text.split(':');
-    let iv = Buffer.from(textParts.shift(), 'hex');
-    //let iv = Buffer.alloc(16, 0);
-    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-    let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-    let decipher = crypto.createDecipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-    let decrypted = decipher.update(encryptedText);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
-  }
-  */
+  
 };
