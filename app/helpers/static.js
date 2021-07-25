@@ -24,10 +24,13 @@ module.exports = {
       decrypted = Buffer.concat([decrypted, decipher.final()]);
       return decrypted.toString();
     }else{ // 舊的方式解密
+      /*
       var decipher = crypto.createDecipher(CONFIG.appenv.cipher.algorithm, CONFIG.appenv.cipher.password)
       var dec = decipher.update(text,'hex','utf8')
       dec += decipher.final('utf8')
       return dec
+      */
+      return text;
     }
 
   }

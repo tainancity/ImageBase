@@ -11,36 +11,18 @@ module.exports = {
   // encrypt text
   encrypt: function(text) {
     /*
-    var cipher = crypto.createCipher(CONFIG.appenv.cipher.algorithm, CONFIG.appenv.cipher.password)
-    var crypted = cipher.update(text,'utf8','hex')
-    crypted += cipher.final('hex')
-    return crypted
+    let IV_LENGTH = 16;
+    let iv = crypto.randomBytes(IV_LENGTH);
+    let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
+    //let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, Buffer.from(CONFIG.appenv.cipher.password, 'hex'), iv);
+    let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
     */
-
-    let IV_LENGTH = 16;
-    let iv = crypto.randomBytes(IV_LENGTH);
-    let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-    //let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, Buffer.from(CONFIG.appenv.cipher.password, 'hex'), iv);
-    let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
+    return text;
 
   },
-  /*
-  encrypt_new: function(text) {
-    let IV_LENGTH = 16;
-    let iv = crypto.randomBytes(IV_LENGTH);
-    let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-    //let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, Buffer.from(CONFIG.appenv.cipher.password, 'hex'), iv);
-    let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
-  },
-  */
-
-
 
   // 密碼加密：password bcrypt
   pwd_bcrypt: function(pwd, cb) {
