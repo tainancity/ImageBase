@@ -229,7 +229,7 @@ var save_file_related_data = function(req, res, results){
                       console.log("一");
                       sharp(form.uploadDir + "/" + file_new_name)
                         .rotate()
-                        .extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                        //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                         .resize(parseInt(setting_width), null)
                         .toFile(form.uploadDir + '/' + generated_filename[0], function(err, info0){
                           if (err) throw err
@@ -262,7 +262,7 @@ var save_file_related_data = function(req, res, results){
                           var setting_width = ((split_item[3]).split('.'))[0] // 寬度
                           sharp(form.uploadDir + "/" + file_new_name)
                             .rotate()
-                            .extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                            //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                             .resize(parseInt(setting_width), null)
                             .toFile(form.uploadDir + '/' + generated_filename[1], function(err, info1){
                               if (err) throw err
@@ -294,7 +294,7 @@ var save_file_related_data = function(req, res, results){
                               var setting_width = ((split_item[3]).split('.'))[0] // 寬度
                               sharp(form.uploadDir + "/" + file_new_name)
                                 .rotate()
-                                .extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                                //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                                 .resize(parseInt(setting_width), null)
                                 .toFile(form.uploadDir + '/' + generated_filename[2], function(err, info2){
                                   if (err) throw err
