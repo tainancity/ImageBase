@@ -197,7 +197,7 @@ var save_file_related_data = function(req, res, results){
             }else{
               var data_files = []
               var data_files_save = []
-              console.log("66");
+              console.log("66: " + form.uploadDir + '/' + file_new_name);
               sharp(form.uploadDir + '/' + file_new_name)
                 .rotate()
                 .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
