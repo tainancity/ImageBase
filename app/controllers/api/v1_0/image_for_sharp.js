@@ -224,13 +224,14 @@ var save_file_related_data = function(req, res, results){
                       // 重這開始：第 1
                       var split_item = (generated_filename[0]).split('_')
                       var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                      console.log("一");
                       sharp(form.uploadDir + "/" + file_new_name)
                         .rotate()
                         .extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                         .resize(parseInt(setting_width), null)
                         .toFile(form.uploadDir + '/' + generated_filename[0], function(err, info0){
                           if (err) throw err
-
+                          console.log("二");
                           //console.log(info)
                           //{ format: 'jpeg',
                           //  width: 960,
@@ -263,7 +264,7 @@ var save_file_related_data = function(req, res, results){
                             .resize(parseInt(setting_width), null)
                             .toFile(form.uploadDir + '/' + generated_filename[1], function(err, info1){
                               if (err) throw err
-
+                              console.log("三");
                               //console.log(info)
                               //{ format: 'jpeg',
                               //  width: 960,
@@ -295,7 +296,7 @@ var save_file_related_data = function(req, res, results){
                                 .resize(parseInt(setting_width), null)
                                 .toFile(form.uploadDir + '/' + generated_filename[2], function(err, info2){
                                   if (err) throw err
-
+                                  console.log("四");
                                   //console.log(info)
                                   //{ format: 'jpeg',
                                   //  width: 960,
