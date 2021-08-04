@@ -140,6 +140,7 @@ var save_tags = function(tags_str, fileid){
 }
 
 var save_file_related_data = function(req, res, results){
+  console.log("11");
   // parse a file upload
   var form = new formidable.IncomingForm()
   form.encoding = 'utf-8'
@@ -147,7 +148,7 @@ var save_file_related_data = function(req, res, results){
   //form.maxFieldsSize = 10 * 1024 * 1024  // 10MB
 
   form.parse(req, function(err, fields, files) {
-
+    console.log("22");
     var file_ext = (files.upload.name.split('.').pop()).toLowerCase()  // 副檔名
     var original_filename = files.upload.name; // 原檔名
 
@@ -160,6 +161,7 @@ var save_file_related_data = function(req, res, results){
 
     switch(file_type_num) {
       case 1:
+        console.log("33");
         var api_upload_dir = 'a' // api 上傳的資料夾
         var basic_upload_dir = CONFIG.path.storage_uploads + '/' + api_upload_dir
         var file_save_path = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category
@@ -179,11 +181,11 @@ var save_file_related_data = function(req, res, results){
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_640.' + file_ext,
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_960.' + file_ext
         ]
-
+        console.log("44");
         fs.rename(files.upload.path, form.uploadDir + "/" + file_new_name, function(){
 
           settingModel.getOne('option_name', 'upload_filesize_limit', function(result){
-
+            console.log("55");
             // result[0].option_value就是後台設定的最大 KB 數，乘上1024轉成多少個 bytes
             if(files.upload.size > (parseInt(result[0].option_value) * 1024)){ // files.upload.size: 873241byte，後台可設定最大上傳多少K，這裡佔定 10M = 10 * 1024 * 1024
               // 將原本機端的檔案刪除
@@ -195,11 +197,11 @@ var save_file_related_data = function(req, res, results){
             }else{
               var data_files = []
               var data_files_save = []
-
+              console.log("66");
               sharp(form.uploadDir + '/' + file_new_name)
                 .rotate()
                 .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
-
+                  console.log("77");
                   var json_origin_data = {
                     format: info_origin.format,
                     width: info_origin.width,
@@ -214,7 +216,7 @@ var save_file_related_data = function(req, res, results){
 
                   data_files.push(json_origin_data)
                   data_files_save.push(saved_origin_data)
-
+                  console.log("88");
                   // 將原本未 rotate 的移除
                   fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
                     if (err) throw err
