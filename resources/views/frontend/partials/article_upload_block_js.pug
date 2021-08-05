@@ -3,6 +3,7 @@ script.
   var user_prepare_upload_files = [];
   var article_upload_block;
   var accepted_ext = ['jpg', 'jpeg', 'png', 'gif'];
+  var continue_upload = true;
   
   var uploadProgress = function(e, filet){
     if(e.lengthComputable){
@@ -112,12 +113,15 @@ script.
                 $(this).removeAttr("data-original-filename");
               }
             });
+            continue_upload = false;
           },
           502: function(){
             console.log("502 Bad Gateway");
+            continue_upload = false;
           },
           504: function(){
             console.log("505 Gateway Time-out");
+            continue_upload = false;
           }
         },
         success: function(data_obj) {
@@ -133,12 +137,20 @@ script.
           });
         },
         complete: function(xhr){
-          if(user_prepare_upload_files.length > (file_index+1)){
-            file_index += 1;
-            loop_file_each(user_prepare_upload_files[file_index]);
+          if(continue_upload){
+            if(user_prepare_upload_files.length > (file_index+1)){
+              file_index += 1;
+              loop_file_each(user_prepare_upload_files[file_index]);
+            }else{
+              user_prepare_upload_files = [];
+            }
           }else{
-            user_prepare_upload_files = [];
+            alert("系統暫無回應，請稍候再試。");
+            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+              $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+            });
           }
+          
         }
       });
 
