@@ -146,9 +146,7 @@ script.
             }
           }else{
             alert("系統暫無回應，請稍候再試。");
-            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
-              $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
-            });
+            location.reload();
           }
           
         }
