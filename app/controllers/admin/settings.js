@@ -23,8 +23,8 @@ exports.index = function(options) {
 // 設定頁面的 post
 exports.index_post = function(options) {
   return function(req, res) {
-    if (req.body.upload_filesize_limit == 0 || req.body.upload_filesize_limit == '' || req.body.upload_filesize_limit > 10240 || isNaN(req.body.upload_filesize_limit) || req.body.upload_filesize_limit.charAt(0) == '0'){
-      req.body.upload_filesize_limit = 10240
+    if (req.body.upload_filesize_limit == 0 || req.body.upload_filesize_limit == '' || req.body.upload_filesize_limit > 20480 || isNaN(req.body.upload_filesize_limit) || req.body.upload_filesize_limit.charAt(0) == '0'){
+      req.body.upload_filesize_limit = 20480
     }
 
     var update_obj = {"option_value": req.body.upload_filesize_limit}
