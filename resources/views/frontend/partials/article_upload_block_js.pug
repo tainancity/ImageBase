@@ -112,6 +112,12 @@ script.
                 $(this).removeAttr("data-original-filename");
               }
             });
+          },
+          502: function(){
+            console.log("502 Bad Gateway");
+          },
+          504: function(){
+            console.log("505 Gateway Time-out");
           }
         },
         success: function(data_obj) {
