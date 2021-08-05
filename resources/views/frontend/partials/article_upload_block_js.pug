@@ -91,7 +91,7 @@ script.
           return myXhr;
         },
         statusCode: {
-          403: function(data_obj) {
+          403: function(data_obj) { // 檔案太大
             $(article_upload_block).find("ul.pic_list").children("li").each(function(){
               if(data_obj.responseJSON.error.original_filename == $(this).attr("data-original-filename")){
                 $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
@@ -115,25 +115,9 @@ script.
           },
           502: function(){
             console.log("502 Bad Gateway");
-            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
-              if($(this).attr("data-original-filename") != undefined){
-                $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
-                $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
-                $(this).find("div.info_block").append("<span class='info_file'>伺服器無回應，請稍候重新整理頁面再試一次。</span>");
-                $(this).removeAttr("data-original-filename");
-              }
-            });
           },
           504: function(){
             console.log("505 Gateway Time-out");
-            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
-              if($(this).attr("data-original-filename") != undefined){
-                $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
-                $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
-                $(this).find("div.info_block").append("<span class='info_file'>伺服器無回應，請稍候重新整理頁面再試一次。</span>");
-                $(this).removeAttr("data-original-filename");
-              }
-            });
           }
         },
         success: function(data_obj) {
