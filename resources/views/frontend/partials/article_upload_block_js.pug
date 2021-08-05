@@ -149,6 +149,10 @@ script.
     });
 
     $(article_upload_block).find("input.select_file").on("change", function(){
+      if($(this).get(0).files.length > 10){
+        alert(`選擇了${$(this).get(0).files.length}張圖，請勿傳超過10張。`);
+        return;
+      }
       $($(this).get(0).files).each(function(i, item){
         user_prepare_upload_files.push(item);
         show_each_li(item);
@@ -156,6 +160,7 @@ script.
       if($(this).get(0).files.length > 0){
         $("button.upload_file").removeClass("-disabled");
       }
+      
     });
     
     // Drag and Drop
@@ -172,6 +177,14 @@ script.
       },
       'drop': function(e) {
         $(this).removeClass('-on');
+        
+        if(e.originalEvent.dataTransfer.files.length > 10){
+          e.preventDefault();
+          e.stopPropagation();
+          alert(`選擇了${e.originalEvent.dataTransfer.files.length}張圖，請勿傳超過10張。`);
+          return;
+        }
+        
         var dataTransfer =  e.originalEvent.dataTransfer;
         if( dataTransfer && dataTransfer.files.length > 0) {
             e.preventDefault();
