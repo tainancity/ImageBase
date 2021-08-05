@@ -368,6 +368,7 @@ var save_file_related_data = function(req, res, results){
                     })
 
                   })
+                  console.log("執行到這裡");
               }catch(err){
                 console.log(err);
                 res.status(500).json({ code: 500, error: { 'message': '執行失敗！', original_filename: original_filename }, err_obj: err })
