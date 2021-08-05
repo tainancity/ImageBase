@@ -100,15 +100,21 @@ script.
                 $(this).removeAttr("data-original-filename");
               }
             });
+          },
+          500: function(data_obj){
+            console.log("500");
+            console.log(data_obj)
+            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+              if(data_obj.responseJSON.error.original_filename == $(this).attr("data-original-filename")){
+                $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
+                $(this).find("div.info_block").append("<span class='info_file'>" + data_obj.responseJSON.error.message + "</span>");
+                $(this).removeAttr("data-original-filename");
+              }
+            });
           }
         },
         success: function(data_obj) {
-          if(user_prepare_upload_files.length > (file_index+1)){
-            file_index += 1;
-            loop_file_each(user_prepare_upload_files[file_index]);
-          }else{
-            user_prepare_upload_files = [];
-          }
           $(article_upload_block).find("ul.pic_list").children("li").each(function(){
             if(data_obj.data.original_filename == $(this).attr("data-original-filename")){
               $(this).find("div.info_block").find("a.info_success_setting").removeClass("display_none").attr("href", '/admin/file/update/' + data_obj.data.short_id);
@@ -119,7 +125,14 @@ script.
               $(this).removeAttr("data-original-filename");
             }
           });
-          
+        },
+        complete: function(xhr){
+          if(user_prepare_upload_files.length > (file_index+1)){
+            file_index += 1;
+            loop_file_each(user_prepare_upload_files[file_index]);
+          }else{
+            user_prepare_upload_files = [];
+          }
         }
       });
 

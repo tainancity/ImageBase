@@ -140,7 +140,7 @@ var save_tags = function(tags_str, fileid){
 }
 
 var save_file_related_data = function(req, res, results){
-  console.log("11");
+  console.log("1、進到 save_file_related_data 函式");
   // parse a file upload
   var form = new formidable.IncomingForm()
   form.encoding = 'utf-8'
@@ -148,20 +148,17 @@ var save_file_related_data = function(req, res, results){
   //form.maxFieldsSize = 10 * 1024 * 1024  // 10MB
 
   form.parse(req, function(err, fields, files) {
-    console.log("22");
+    console.log("2、進到 form.parse");
     var file_ext = (files.upload.name.split('.').pop()).toLowerCase()  // 副檔名
     var original_filename = files.upload.name; // 原檔名
 
     if( file_ext == "jpeg" || file_ext == "jpg" || file_ext == "png" || file_ext == "gif" ){
       var file_type_num = 1
     }
-    /*if(file_ext == "pdf"){
-      var file_type_num = 2
-    }*/
 
     switch(file_type_num) {
       case 1:
-        console.log("33");
+        console.log("3、進到 switch");
         var api_upload_dir = 'a' // api 上傳的資料夾
         var basic_upload_dir = CONFIG.path.storage_uploads + '/' + api_upload_dir
         var file_save_path = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category
@@ -181,11 +178,11 @@ var save_file_related_data = function(req, res, results){
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_640.' + file_ext,
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_960.' + file_ext
         ]
-        console.log("44");
+        console.log("4、執行更名前");
         fs.rename(files.upload.path, form.uploadDir + "/" + file_new_name, function(){
 
           settingModel.getOne('option_name', 'upload_filesize_limit', function(result){
-            console.log("55");
+            console.log("5、取得 setting 資料中的 upload_filesize_limit");
             // result[0].option_value就是後台設定的最大 KB 數，乘上1024轉成多少個 bytes
             if(files.upload.size > (parseInt(result[0].option_value) * 1024)){ // files.upload.size: 873241byte，後台可設定最大上傳多少K，這裡佔定 10M = 10 * 1024 * 1024
               // 將原本機端的檔案刪除
@@ -197,176 +194,184 @@ var save_file_related_data = function(req, res, results){
             }else{
               var data_files = []
               var data_files_save = []
-              console.log("66: " + form.uploadDir + '/' + file_new_name);
-              sharp(form.uploadDir + '/' + file_new_name)
-                .rotate()
-                .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
-                  console.log("77");
-                  var json_origin_data = {
-                    format: info_origin.format,
-                    width: info_origin.width,
-                    height: info_origin.height,
-                    size: info_origin.size,
-                    origin: true
-                  }
-                  var saved_origin_data = JSON.parse(JSON.stringify(json_origin_data));
+              console.log("6、取得路徑。");
+              try{
+                console.log("7、進到 try。")
+                sharp(form.uploadDir + '/' + file_new_name)
+                  .rotate()
+                  .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
+                    console.log("8、進到第一個 sharp");
+                    var json_origin_data = {
+                      format: info_origin.format,
+                      width: info_origin.width,
+                      height: info_origin.height,
+                      size: info_origin.size,
+                      origin: true
+                    }
+                    var saved_origin_data = JSON.parse(JSON.stringify(json_origin_data));
 
-                  saved_origin_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
-                  json_origin_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
+                    saved_origin_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
+                    json_origin_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + file_new_name
 
-                  data_files.push(json_origin_data)
-                  data_files_save.push(saved_origin_data)
-                  console.log("88");
-                  // 將原本未 rotate 的移除
-                  fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
-                    if (err) throw err
-                    fs.rename(form.uploadDir + '/' + 'temp_' + file_new_name, form.uploadDir + '/' + file_new_name, function(){
-
-
-                      // 重這開始：第 1
-                      var split_item = (generated_filename[0]).split('_')
-                      var setting_width = ((split_item[3]).split('.'))[0] // 寬度
-                      console.log("一");
-                      sharp(form.uploadDir + "/" + file_new_name)
-                        .rotate()
-                        //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
-                        .resize(parseInt(setting_width), null)
-                        .toFile(form.uploadDir + '/' + generated_filename[0], function(err, info0){
-                          if (err) throw err
-                          console.log("二");
-                          //console.log(info)
-                          //{ format: 'jpeg',
-                          //  width: 960,
-                          //  height: 720,
-                          //  channels: 3,
-                          //  premultiplied: false,
-                          //  size: 65616 }
-                          var json_data = {
-                            format: info0.format,
-                            width: info0.width,
-                            height: info0.height,
-                            size: info0.size,
-                            origin: false
-                          }
-                          var saved_data = JSON.parse(JSON.stringify(json_data));
-
-                          saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[0]
-                          json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[0]
-
-                          data_files_save.push(saved_data)
-                          data_files.push(json_data)
+                    data_files.push(json_origin_data)
+                    data_files_save.push(saved_origin_data)
+                    console.log("9、將原本未 rotate 的移除");
+                    // 將原本未 rotate 的移除
+                    fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                      if (err) throw err
+                      fs.rename(form.uploadDir + '/' + 'temp_' + file_new_name, form.uploadDir + '/' + file_new_name, function(){
 
 
-                          // 第 2
-                          var split_item = (generated_filename[1]).split('_')
-                          var setting_width = ((split_item[3]).split('.'))[0] // 寬度
-                          sharp(form.uploadDir + "/" + file_new_name)
-                            .rotate()
-                            //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
-                            .resize(parseInt(setting_width), null)
-                            .toFile(form.uploadDir + '/' + generated_filename[1], function(err, info1){
-                              if (err) throw err
-                              console.log("三");
-                              //console.log(info)
-                              //{ format: 'jpeg',
-                              //  width: 960,
-                              //  height: 720,
-                              //  channels: 3,
-                              //  premultiplied: false,
-                              //  size: 65616 }
-                              var json_data = {
-                                format: info1.format,
-                                width: info1.width,
-                                height: info1.height,
-                                size: info1.size,
-                                origin: false
-                              }
-                              var saved_data = JSON.parse(JSON.stringify(json_data));
+                        // 重這開始：第 1
+                        var split_item = (generated_filename[0]).split('_')
+                        var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                        sharp(form.uploadDir + "/" + file_new_name)
+                          .rotate()
+                          //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                          .resize(parseInt(setting_width), null)
+                          .toFile(form.uploadDir + '/' + generated_filename[0], function(err, info0){
+                            if (err) throw err
+                            console.log("10、進到第二個 sharp。");
+                            //console.log(info)
+                            //{ format: 'jpeg',
+                            //  width: 960,
+                            //  height: 720,
+                            //  channels: 3,
+                            //  premultiplied: false,
+                            //  size: 65616 }
+                            var json_data = {
+                              format: info0.format,
+                              width: info0.width,
+                              height: info0.height,
+                              size: info0.size,
+                              origin: false
+                            }
+                            var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                              saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[1]
-                              json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[1]
+                            saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[0]
+                            json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[0]
 
-                              data_files_save.push(saved_data)
-                              data_files.push(json_data)
+                            data_files_save.push(saved_data)
+                            data_files.push(json_data)
 
-                              // 第 3
-                              var split_item = (generated_filename[2]).split('_')
-                              var setting_width = ((split_item[3]).split('.'))[0] // 寬度
-                              sharp(form.uploadDir + "/" + file_new_name)
-                                .rotate()
-                                //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
-                                .resize(parseInt(setting_width), null)
-                                .toFile(form.uploadDir + '/' + generated_filename[2], function(err, info2){
-                                  if (err) throw err
-                                  console.log("四");
-                                  //console.log(info)
-                                  //{ format: 'jpeg',
-                                  //  width: 960,
-                                  //  height: 720,
-                                  //  channels: 3,
-                                  //  premultiplied: false,
-                                  //  size: 65616 }
-                                  var json_data = {
-                                    format: info2.format,
-                                    width: info2.width,
-                                    height: info2.height,
-                                    size: info2.size,
-                                    origin: false
-                                  }
-                                  var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                                  saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
-                                  json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
+                            // 第 2
+                            var split_item = (generated_filename[1]).split('_')
+                            var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                            sharp(form.uploadDir + "/" + file_new_name)
+                              .rotate()
+                              //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                              .resize(parseInt(setting_width), null)
+                              .toFile(form.uploadDir + '/' + generated_filename[1], function(err, info1){
+                                if (err) throw err
+                                console.log("11、進到第三個 sharp。");
+                                //console.log(info)
+                                //{ format: 'jpeg',
+                                //  width: 960,
+                                //  height: 720,
+                                //  channels: 3,
+                                //  premultiplied: false,
+                                //  size: 65616 }
+                                var json_data = {
+                                  format: info1.format,
+                                  width: info1.width,
+                                  height: info1.height,
+                                  size: info1.size,
+                                  origin: false
+                                }
+                                var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                                  data_files_save.push(saved_data)
-                                  data_files.push(json_data)
+                                saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[1]
+                                json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[1]
 
-                                  // 儲存
-                                  userModel.getOne('id', results[0].user_id, function(user_results){
+                                data_files_save.push(saved_data)
+                                data_files.push(json_data)
 
-                                    var saved_obj = {
-                                      //u_id: Math.floor((Math.random() * 10000) + 1),
-                                      user_id: parseInt(user_results[0].id),
-                                      category_id: parseInt(fields.category),
-                                      organ_id: user_results[0].organ_id,
-                                      title: fields.title,
-                                      file_type: file_type_num,
-                                      file_path: file_save_path,
-                                      file_ext: file_ext,
-                                      file_data: JSON.stringify(data_files_save),
-                                      pageviews: 0,
-                                      permissions: fields.permissions
+                                // 第 3
+                                var split_item = (generated_filename[2]).split('_')
+                                var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                                sharp(form.uploadDir + "/" + file_new_name)
+                                  .rotate()
+                                  //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
+                                  .resize(parseInt(setting_width), null)
+                                  .toFile(form.uploadDir + '/' + generated_filename[2], function(err, info2){
+                                    if (err) throw err
+                                    console.log("12、進到第四個 sharp。");
+                                    //console.log(info)
+                                    //{ format: 'jpeg',
+                                    //  width: 960,
+                                    //  height: 720,
+                                    //  channels: 3,
+                                    //  premultiplied: false,
+                                    //  size: 65616 }
+                                    var json_data = {
+                                      format: info2.format,
+                                      width: info2.width,
+                                      height: info2.height,
+                                      size: info2.size,
+                                      origin: false
                                     }
+                                    var saved_data = JSON.parse(JSON.stringify(json_data));
 
-                                    var data_for_have_the_same_u_id = {
-                                      req: req,
-                                      res: res,
-                                      fields: fields,
-                                      data_files: data_files,
-                                      original_filename: original_filename,
-                                      saved_obj: saved_obj
-                                    }
-                                    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
-                                      var unique_id = functions.generate_random_code(code_num)
-                                      have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
-                                        duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
-                                      })
-                                    }else{
-                                      scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
-                                    }
+                                    saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
+                                    json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
 
+                                    data_files_save.push(saved_data)
+                                    data_files.push(json_data)
+
+                                    // 儲存
+                                    userModel.getOne('id', results[0].user_id, function(user_results){
+
+                                      var saved_obj = {
+                                        //u_id: Math.floor((Math.random() * 10000) + 1),
+                                        user_id: parseInt(user_results[0].id),
+                                        category_id: parseInt(fields.category),
+                                        organ_id: user_results[0].organ_id,
+                                        title: fields.title,
+                                        file_type: file_type_num,
+                                        file_path: file_save_path,
+                                        file_ext: file_ext,
+                                        file_data: JSON.stringify(data_files_save),
+                                        pageviews: 0,
+                                        permissions: fields.permissions
+                                      }
+
+                                      var data_for_have_the_same_u_id = {
+                                        req: req,
+                                        res: res,
+                                        fields: fields,
+                                        data_files: data_files,
+                                        original_filename: original_filename,
+                                        saved_obj: saved_obj
+                                      }
+                                      if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
+                                        console.log("13、這是本機端或 staing\n");
+                                        var unique_id = functions.generate_random_code(code_num)
+                                        have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+                                          duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
+                                        })
+                                      }else{
+                                        console.log("13、傳到 storage 伺服器\n");
+                                        scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
+                                      }
+
+
+                                    })
 
                                   })
-
-                                })
-                            })
-                        })
+                              })
+                          })
 
 
+                      })
                     })
-                  })
 
-                })
+                  })
+              }catch(err){
+                console.log(err);
+                res.status(500).json({ code: 500, error: { 'message': '執行失敗！', original_filename: original_filename }, err_obj: err })
+              }
+
 
             }
           })
