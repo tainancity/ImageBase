@@ -256,9 +256,9 @@ module.exports = function(app){
   // ========== 500 ========== //
   app.use(function (err, req, res, next) {
     console.error(err.stack)
-    exec("pm2 restart imagebase", function(error, stdout, stderr){
+    //exec("pm2 restart imagebase", function(error, stdout, stderr){
       res.status(500).send("500 Error!")
-    })
+    //})
   })
 
 
