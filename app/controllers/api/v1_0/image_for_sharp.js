@@ -1,6 +1,6 @@
 var formidable = require('formidable')
 var fs = require('graceful-fs')
-
+const async = require("async");
 const sharp = require('sharp')
 sharp.cache(false)
 
@@ -175,7 +175,7 @@ var save_file_related_data = function(req, res, results){
         var file_new_name = results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_original' + '.' + file_ext  // 完整檔案名稱(含副檔名)
         var generated_filename = [
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_320.' + file_ext,
-          results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_640.' + file_ext,
+          //results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_640.' + file_ext,
           results[0].user_id + '_' + current_timestamp + '_' + random_for_new_file + '_960.' + file_ext
         ]
         console.log("4、執行更名前");
@@ -225,9 +225,9 @@ var save_file_related_data = function(req, res, results){
 
                         // 重這開始：第 1
                         var split_item = (generated_filename[0]).split('_')
-                        var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                        var setting_width = ((split_item[3]).split('.'))[0] // 寬度: 320
                         sharp(form.uploadDir + "/" + file_new_name)
-                          .rotate()
+                          //.rotate()
                           //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                           .resize(parseInt(setting_width), null)
                           .toFile(form.uploadDir + '/' + generated_filename[0], function(err, info0){
@@ -258,9 +258,9 @@ var save_file_related_data = function(req, res, results){
 
                             // 第 2
                             var split_item = (generated_filename[1]).split('_')
-                            var setting_width = ((split_item[3]).split('.'))[0] // 寬度
+                            var setting_width = ((split_item[3]).split('.'))[0] // 寬度: 960
                             sharp(form.uploadDir + "/" + file_new_name)
-                              .rotate()
+                              //.rotate()
                               //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
                               .resize(parseInt(setting_width), null)
                               .toFile(form.uploadDir + '/' + generated_filename[1], function(err, info1){
@@ -288,78 +288,45 @@ var save_file_related_data = function(req, res, results){
                                 data_files_save.push(saved_data)
                                 data_files.push(json_data)
 
-                                // 第 3
-                                var split_item = (generated_filename[2]).split('_')
-                                var setting_width = ((split_item[3]).split('.'))[0] // 寬度
-                                sharp(form.uploadDir + "/" + file_new_name)
-                                  .rotate()
-                                  //.extract({ left: 0, top: 0, width: info_origin.width, height: info_origin.height })
-                                  .resize(parseInt(setting_width), null)
-                                  .toFile(form.uploadDir + '/' + generated_filename[2], function(err, info2){
-                                    if (err) throw err
-                                    console.log("12、進到第四個 sharp。");
-                                    //console.log(info)
-                                    //{ format: 'jpeg',
-                                    //  width: 960,
-                                    //  height: 720,
-                                    //  channels: 3,
-                                    //  premultiplied: false,
-                                    //  size: 65616 }
-                                    var json_data = {
-                                      format: info2.format,
-                                      width: info2.width,
-                                      height: info2.height,
-                                      size: info2.size,
-                                      origin: false
-                                    }
-                                    var saved_data = JSON.parse(JSON.stringify(json_data));
+                                // 儲存
+                                userModel.getOne('id', results[0].user_id, function(user_results){
 
-                                    saved_data.url = CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
-                                    json_data.url = CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + fields.category + '/' + generated_filename[2]
+                                  var saved_obj = {
+                                    //u_id: Math.floor((Math.random() * 10000) + 1),
+                                    user_id: parseInt(user_results[0].id),
+                                    category_id: parseInt(fields.category),
+                                    organ_id: user_results[0].organ_id,
+                                    title: fields.title,
+                                    file_type: file_type_num,
+                                    file_path: file_save_path,
+                                    file_ext: file_ext,
+                                    file_data: JSON.stringify(data_files_save),
+                                    pageviews: 0,
+                                    permissions: fields.permissions
+                                  }
 
-                                    data_files_save.push(saved_data)
-                                    data_files.push(json_data)
-
-                                    // 儲存
-                                    userModel.getOne('id', results[0].user_id, function(user_results){
-
-                                      var saved_obj = {
-                                        //u_id: Math.floor((Math.random() * 10000) + 1),
-                                        user_id: parseInt(user_results[0].id),
-                                        category_id: parseInt(fields.category),
-                                        organ_id: user_results[0].organ_id,
-                                        title: fields.title,
-                                        file_type: file_type_num,
-                                        file_path: file_save_path,
-                                        file_ext: file_ext,
-                                        file_data: JSON.stringify(data_files_save),
-                                        pageviews: 0,
-                                        permissions: fields.permissions
-                                      }
-
-                                      var data_for_have_the_same_u_id = {
-                                        req: req,
-                                        res: res,
-                                        fields: fields,
-                                        data_files: data_files,
-                                        original_filename: original_filename,
-                                        saved_obj: saved_obj
-                                      }
-                                      if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
-                                        console.log("13、這是本機端或 staing\n");
-                                        var unique_id = functions.generate_random_code(code_num)
-                                        have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
-                                          duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
-                                        })
-                                      }else{
-                                        console.log("13、傳到 storage 伺服器\n");
-                                        scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
-                                      }
-
-
+                                  var data_for_have_the_same_u_id = {
+                                    req: req,
+                                    res: res,
+                                    fields: fields,
+                                    data_files: data_files,
+                                    original_filename: original_filename,
+                                    saved_obj: saved_obj
+                                  }
+                                  if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
+                                    console.log("12、這是本機端或 staing\n");
+                                    var unique_id = functions.generate_random_code(code_num)
+                                    have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+                                      duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                                     })
+                                  }else{
+                                    console.log("12、傳到 storage 伺服器\n");
+                                    scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
+                                  }
 
-                                  })
+
+                                })
+
                               })
                           })
 
@@ -368,7 +335,7 @@ var save_file_related_data = function(req, res, results){
                     })
 
                   })
-                  console.log("執行到這裡");
+                  //console.log("執行到這裡");
               }catch(err){
                 console.log(err);
                 res.status(500).json({ code: 500, error: { 'message': '執行失敗！', original_filename: original_filename }, err_obj: err })
@@ -1196,7 +1163,7 @@ exports.image_crop = function(options){
           var file_data = JSON.parse(file_result[0].file_data)
           var new_file_data = []
           var file_name_arr = []
-          var file_width_arr = [] // 縮放的寬度，應該都是 320、640、960
+          var file_width_arr = [] // 縮放的寬度，舊的是 320、640、960；新的是 320、960
 
           // 取得原主檔名，並刪除
           let delete_file_path_array = []
@@ -1266,67 +1233,69 @@ exports.image_crop = function(options){
 
 
           var to_file_path = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id
-          sharp(savePath).resize(file_width_arr[0], null).toFile(to_file_path + '/' + file_name_arr[0] + '.png', function(err, file0_sharp) {
-            //console.log(file0_sharp)
-            new_file_data.push({
-              format: file0_sharp.format,
-              width: file0_sharp.width,
-              height: file0_sharp.height,
-              size: file0_sharp.size,
-              origin: false,
-              url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[0] + '.png'
-            })
-            sharp(savePath).resize(file_width_arr[1], null).toFile(to_file_path + '/' + file_name_arr[1] + '.png', function(err, file1_sharp) {
-              //console.log(file1_sharp)
-              new_file_data.push({
-                format: file1_sharp.format,
-                width: file1_sharp.width,
-                height: file1_sharp.height,
-                size: file1_sharp.size,
-                origin: false,
-                url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[1] + '.png'
-              })
-              sharp(savePath).resize(file_width_arr[2], null).toFile(to_file_path + '/' + file_name_arr[2] + '.png', function(err, file2_sharp) {
-                //console.log(file2_sharp)
-                new_file_data.push({
-                  format: file2_sharp.format,
-                  width: file2_sharp.width,
-                  height: file2_sharp.height,
-                  size: file2_sharp.size,
-                  origin: false,
-                  url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[2] + '.png'
+          let waterfall_func_arr = [];
+          file_width_arr.forEach(function(file_width_item, file_width_index){
+            if(file_width_index == 0){
+              waterfall_func_arr.push(function(callback){
+                sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
+                  new_file_data.push({
+                    format: file_sharp.format,
+                    width: file_sharp.width,
+                    height: file_sharp.height,
+                    size: file_sharp.size,
+                    origin: false,
+                    url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[file_width_index] + '.png'
+                  })
+                  callback(null, "");
                 })
-                //console.log(new_file_data)
-                var update_obj = {file_data: JSON.stringify(new_file_data)}
-                var where_obj = {u_id: file_result[0].u_id}
-                fileModel.update(update_obj, where_obj, true, function(file_update_result){
-
-                  //redisFileDataModel.import_to_redis()
-
-                  if (fs.existsSync(savePath)) {
-                    fs.unlinkSync(savePath)
-                  }
-
-                  // 複製檔案至 storage
-                  if(CONFIG.appenv.env == 'production'){
-                    file_name_arr.forEach(function(file_name_item, file_name_index){
-                      client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-
-                        // 將原本機端的原檔案刪除
-                        fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
-                        if(file_name_arr.length == file_name_index + 1){
-                          return res.status(200).json({code: 200, msg: '裁切成功。'})
-                        }
-                      })
-                    })
-                  }else{
-                    return res.status(200).json({code: 200, msg: '裁切成功。'})
-                  }
-
+              });
+            }else{
+              waterfall_func_arr.push(function(arg, callback){
+                sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
+                  new_file_data.push({
+                    format: file_sharp.format,
+                    width: file_sharp.width,
+                    height: file_sharp.height,
+                    size: file_sharp.size,
+                    origin: false,
+                    url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[file_width_index] + '.png'
+                  })
+                  callback(null, "");
                 })
-              })
-            })
+              });
+            }
+
           })
+          async.waterfall(waterfall_func_arr, function (err, result) {
+            // result now equals 'done'
+            var update_obj = {file_data: JSON.stringify(new_file_data)}
+            var where_obj = {u_id: file_result[0].u_id}
+            fileModel.update(update_obj, where_obj, true, function(file_update_result){
+
+              //redisFileDataModel.import_to_redis()
+
+              if (fs.existsSync(savePath)) {
+                fs.unlinkSync(savePath)
+              }
+
+              // 複製檔案至 storage
+              if(CONFIG.appenv.env == 'production'){
+                file_name_arr.forEach(function(file_name_item, file_name_index){
+                  client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
+
+                    // 將原本機端的原檔案刪除
+                    fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
+                    if(file_name_arr.length == file_name_index + 1){
+                      return res.status(200).json({code: 200, msg: '裁切成功。'})
+                    }
+                  })
+                })
+              }else{
+                return res.status(200).json({code: 200, msg: '裁切成功。'})
+              }
+
+            })
+          });
 
     		}
     	})
