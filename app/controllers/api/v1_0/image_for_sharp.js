@@ -601,7 +601,7 @@ exports.image_get_by_data = function(options){
       if(results.length > 0 || req.query.api_key == CONFIG.appenv.full_api_key){
 
         if(req.query.api_key == CONFIG.appenv.full_api_key){ // 若是使用特殊的 api key，限只能站內使用
-          if( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ){
+          if( req.header('Referer') == undefined || ( ! (req.header('Referer')).includes(CONFIG.appenv.domain) ) ){
             return res.status(403).json({code: 403, msg:'無效存取！'})
           }
         }
