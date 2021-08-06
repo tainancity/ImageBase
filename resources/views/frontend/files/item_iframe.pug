@@ -18,7 +18,7 @@ block append content
         h1.title1= (file_obj.title == null ? "" : file_obj.title )
       section.pic_s
         each item, index in JSON.parse(file_obj.file_data)
-          if (item.width == 640 && !item.origin)
+          if (item.width == 960 && !item.origin)
             figure: img(src= config.appenv.storage.domain + item.url style='width:100%;')
       footer.pic_f
         a.link(href=config.appenv.domain target='_blank')= config.app.sitename

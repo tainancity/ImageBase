@@ -129,13 +129,5 @@ exports.item_iframe = function(options){
         file_obj: file
       })
     });
-    /*
-    redisFileDataModel.get_file(req.params.u_id, function(file_obj){
-      //console.log(file_obj)
-      res.render('frontend/files/item_iframe', {
-        file_obj: file_obj
-      })
-    })
-    */
   }
 }
