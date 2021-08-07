@@ -117,11 +117,19 @@ script.
           },
           502: function(){
             console.log("502 Bad Gateway");
-            //continue_upload = false;
+            continue_upload = false;
           },
           504: function(){
-            console.log("505 Gateway Time-out");
-            //continue_upload = false;
+            console.log("504 Gateway Time-out");
+            //console.log(file_item.name);
+            $(article_upload_block).find("ul.pic_list").children("li").each(function(){
+              if(file_item.name == $(this).attr("data-original-filename")){
+                $(this).find("div.progress_block").find("span.percentag_text.-processing").fadeOut();
+                $(this).find("div.progress_block").removeClass("-uploading").addClass("-failing");
+                $(this).find("div.info_block").append("<span class='info_file'>處理逾時</span>");
+                $(this).removeAttr("data-original-filename");
+              }
+            });
           }
         },
         success: function(data_obj) {
@@ -145,8 +153,8 @@ script.
               user_prepare_upload_files = [];
             }
           }else{
-            alert("系統暫無回應，請稍候再試。");
-            location.reload();
+            alert("系統忙錄中，請稍候再試。");
+            //location.reload();
           }
           
         }
@@ -160,14 +168,14 @@ script.
   };
   
   var loop_files = function(){
-    //if(user_prepare_upload_files.length > 10){
-      //alert("請勿一次傳超過 10 個檔案！");
-    //}else{
+    if(user_prepare_upload_files.length > 10){
+      alert("請勿一次傳超過 10 個檔案！");
+    }else{
       file_index = 0;
       loop_file_each(user_prepare_upload_files[file_index]);
       
       $(article_upload_block).find("span.hint").addClass("display_none");
-    //}
+    }
   };
 
   $(function(){

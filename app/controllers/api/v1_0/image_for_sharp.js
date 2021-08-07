@@ -824,6 +824,8 @@ exports.image_get_by_data = function(options){
 exports.image_post = function(options){
 
   return function(req, res){
+    //return res.status(504).json({code: 504, msg:'逾時！'})
+
     if(req.query.api_key == CONFIG.appenv.full_api_key && !req.session.u_id){
       return res.status(403).json({code: 403, msg:'使用了特殊 API Key，但尚未登入！'})
     }
