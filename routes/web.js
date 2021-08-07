@@ -24,7 +24,7 @@ var AdminShortUrlManage = require(CONFIG.path.controllers + '/admin/short_url_ma
 
 const exec = require('child_process').exec
 //const async = require("async")
-const os = require("os")
+//const os = require("os")
 module.exports = function(app){
 
   // Custom Basic Auth
@@ -36,10 +36,10 @@ module.exports = function(app){
   var options = {}
 
   // for test
-  app.get('/for_test', function(req, res){
-    console.log(os.cpus().length + "數");
-    res.status(200).send("200")
-  })
+  // app.get('/for_test', function(req, res){
+  //   console.log(os.cpus().length + "數");
+  //   res.status(200).send("200")
+  // })
 
   // Home
   app.get('/', Home.index(options))
