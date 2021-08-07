@@ -1222,6 +1222,7 @@ exports.image_crop = function(options){
           let waterfall_func_arr = [];
           file_width_arr.forEach(function(file_width_item, file_width_index){
             waterfall_func_arr.push(function(callback){
+              console.log("test")
               sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
                 new_file_data.push({
                   format: file_sharp.format,
@@ -1241,6 +1242,7 @@ exports.image_crop = function(options){
             if (err) {
               console.log(err);
             }
+            console.log("test_here")
             var update_obj = {file_data: JSON.stringify(new_file_data)}
             var where_obj = {u_id: file_result[0].u_id}
             fileModel.update(update_obj, where_obj, true, function(file_update_result){
