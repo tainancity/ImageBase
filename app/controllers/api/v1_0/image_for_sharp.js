@@ -1222,7 +1222,6 @@ exports.image_crop = function(options){
           let waterfall_func_arr = [];
           file_width_arr.forEach(function(file_width_item, file_width_index){
             waterfall_func_arr.push(function(callback){
-              console.log("test")
               sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
                 new_file_data.push({
                   format: file_sharp.format,
@@ -1242,7 +1241,6 @@ exports.image_crop = function(options){
             if (err) {
               console.log(err);
             }
-            console.log("test_here")
             var update_obj = {file_data: JSON.stringify(new_file_data)}
             var where_obj = {u_id: file_result[0].u_id}
             fileModel.update(update_obj, where_obj, true, function(file_update_result){
@@ -1255,9 +1253,10 @@ exports.image_crop = function(options){
 
               // 複製檔案至 storage
               if(CONFIG.appenv.env == 'production'){
+                console.log("here_p");
                 file_name_arr.forEach(function(file_name_item, file_name_index){
                   client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-
+                    console.log("here_" + file_name_index);
                     // 將原本機端的原檔案刪除
                     fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
                     if(file_name_arr.length == file_name_index + 1){
