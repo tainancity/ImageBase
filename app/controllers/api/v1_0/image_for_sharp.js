@@ -358,19 +358,19 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
   client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir, function(err){
     if(err){
       console.log(err);
-      return res.status(500).json({code: 500, msg:'傳檔失敗！'})
+      return res.status(502).json({code: 502, msg:'傳檔失敗！'})
     }
 
     client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category, function(err){
       if(err){
         console.log(err);
-        return res.status(500).json({code: 500, msg:'傳檔失敗！'})
+        return res.status(502).json({code: 502, msg:'傳檔失敗！'})
       }
       // 傳原圖至 Storage
       client_scp2.upload(form_uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + file_new_name, function(err){
         if(err){
           console.log(err);
-          return res.status(500).json({code: 500, msg:'傳檔失敗！'})
+          return res.status(502).json({code: 502, msg:'傳檔失敗！'})
         }
         // 將原本機端的原檔案刪除
         fs.unlink(form_uploadDir + '/' + file_new_name, (err) => {
@@ -383,7 +383,7 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
             client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(err){
               if(err){
                 console.log(err);
-                return res.status(500).json({code: 500, msg:'傳檔失敗！'})
+                return res.status(502).json({code: 502, msg:'傳檔失敗！'})
               }
               fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
                 if (err) throw err
