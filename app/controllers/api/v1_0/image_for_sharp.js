@@ -1256,6 +1256,7 @@ exports.image_crop = function(options){
                 console.log("here_p");
                 console.log(file_name_arr);
                 file_name_arr.forEach(function(file_name_item, file_name_index){
+                  console.log("here2_" + file_name_index);
                   client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
                     console.log("here_" + file_name_index);
                     // 將原本機端的原檔案刪除
