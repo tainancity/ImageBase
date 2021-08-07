@@ -198,7 +198,7 @@ var save_file_related_data = function(req, res, results){
               try{
                 console.log("7、進到 try。")
                 sharp(form.uploadDir + '/' + file_new_name)
-                  .rotate()
+                  //.rotate()
                   .toFile(form.uploadDir + '/' + 'temp_' + file_new_name, function(err_origin, info_origin){
                     console.log("8、進到第一個 sharp");
                     if (err_origin) throw err_origin
