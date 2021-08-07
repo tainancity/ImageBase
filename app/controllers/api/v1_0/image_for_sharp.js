@@ -1192,20 +1192,6 @@ exports.image_crop = function(options){
                 //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                 delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
                 //client_scp2: here
-                /*
-                client_ssh_sftp.connect({
-                    host: CONFIG.appenv.storage.scp.ip,
-                    port: 22,
-                    username: CONFIG.appenv.storage.scp.user,
-                    password: CONFIG.appenv.storage.scp.password
-                }).then(() => {
-                  //console.log(delete_file_path)
-                  client_ssh_sftp.delete(delete_file_path);
-
-                }).catch((err) => {
-                  console.log(err, 'catch error');
-                })
-                */
 
               }
             }else{
@@ -1235,39 +1221,26 @@ exports.image_crop = function(options){
           var to_file_path = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id
           let waterfall_func_arr = [];
           file_width_arr.forEach(function(file_width_item, file_width_index){
-            if(file_width_index == 0){
-              waterfall_func_arr.push(function(callback){
-                sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
-                  new_file_data.push({
-                    format: file_sharp.format,
-                    width: file_sharp.width,
-                    height: file_sharp.height,
-                    size: file_sharp.size,
-                    origin: false,
-                    url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[file_width_index] + '.png'
-                  })
-                  callback(null, "");
+            waterfall_func_arr.push(function(callback){
+              sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
+                new_file_data.push({
+                  format: file_sharp.format,
+                  width: file_sharp.width,
+                  height: file_sharp.height,
+                  size: file_sharp.size,
+                  origin: false,
+                  url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[file_width_index] + '.png'
                 })
-              });
-            }else{
-              waterfall_func_arr.push(function(arg, callback){
-                sharp(savePath).resize(file_width_arr[file_width_index], null).toFile(to_file_path + '/' + file_name_arr[file_width_index] + '.png', function(err, file_sharp) {
-                  new_file_data.push({
-                    format: file_sharp.format,
-                    width: file_sharp.width,
-                    height: file_sharp.height,
-                    size: file_sharp.size,
-                    origin: false,
-                    url: CONFIG.appenv.storage.path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_arr[file_width_index] + '.png'
-                  })
-                  callback(null, "");
-                })
-              });
-            }
+                callback(null);
+              })
+            });
 
           })
+
           async.waterfall(waterfall_func_arr, function (err, result) {
-            // result now equals 'done'
+            if (err) {
+              console.log(err);
+            }
             var update_obj = {file_data: JSON.stringify(new_file_data)}
             var where_obj = {u_id: file_result[0].u_id}
             fileModel.update(update_obj, where_obj, true, function(file_update_result){

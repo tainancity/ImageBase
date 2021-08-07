@@ -23,6 +23,7 @@ var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
 var AdminShortUrlManage = require(CONFIG.path.controllers + '/admin/short_url_manage.js')
 
 const exec = require('child_process').exec
+//const async = require("async")
 
 module.exports = function(app){
 
@@ -33,6 +34,11 @@ module.exports = function(app){
   }
 
   var options = {}
+
+  // for test
+  // app.get('/for_test', function(req, res){
+  //   res.status(200).send("200")
+  // })
 
   // Home
   app.get('/', Home.index(options))
