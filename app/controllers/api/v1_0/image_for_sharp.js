@@ -1253,29 +1253,10 @@ exports.image_crop = function(options){
 
               // 複製檔案至 storage
               if(CONFIG.appenv.env == 'production'){
-                /*
-                console.log("here_p");
-                console.log(file_name_arr);
-                file_name_arr.forEach(function(file_name_item, file_name_index){
-                  console.log("here2_" + file_name_index);
-                  client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-                    console.log("here_" + file_name_index);
-                    // 將原本機端的原檔案刪除
-                    fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
-                    console.log("here_d")
-                    if(file_name_arr.length == file_name_index + 1){
-                      console.log("here_if")
-                      return res.status(200).json({code: 200, msg: '裁切成功。'})
-                    }
-                  })
-                })
-                */
                 let scp_func_arr = [];
                 file_name_arr.forEach(function(file_name_item, file_name_index){
                   scp_func_arr.push(function(callback){
-                    console.log("here1_" + file_name_index);
                     client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-                      console.log("here_u_" + file_name_index);
                       // 將原本機端的原檔案刪除
                       fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
                       callback(null);
@@ -1283,7 +1264,7 @@ exports.image_crop = function(options){
                   });
                 })
                 async.waterfall(scp_func_arr, function (err, result) {
-                  console.log("here_done")
+                  console.log("crop_done")
                   return res.status(200).json({code: 200, msg: '裁切成功。'})
                 })
               }else{
