@@ -46,9 +46,11 @@ exports.global = function(app){
     }
 
     fileCategoryModel.getAll({column: 'level', sort_type: 'ASC'}, function(all_categories){
+      //all_categories = undefined
       res.locals.all_file_categories = all_categories
+      next()
     })
 
-    next()
+    //next()
   }
 }
