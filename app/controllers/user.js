@@ -194,14 +194,16 @@ exports.logout = function(options) {
   return function(req, res) {
 
     userModel.getOne('u_id', req.session.u_id, function(results){
-      // log_login
-      var insert_log_obj_for_logout = {
-        "user_id": results[0].id,
-        //"ip": req.ip,
-        "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-        "logout_at": Date.now() / 1000
+      if(results.length > 0){
+        // log_login
+        var insert_log_obj_for_logout = {
+          "user_id": results[0].id,
+          //"ip": req.ip,
+          "ip": req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+          "logout_at": Date.now() / 1000
+        }
+        logLoginModel.save_for_logout(insert_log_obj_for_logout, true, function(){})
       }
-      logLoginModel.save_for_logout(insert_log_obj_for_logout, true, function(){})
     })
 
     req.session.destroy()
