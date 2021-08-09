@@ -13,7 +13,7 @@ var unique_id = functions.generate_u_id()
 var insert_obj = {}
 var update_obj = {}
 var insert_log_obj = {}
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // fix unable to get local issuer certificate
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // fix unable to get local issuer certificate
 var have_the_same_u_id = function(u_id, cb){
   userModel.getOne('u_id', u_id, function(results_check){
     if(results_check.length == 1){
