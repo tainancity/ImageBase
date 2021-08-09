@@ -167,14 +167,19 @@ module.exports = function(app){
     app.put('/update-pageviews', function(req, res){
 
       fileModel.getOne('u_id', req.body.u_id, function(file_resule){
-        var new_pageviews = file_resule[0].pageviews + 1
-        var update_obj = {'pageviews': new_pageviews}
-        var where_obj = {'u_id': req.body.u_id}
-        fileModel.update(update_obj, where_obj, true, function(result){
-          //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
-          //redisFileDataModel.import_to_redis()
-          res.json({new_pageviews:new_pageviews})
-        });
+        if(file_resule.length > 0){
+          var new_pageviews = file_resule[0].pageviews + 1
+          var update_obj = {'pageviews': new_pageviews}
+          var where_obj = {'u_id': req.body.u_id}
+          fileModel.update(update_obj, where_obj, true, function(result){
+            //res.json({"u_id": req.query.u_id, "role_id": req.query.role})
+            //redisFileDataModel.import_to_redis()
+            res.json({new_pageviews:new_pageviews})
+          });
+        }else{
+          res.json({})
+        }
+
       })
     })
 

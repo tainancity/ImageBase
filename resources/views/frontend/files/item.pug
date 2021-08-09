@@ -217,7 +217,9 @@ block append body_end_others
             }
           },
           success: function(r_data){
-            $("span.pageviews").html(r_data.new_pageviews)
+            if(r_data.new_pageviews != undefined){
+              $("span.pageviews").html(r_data.new_pageviews);
+            }
           }
         });
       }

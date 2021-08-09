@@ -118,16 +118,23 @@ exports.item_iframe = function(options){
       }
     ], function (err, file) {
 
-      if(file.deleted_at == null){
-        file.deleted_at = ''
-      }
-      if(file.title == null){
-        file.title = ''
+      if(file == undefined){
+        res.render('frontend/files/item_iframe', {
+          file_obj: file
+        })
+      }else{
+        if(file.deleted_at == null){
+          file.deleted_at = ''
+        }
+        if(file.title == null){
+          file.title = ''
+        }
+
+        res.render('frontend/files/item_iframe', {
+          file_obj: file
+        })
       }
 
-      res.render('frontend/files/item_iframe', {
-        file_obj: file
-      })
     });
   }
 }
