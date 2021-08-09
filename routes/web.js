@@ -23,6 +23,23 @@ var AdminFileManage = require(CONFIG.path.controllers + '/admin/file_manage.js')
 var AdminShortUrlManage = require(CONFIG.path.controllers + '/admin/short_url_manage.js')
 
 const exec = require('child_process').exec
+
+var { networkInterfaces } = require('os');
+var nets = networkInterfaces();
+var ip_results = {};
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        if (net.family === 'IPv4' && !net.internal) {
+            if (!ip_results[name]) {
+                ip_results[name] = [];
+            }
+            ip_results[name].push(net.address);
+        }
+    }
+}
+
+
 //const async = require("async")
 //const os = require("os")
 module.exports = function(app){
@@ -32,9 +49,9 @@ module.exports = function(app){
     app.post('/basic_auth', Basic_Auth.basic_auth_post())
     app.use(Basic_Auth.basic_auth())
   }
-
   var options = {}
-
+  console.log("本機端IP：");
+  console.log(ip_results);
   // for test
   // app.get('/for_test', function(req, res){
   //   console.log(os.cpus().length + "數");
