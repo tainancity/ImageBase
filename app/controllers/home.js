@@ -12,10 +12,25 @@ const settingModel = require(CONFIG.path.models + '/setting.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 
 // CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip
+var { networkInterfaces } = require('os');
+var nets = networkInterfaces();
+var ip_results = {};
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+        if (net.family === 'IPv4' && !net.internal) {
+            if (!ip_results[name]) {
+                ip_results[name] = [];
+            }
+            ip_results[name].push(net.address);
+        }
+    }
+}
 
 exports.index = function(options) {
   return function(req, res) {
-
+    console.log("首頁顯示本機端 IP：" + JSON.stringify(ip_results))
+    
     fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
       async.parallel([
