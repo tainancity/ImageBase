@@ -182,7 +182,7 @@ module.exports = function(app){
     app.post('/settings-logo-file-post', Settings.logo_file_post(options))
 
     // 平台 log
-    app.get('/action_log', AdminLogAction.log_action(options))
+    //app.get('/action_log', AdminLogAction.log_action(options))
 
     // 維護模式頁面內容
     app.get('/maintenance', AdminPage.maintenance(options))
