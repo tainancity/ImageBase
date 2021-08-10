@@ -114,3 +114,14 @@ require(CONFIG.path.routes + '/web')(app)
 app.listen(app.get('port'), function(){
   console.log(CONFIG.appenv.env + ': ' + CONFIG.appenv.domain)
 })
+
+// test Exception
+const handleUncaughtExceptionOrRejection = err => {
+	console.log('Uncaughted Exception or Unhandled Rejection')
+	console.log(err);
+	// server.close(() => {
+	// 	process.exit(1)
+	// });
+};
+process.on('unhandledRejection', handleUncaughtExceptionOrRejection);
+process.on('uncaughtException', handleUncaughtExceptionOrRejection);

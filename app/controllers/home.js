@@ -30,7 +30,7 @@ for (const name of Object.keys(nets)) {
 exports.index = function(options) {
   return function(req, res) {
     console.log("首頁顯示本機端 IP：" + JSON.stringify(ip_results))
-    
+
     fileLikeModel.count_column({ name: 'file_id', alias: 'file_id_total', sort_value: 'DESC' }, function(files_like){
 
       async.parallel([
