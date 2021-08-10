@@ -58,39 +58,27 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
   fileModel.save(saved_obj, true, function(save_results){
 
     // 儲存 tags
-    if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
-      save_tags((fields.tags).trim(), save_results.insertId)
-    }
-    /*
-    redisFileDataModel.import_to_redis_for_post_temp(function(){
-      //CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + basic_upload_dir + '/' + fields.category + '/' + file_new_name
-      res.status(200).json({
-        code: 200,
-        data:{
-          short_url: CONFIG.appenv.domain + '/' + unique_id,
-          short_id: unique_id,
-          original_filename: original_filename,
-          files: data_files
-        }
-      })
-    })
-    */
-    res.status(200).json({
+    let res_obj = {
       code: 200,
-      data:{
+      data: {
         short_url: CONFIG.appenv.domain + '/' + unique_id,
         short_id: unique_id,
         original_filename: original_filename,
         files: data_files
       }
-    })
+    };
+    if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
+      save_tags((fields.tags).trim(), save_results.insertId, res, res_obj)
+    }else{
+      res.status(200).json(res_obj)
+    }
 
 
   })
 }
 
 // save tags
-var save_tags = function(tags_str, fileid){
+var save_tags = function(tags_str, fileid, res, res_obj){
 
   var tags_array = tags_str.split(',')
 
@@ -109,34 +97,57 @@ var save_tags = function(tags_str, fileid){
     }
   })
 
-  tags_array.forEach(function(tag_item, tag_index, tag_arr){
-    if(tag_item != ''){
-      tagModel.getOne("tag_name", tag_item, function(find_tags_result){
-        if(find_tags_result.length > 0){
-          var sort_obj = { "column": "id", "sort_type": "DESC" }
-          var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
-          var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": find_tags_result[0].id }
-          fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
-            if(file_tag_result.length == 0){
-              fileTagModel.save({"file_id": fileid, "tag_id": find_tags_result[0].id}, false, function(){})
-            }
-          })
-        }else{
-          tagModel.save({tag_name: tag_item}, false, function(tag_result){
+  let waterfall_tag_func_arr = [];
+  tags_array.forEach(function(tag_item, tag_index){
+    waterfall_tag_func_arr.push(function(callback){
+      if(tag_item != ''){
+        tagModel.getOne("tag_name", tag_item, function(find_tags_result){
+          if(find_tags_result.length > 0){
             var sort_obj = { "column": "id", "sort_type": "DESC" }
             var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
-            var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": tag_result.insertId }
+            var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": find_tags_result[0].id }
             fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
               if(file_tag_result.length == 0){
-                fileTagModel.save({"file_id": fileid, "tag_id": tag_result.insertId}, false, function(){})
+                fileTagModel.save({"file_id": fileid, "tag_id": find_tags_result[0].id}, false, function(){
+                  callback(null);
+                })
+              }else{
+                callback(null);
               }
             })
+          }else{
+            tagModel.save({tag_name: tag_item}, false, function(tag_result){
+              var sort_obj = { "column": "id", "sort_type": "DESC" }
+              var where_obj1 = { "column_name": "file_id", "operator": "=", "column_value": fileid }
+              var where_obj2 = { "column_name": "tag_id", "operator": "=", "column_value": tag_result.insertId }
+              fileTagModel.getAll2Where(sort_obj, where_obj1, where_obj2, function(file_tag_result){
+                if(file_tag_result.length == 0){
+                  fileTagModel.save({"file_id": fileid, "tag_id": tag_result.insertId}, false, function(){
+                    callback(null);
+                  })
+                }else{
+                  callback(null);
+                }
+              })
 
-          })
-        }
-      })
-    }
+            })
+          }
+        })
+      }else{
+        callback(null);
+      }
+
+    });
+
   })
+
+  async.waterfall(waterfall_tag_func_arr, function (err, result) {
+    if (err) {
+      console.log(err);
+    }
+    res.status(200).json(res_obj)
+  });
+
 }
 
 var save_file_related_data = function(req, res, results){
@@ -1339,7 +1350,7 @@ exports.image_put_data = function(options){
             }else{
               var change_tags = fields.tags
             }
-            save_tags((change_tags).trim(), file_result[0].id)
+
 
             if(fields.title == undefined){
               var modify_title = ''
@@ -1350,7 +1361,10 @@ exports.image_put_data = function(options){
             var where_obj = { u_id: req.params.u_id }
             fileModel.update(update_obj, where_obj, true, function(update_results){
               //redisFileDataModel.import_to_redis()
-              return res.status(200).json({code: 200, msg:'更新成功'})
+              let res_obj = {code: 200, msg:'更新成功'};
+              //console.log((change_tags).trim());
+              save_tags((change_tags).trim(), file_result[0].id, res, res_obj)
+              //return res.status(200).json({code: 200, msg:'更新成功'})
             })
 
           })
