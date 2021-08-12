@@ -607,6 +607,14 @@ exports.image_get_by_data = function(options){
           }
         }
 
+        if(parseInt(req.query.page) < 1){
+          return res.status(404).json({ code: 404, error: { 'message': '找不到該檔案'} })
+        }
+        if(req.query.items_per_page == undefined){
+          req.query.items_per_page = 20;
+        }
+
+
         //req.query.title
         organizationModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_organs){
           //console.log(all_organs)
