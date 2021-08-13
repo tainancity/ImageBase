@@ -1187,9 +1187,10 @@ exports.image_crop = function(options){
 
       // 將 「data:image\/png;base64,」移除，最後將「空白」問題，用「+」號取代。
       var base64Data = (req.body.img_data.replace(/^data:image\/png;base64,/, "")).replace(/\s/g, "+")
-
       var savePath = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + 'crop_' + req.body.img_id + '.png'
-      var dataBuffer = new Buffer(base64Data, 'base64')
+      //var dataBuffer = new Buffer(base64Data, 'base64'); // old
+      var dataBuffer = Buffer.from(base64Data, "base64"); // new
+
 
     	fs.writeFile(savePath, dataBuffer, function(err) {
     		if(err){
@@ -1235,23 +1236,24 @@ exports.image_crop = function(options){
             }
           })
 
-          client_ssh_sftp.connect({
-              host: CONFIG.appenv.storage.scp.ip,
-              port: 22,
-              username: CONFIG.appenv.storage.scp.user,
-              password: CONFIG.appenv.storage.scp.password
-          }).then(() => {
-            delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
-              //console.log(file_item_path)
-              client_ssh_sftp.delete(delete_file_item_path)
+          if(CONFIG.appenv.env == 'production'){
+            client_ssh_sftp.connect({
+                host: CONFIG.appenv.storage.scp.ip,
+                port: 22,
+                username: CONFIG.appenv.storage.scp.user,
+                password: CONFIG.appenv.storage.scp.password
+            }).then(() => {
+              delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
+                //console.log(file_item_path)
+                client_ssh_sftp.delete(delete_file_item_path)
+              })
+            }).then((data) => {
+              client_ssh_sftp.end()
+              //console.log(data, 'the data info');
+            }).catch((err) => {
+              console.log(err, 'catch error');
             })
-          }).then((data) => {
-            // step 5: 刪除 資料表 files
-            client_ssh_sftp.end()
-            //console.log(data, 'the data info');
-          }).catch((err) => {
-            console.log(err, 'catch error');
-          })
+          }
 
 
           var to_file_path = CONFIG.path.storage_uploads + '/' + api_upload_dir + '/' + file_result[0].category_id
