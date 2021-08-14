@@ -23,6 +23,19 @@ module.exports = {
     return text;
 
   },
+  encrypt_new: function(text){
+    const algorithm = 'aes-192-cbc';
+    const password = CONFIG.appenv.cipher.password;
+    const key = crypto.scryptSync(password, 'salt', 24);
+    const iv = Buffer.alloc(16, 0); // Initialization vector.
+
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    console.log(text);
+    console.log(encrypted);
+  },
 
   // 密碼加密：password bcrypt
   pwd_bcrypt: function(pwd, cb) {

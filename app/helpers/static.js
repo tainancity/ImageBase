@@ -26,6 +26,11 @@ module.exports = {
     }
     return text;
 
+  },
+  decrypt_new: function(text) {
+
+    return text;
+
   }
-  
+
 };
