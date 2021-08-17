@@ -116,12 +116,25 @@ app.listen(app.get('port'), function(){
 })
 
 // test Exception
-const handleUncaughtExceptionOrRejection = err => {
-	console.log('Uncaughted Exception or Unhandled Rejection')
+process.on('unhandledRejection', (err) => {
+  console.log('unhandledRejection');
 	console.log(err);
-	// server.close(() => {
-	// 	process.exit(1)
-	// });
-};
-process.on('unhandledRejection', handleUncaughtExceptionOrRejection);
-process.on('uncaughtException', handleUncaughtExceptionOrRejection);
+  process.exit();
+});
+process.on('uncaughtException', (err) => {
+  console.log('uncaughtException');
+	console.log(err);
+  process.exit();
+});
+// process.on('SIGTERM', (signal) => {
+//   console.log('SIGTERM');
+//   console.log(`Received ${signal}`);
+// });
+// process.on('SIGINT', (signal) => {
+//   console.log('SIGINT');
+//   console.log('Received SIGINT. Press Control-D to exit.');
+//   process.exit();
+// });
+process.on('exit', (code) => {
+  console.log('Process exit event with code: ', code);
+});
