@@ -151,7 +151,11 @@ var save_tags = function(tags_str, fileid, res, res_obj){
     if (err) {
       console.log(err);
     }
-    console.log("14、回傳 response。\n");
+    if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
+      console.log("13、local 或 staging 回傳 response。\n");
+    }else{
+      console.log("14、回傳 response。\n");
+    }
     res.status(200).json(res_obj)
   });
 
