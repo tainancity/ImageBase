@@ -70,6 +70,12 @@ var duplicate_func = function(req, res, fields, data_files, original_filename, u
     if(fields.tags != undefined && ((fields.tags).trim()).length > 0){
       save_tags((fields.tags).trim(), save_results.insertId, res, res_obj)
     }else{
+      if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){
+        console.log("13、local 或 staging 回傳 response。\n");
+      }else{
+        console.log("14、回傳 response。\n");
+      }
+
       res.status(200).json(res_obj)
     }
 
@@ -145,6 +151,7 @@ var save_tags = function(tags_str, fileid, res, res_obj){
     if (err) {
       console.log(err);
     }
+    console.log("14、回傳 response。\n");
     res.status(200).json(res_obj)
   });
 
@@ -325,13 +332,13 @@ var save_file_related_data = function(req, res, results){
                                     saved_obj: saved_obj
                                   }
                                   if(CONFIG.appenv.env == 'local' || CONFIG.appenv.env == 'staging'){ // local 端直接儲存
-                                    console.log("12、這是本機端或 staing\n");
+                                    console.log("12、這是本機端或 staing");
                                     var unique_id = functions.generate_random_code(code_num)
                                     have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
                                       duplicate_func(req, res, fields, data_files, original_filename, unique_id, saved_obj)
                                     })
                                   }else{
-                                    console.log("12、傳到 storage 伺服器\n");
+                                    console.log("12、圖片開始傳到 storage 伺服器\n");
                                     scp_to_storage(form.uploadDir, fields.category, api_upload_dir, file_new_name, generated_filename, data_for_have_the_same_u_id)
                                   }
 
@@ -390,7 +397,23 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
 
         // 傳縮圖至 Storage，然後刪除
         if(generated_filename.length > 0){
+          let waterfall_generated_filename_func_arr = [];
           generated_filename.forEach(function(generated_item, generated_index, generated_arr) {
+
+            waterfall_generated_filename_func_arr.push(function(callback){
+              client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(err){
+                if(err){
+                  console.log(err);
+                  return res.status(502).json({code: 502, msg:'傳檔失敗！'})
+                }
+                fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
+                  if (err) throw err
+                  callback(null);
+                })
+              })
+            });
+
+            /*
             client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(err){
               if(err){
                 console.log(err);
@@ -407,6 +430,15 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
                 }
 
               })
+            })
+            */
+          })
+          async.waterfall(waterfall_generated_filename_func_arr, function (err, result) {
+            if (err) { console.log(err); }
+            console.log("13、圖片傳到 storage 伺服器完成。\n");
+            var unique_id = functions.generate_random_code(code_num)
+            have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
+              duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
             })
           })
         }else{
