@@ -394,6 +394,7 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
           console.log(err);
           return res.status(502).json({code: 502, msg:'傳檔失敗！'})
         }
+        console.log("12.1、傳原圖完成。");
         // 將原本機端的原檔案刪除
         fs.unlink(form_uploadDir + '/' + file_new_name, (err) => {
           if (err) throw err
@@ -410,6 +411,7 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
                   console.log(err);
                   return res.status(502).json({code: 502, msg:'傳檔失敗！'})
                 }
+                console.log(`12.${generated_index+2}、傳縮圖${generated_index+1}完成。`);
                 fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
                   if (err) throw err
                   callback(null);
@@ -417,25 +419,6 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
               })
             });
 
-            /*
-            client_scp2.upload(form_uploadDir + '/' + generated_item, CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_item, function(err){
-              if(err){
-                console.log(err);
-                return res.status(502).json({code: 502, msg:'傳檔失敗！'})
-              }
-              fs.unlink(form_uploadDir + '/' + generated_item, (err) => {
-                if (err) throw err
-
-                if(generated_index + 1 == generated_filename.length){
-                  var unique_id = functions.generate_random_code(code_num)
-                  have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
-                    duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
-                  })
-                }
-
-              })
-            })
-            */
           })
           async.waterfall(waterfall_generated_filename_func_arr, function (err, result) {
             if (err) { console.log(err); }
