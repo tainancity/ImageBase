@@ -22,18 +22,18 @@ module.exports = {
     return encrypted;
 
   },
-  encrypt_new: function(text){
-    const key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 24);
-    const iv = Buffer.alloc(16, 0); // Initialization vector.
-
-    const cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-
-    //console.log(`要加密的資料：${text}，加密後：${encrypted}`);
-    return encrypted;
-  },
+  // encrypt_new: function(text){
+  //   const key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 24);
+  //   const iv = Buffer.alloc(16, 0); // Initialization vector.
+  //
+  //   const cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
+  //
+  //   let encrypted = cipher.update(text, 'utf8', 'hex');
+  //   encrypted += cipher.final('hex');
+  //
+  //   //console.log(`要加密的資料：${text}，加密後：${encrypted}`);
+  //   return encrypted;
+  // },
 
   // 密碼加密：password bcrypt
   pwd_bcrypt: function(pwd, cb) {
