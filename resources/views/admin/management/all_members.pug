@@ -33,13 +33,12 @@ block append content_sl
                       th 指派為局處管理者
                   tbody
                     each item, index in members
-                      tr(data-u-id=item.u_id)
+                      tr
                         td= index+1
                         td= item.pid
                         td
                           img(src=item.portrait_url class='portrait_url')
                           span.name= decrypt(item.name)
-                          button.btn_update_info(type="button") 更新
                         td= item.organ_name + '(' + item.organ_id + ')'
                         td= decrypt(item.email)
                         td= item.job_title
@@ -74,6 +73,8 @@ block append content_sl
                         li
                           a(class=(c_page == (n+1)? '-on' : '') href='?page='+(n+1)).page_link= (n+1)
                         - n++
+                
+                button.btn_update_info(type="button") 更新
               
           
           
@@ -125,12 +126,11 @@ block append body_end_others_sl
       });
       
       $("button.btn_update_info").on("click", function(){
-        let u_id = $(this).closest("tr").attr("data-u-id");
         
         $.ajax({
       		url: '#{config.appenv.domain}' + '/api-ajax/v1.0/update-user-info',
       		type: 'PUT',
-      		data: {u_id: u_id},
+      		//data: {u_id: u_id},
       		dataType: 'json',
           headers: {
             "X-CSRF-Token": '#{csrfToken}'

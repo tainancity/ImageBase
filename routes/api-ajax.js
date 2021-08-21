@@ -788,9 +788,65 @@ module.exports = function(app){
     // 暫時：因應加密方式的改變
     app.put('/update-user-info', function(req, res){
       //console.log("哈囉：" + req.body.u_id);
+      userModel.getAll({column: 'id', sort_type: 'DESC'}, function(all_users){
 
-      userModel.getOne('u_id', req.body.u_id, function(user_results){
-        functions.encrypt_new(user_results[0].name);
+
+        let waterfall_users_func_arr = [];
+
+        all_users.forEach(function(user_item, user_index){
+
+          waterfall_users_func_arr.push(function(callback){
+            //if(user_item.pid == "logintest"){
+            console.log(user_item.u_id);
+            console.log(user_item.name);
+            console.log(user_item.email);
+            console.log(user_item.tel_office);
+            console.log(user_item.tel_personal);
+            console.log("");
+
+            let name_encrypt = functions.encrypt_new(user_item.name);
+            let name_decrypt = static.decrypt_new(name_encrypt);
+            console.log(`原資料：${user_item.name}，加密後：${name_encrypt}，解密後：${name_decrypt}`);
+
+            let email_encrypt = functions.encrypt_new(user_item.email);
+            let email_decrypt = static.decrypt_new(email_encrypt);
+            console.log(`原資料：${user_item.email}，加密後：${email_encrypt}，解密後：${email_decrypt}`);
+
+            let tel_office_encrypt = functions.encrypt_new(user_item.tel_office);
+            let tel_office_decrypt = static.decrypt_new(tel_office_encrypt);
+            console.log(`原資料：${user_item.tel_office}，加密後：${tel_office_encrypt}，解密後：${tel_office_decrypt}`);
+
+            let tel_personal_encrypt = functions.encrypt_new(user_item.tel_personal);
+            let tel_personal_decrypt = static.decrypt_new(tel_personal_encrypt);
+            console.log(`原資料：${user_item.tel_personal}，加密後：${tel_personal_encrypt}，解密後：${tel_personal_decrypt}`);
+
+            let update_obj = {
+              "name": name_encrypt,
+              "email": email_encrypt,
+              "tel_office": tel_office_encrypt,
+              "tel_personal": tel_personal_encrypt
+            };
+            var where_obj = {"u_id": user_item.u_id};
+            userModel.update(update_obj, where_obj, true, function(result){
+              callback(null);
+
+            });
+            //}
+
+          });
+
+
+        })
+
+        async.waterfall(waterfall_users_func_arr, function (err, result) {
+          if (err) { console.log(err); }
+          console.log("done");
+          res.json({});
+        })
+
+      })
+      //userModel.getOne('u_id', req.body.u_id, function(user_results){
+        //functions.encrypt_new(user_results[0].name);
         /*
         // req.body.u_id
         let name_obj = {
@@ -843,7 +899,7 @@ module.exports = function(app){
         });
         */
 
-      });
+      //});
 
     })
 

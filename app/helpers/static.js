@@ -12,25 +12,19 @@ module.exports = {
   // decrypt text
   decrypt: function(text) {
 
-    if(text.includes(":")){ // 新的方式加密
-      // let textParts = text.split(':');
-      // let iv = Buffer.from(textParts.shift(), 'hex');
-      // //let iv = Buffer.alloc(16, 0);
-      // let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-      // let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-      // let decipher = crypto.createDecipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-      // let decrypted = decipher.update(encryptedText);
-      // decrypted = Buffer.concat([decrypted, decipher.final()]);
-      // return decrypted.toString();
-    }else{ // 舊的方式解密
-    }
     return text;
 
   },
   decrypt_new: function(text) {
+    const key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 24);
+    const iv = Buffer.alloc(16, 0); // Initialization vector.
 
-    return text;
+    const decipher = crypto.createDecipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
 
+    let decrypted = decipher.update(text, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    //console.log(`解密後的資料：${decrypted}`);
+    return decrypted;
   }
 
 };

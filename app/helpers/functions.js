@@ -10,31 +10,29 @@ module.exports = {
 
   // encrypt text
   encrypt: function(text) {
-    /*
-    let IV_LENGTH = 16;
-    let iv = crypto.randomBytes(IV_LENGTH);
-    let key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 32);
-    //let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, Buffer.from(CONFIG.appenv.cipher.password, 'hex'), iv);
-    let cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
-    */
-    return text;
-
-  },
-  encrypt_new: function(text){
-    const algorithm = 'aes-192-cbc';
-    const password = CONFIG.appenv.cipher.password;
-    const key = crypto.scryptSync(password, 'salt', 24);
+    const key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 24);
     const iv = Buffer.alloc(16, 0); // Initialization vector.
 
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    const cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    console.log(text);
-    console.log(encrypted);
+
+    //console.log(`要加密的資料：${text}，加密後：${encrypted}`);
+    return encrypted;
+
+  },
+  encrypt_new: function(text){
+    const key = crypto.scryptSync(CONFIG.appenv.cipher.password, 'salt', 24);
+    const iv = Buffer.alloc(16, 0); // Initialization vector.
+
+    const cipher = crypto.createCipheriv(CONFIG.appenv.cipher.algorithm, key, iv);
+
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    //console.log(`要加密的資料：${text}，加密後：${encrypted}`);
+    return encrypted;
   },
 
   // 密碼加密：password bcrypt
