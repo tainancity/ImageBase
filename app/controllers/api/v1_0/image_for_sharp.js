@@ -761,7 +761,8 @@ exports.image_get_by_data = function(options){
                             // 找出使用者名稱
                             all_users.forEach(function(the_user, user_index){
                               if(file_item.user_id == the_user.id){
-                                data_files[file_index].user_name = static.decrypt(the_user.name)
+                                //data_files[file_index].user_name = static.decrypt(the_user.name)
+                                data_files[file_index].pid = the_user.pid
                               }
                             })
 
