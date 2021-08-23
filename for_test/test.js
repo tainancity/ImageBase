@@ -11,15 +11,17 @@ client_ssh_sftp.connect({
 }).then(() => {
   let remoteDir = CONFIG.path.project + "/for_test/abc/a";
 
-  let remoteDir2 = CONFIG.path.project + "/for_test/abc/b";
+  let remoteDir2 = CONFIG.path.project + "/for_test/def/b";
   client_ssh_sftp.mkdir(remoteDir2, true);
 
-  return client_ssh_sftp.mkdir(remoteDir, true);
+  client_ssh_sftp.mkdir(remoteDir, true);
+  return;
 }).then(() => {
   // DSC05910.jpg
   let localFile = CONFIG.path.project + "/for_test/DSC05910.jpg";
   let remoteFile = CONFIG.path.project + "/for_test/abc/a/DSC05910.jpg";
-  return client_ssh_sftp.fastPut(localFile, remoteFile);
+  client_ssh_sftp.fastPut(localFile, remoteFile);
+  return;
 }).then(() => {
   console.log("執行到這end");
   return client_ssh_sftp.end();
