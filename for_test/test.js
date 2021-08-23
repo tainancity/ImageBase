@@ -9,7 +9,7 @@ client_ssh_sftp.connect({
   username: CONFIG.appenv.storage.scp.user,
   password: CONFIG.appenv.storage.scp.password
 }).then(() => {
-  let removeDir = CONFIG.path.project + "/for_test/abc/a";
+  let remoteDir = CONFIG.path.project + "/for_test/abc/a";
   return client_ssh_sftp.mkdir(remoteDir, false);
 }).then(data => {
   return client_ssh_sftp.end();
