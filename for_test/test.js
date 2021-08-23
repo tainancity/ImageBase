@@ -10,9 +10,9 @@ client_ssh_sftp.connect({
   password: CONFIG.appenv.storage.scp.password
 }).then(() => {
   let removeDir = CONFIG.path.project + "/for_test/abc/a";
-  return client.mkdir(remoteDir, false);
+  return client_ssh_sftp.mkdir(remoteDir, false);
 }).then(data => {
-  return client.end();
+  return client_ssh_sftp.end();
 }).catch(err => {
   console.log("這裡");
   console.log(err);
