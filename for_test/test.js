@@ -10,6 +10,10 @@ client_ssh_sftp.connect({
   password: CONFIG.appenv.storage.scp.password
 }).then(() => {
   let remoteDir = CONFIG.path.project + "/for_test/abc/a";
+
+  let remoteDir2 = CONFIG.path.project + "/for_test/abc/b";
+  client_ssh_sftp.mkdir(remoteDir2, true);
+
   return client_ssh_sftp.mkdir(remoteDir, true);
 }).then(() => {
   // DSC05910.jpg
