@@ -10,8 +10,14 @@ client_ssh_sftp.connect({
   password: CONFIG.appenv.storage.scp.password
 }).then(() => {
   let remoteDir = CONFIG.path.project + "/for_test/abc/a";
-  client_ssh_sftp.mkdir(remoteDir, true);
-}).then(data => {
+  return client_ssh_sftp.mkdir(remoteDir, true);
+}).then(() => {
+  // DSC05910.jpg
+  let localFile = CONFIG.path.project + "/for_test/DSC05910.jpg";
+  let remoteFile = CONFIG.path.project + "/for_test/abc/a/DSC05910.jpg";
+  client_ssh_sftp.fastPut(localFile, remoteFile);
+}).then(() => {
+  console.log("執行到這end");
   return client_ssh_sftp.end();
 }).catch(err => {
   console.log("這裡");
