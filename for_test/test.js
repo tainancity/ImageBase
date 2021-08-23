@@ -15,7 +15,7 @@ client_ssh_sftp.connect({
   // DSC05910.jpg
   let localFile = CONFIG.path.project + "/for_test/DSC05910.jpg";
   let remoteFile = CONFIG.path.project + "/for_test/abc/a/DSC05910.jpg";
-  client_ssh_sftp.fastPut(localFile, remoteFile);
+  return client_ssh_sftp.fastPut(localFile, remoteFile);
 }).then(() => {
   console.log("執行到這end");
   return client_ssh_sftp.end();
