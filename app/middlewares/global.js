@@ -47,8 +47,12 @@ exports.global = function(app){
 
     fileCategoryModel.getAll({column: 'level', sort_type: 'ASC'}, function(all_categories){
       //all_categories = undefined
-      res.locals.all_file_categories = all_categories
-      next()
+      settingModel.getOne('option_name', 'upload_filetotal_limit', function(setting_result){
+        res.locals.upload_filetotal_limit = parseInt(setting_result[0].option_value)
+        res.locals.all_file_categories = all_categories
+        next()
+      })
+
     })
 
     //next()

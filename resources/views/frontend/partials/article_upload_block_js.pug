@@ -168,8 +168,8 @@ script.
   };
   
   var loop_files = function(){
-    if(user_prepare_upload_files.length > 10){
-      alert("請勿一次傳超過 10 個檔案！");
+    if(user_prepare_upload_files.length > #{upload_filetotal_limit}){
+      alert("請勿一次傳超過 #{upload_filetotal_limit} 個檔案！");
     }else{
       file_index = 0;
       loop_file_each(user_prepare_upload_files[file_index]);
@@ -186,8 +186,8 @@ script.
     });
 
     $(article_upload_block).find("input.select_file").on("change", function(){
-      if($(this).get(0).files.length > 10){
-        alert(`選擇了${$(this).get(0).files.length}張圖，請勿傳超過10張。`);
+      if($(this).get(0).files.length > #{upload_filetotal_limit}){
+        alert(`選擇了${$(this).get(0).files.length}張圖，請勿傳超過#{upload_filetotal_limit}張。`);
         return;
       }
       $($(this).get(0).files).each(function(i, item){
@@ -215,10 +215,10 @@ script.
       'drop': function(e) {
         $(this).removeClass('-on');
         
-        if(e.originalEvent.dataTransfer.files.length > 10){
+        if(e.originalEvent.dataTransfer.files.length > #{upload_filetotal_limit}){
           e.preventDefault();
           e.stopPropagation();
-          alert(`選擇了${e.originalEvent.dataTransfer.files.length}張圖，請勿傳超過10張。`);
+          alert(`選擇了${e.originalEvent.dataTransfer.files.length}張圖，請勿傳超過#{upload_filetotal_limit}張。`);
           return;
         }
         
