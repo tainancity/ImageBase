@@ -58,11 +58,11 @@ app.use(cookieParser())
 
 //app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({
-  limit: '50mb'
+  limit: '30mb'
 }));
 app.use(bodyParser.urlencoded({
   extended: true,
-  limit: '50mb'
+  limit: '30mb'
 }));
 //app.use(express.json({limit: '50mb'}));
 
