@@ -116,6 +116,7 @@ app.listen(app.get('port'), function(){
 })
 
 // test Exception
+/*
 process.on('unhandledRejection', (err) => {
   console.log('unhandledRejection');
 	console.log(err);
@@ -138,3 +139,4 @@ process.on('uncaughtException', (err) => {
 process.on('exit', (code) => {
   console.log('Process exit event with code: ', code);
 });
+*/
