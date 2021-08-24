@@ -67,7 +67,7 @@ app.use(bodyParser.urlencoded({
 //app.use(express.json({limit: '50mb'}));
 
 app.use(function (err, req, res, next) { // body-parser Request Aborted Error
-  console.log('error caught: ' + err.stack)
+  //console.log('error caught: ' + err.stack)
   req.destroy()
 })
 
