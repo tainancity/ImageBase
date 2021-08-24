@@ -36,7 +36,13 @@ exports.index_post = function(options) {
         var update_is_maintenance_obj = {"option_value": req.body.is_maintenance}
         var where_is_maintenance_obj = {"option_name": "is_maintenance"}
         settingModel.update(update_is_maintenance_obj, where_is_maintenance_obj, true, function(){
-          res.redirect('/admin/management/settings')
+
+          var update_upload_filetotal_limit_obj = {"option_value": req.body.upload_filetotal_limit}
+          var where_upload_filetotal_limit_obj = {"option_name": "upload_filetotal_limit"}
+          settingModel.update(update_upload_filetotal_limit_obj, where_upload_filetotal_limit_obj, true, function(){
+            res.redirect('/admin/management/settings')
+          })
+
         })
       })
     })

@@ -50,6 +50,12 @@ block append content_sl
                 input(type='hidden' name='_csrf' value=csrfToken)
                 
                 each val, index in settings
+                  if val.option_name == 'upload_filetotal_limit'
+                    fieldset
+                      .form-group.row
+                        label.col-lg-2.col-form-label 上傳檔案的張數上限
+                        .col-lg-10
+                          input.form-control.upload_filetotal_limit(type='number' name='upload_filetotal_limit' value=val.option_value)
                   if val.option_name == 'upload_filesize_limit'
                     fieldset
                       .form-group.row
