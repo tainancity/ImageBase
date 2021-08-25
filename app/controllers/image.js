@@ -99,14 +99,15 @@ exports.image_upload = function(options){
                 username: CONFIG.appenv.storage.scp.user,
                 password: CONFIG.appenv.storage.scp.password
               }).then(() => {
-                return client_ssh_sftp.exists(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d);
+                return client_ssh_sftp.exists(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + "/dd");
               }).then((data) => {
                 if(data == "d"){ // 表示該資料夾已存在
                   console.log("here exist");
                   return Promise.resolve(1);
                 }else{
-                  let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d;
-                  return client_ssh_sftp.mkdir(remoteDir, false);
+                  console.log("here not exist");
+                  let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + "/dd";
+                  return client_ssh_sftp.mkdir(remoteDir, true);
                 }
               }).then(() => {
                 console.log("here exist2");
