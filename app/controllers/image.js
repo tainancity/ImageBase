@@ -7,13 +7,16 @@ var CONFIG = require('../config/global.js')
 var settingModel = require(CONFIG.path.models + '/setting.js')
 //var functions = require(CONFIG.path.helpers + '/functions.js')
 
-var Client = require('scp2').Client
-var client_scp2 = new Client({
-  port: 22,
-  host: CONFIG.appenv.storage.scp.ip,
-  username: CONFIG.appenv.storage.scp.user,
-  password: CONFIG.appenv.storage.scp.password
-})
+// var Client = require('scp2').Client
+// var client_scp2 = new Client({
+//   port: 22,
+//   host: CONFIG.appenv.storage.scp.ip,
+//   username: CONFIG.appenv.storage.scp.user,
+//   password: CONFIG.appenv.storage.scp.password
+// })
+
+let client_ssh = require('ssh2-sftp-client')
+let client_ssh_sftp = new client_ssh()
 
 // CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip
 
@@ -65,6 +68,7 @@ exports.image_upload = function(options){
             }else{
 
               // 建遠端資料夾
+              /*
               client_scp2.mkdir(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d, function(err){
                 // 傳圖至 Storage
                 client_scp2.upload(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name, function(){
@@ -84,6 +88,53 @@ exports.image_upload = function(options){
 
                 // client_scp2.scp(form.uploadDir + '/' + file_new_name, CONFIG.appenv.storage.scp.user + ':' + CONFIG.appenv.storage.scp.password + '@' + CONFIG.appenv.storage.scp.ip + ':' + CONFIG.appenv.storage.storage_uploads_path + '/g/', function(err) {})
               })
+              */
+
+
+
+
+              client_ssh_sftp.connect({
+                host: CONFIG.appenv.storage.scp.ip,
+                port: 22,
+                username: CONFIG.appenv.storage.scp.user,
+                password: CONFIG.appenv.storage.scp.password
+              }).then(() => {
+                let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d;
+                return client_ssh_sftp.mkdir(remoteDir, true);
+              }).then(() => {
+                let localFile = form.uploadDir + '/' + file_new_name;
+                let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name;
+                return client_ssh_sftp.fastPut(localFile, remoteFile);
+              }).then(() => {
+                console.log("執行到這end");
+                // 將原本機端的檔案刪除
+                fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
+                  if (err) throw err
+                  // 回傳圖片路徑
+                  res.json({
+                    'uploaded': 1,
+                    // "fileName": files.upload.name,
+                    'url': CONFIG.appenv.storage.domain + CONFIG.appenv.storage.path + '/' + req.query.d + '/' + file_new_name
+                  })
+                })
+                return client_ssh_sftp.end();
+              }).catch(err => {
+                console.log("error");
+                console.log(err);
+              });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             }
           }
