@@ -99,7 +99,7 @@ exports.image_upload = function(options){
                 username: CONFIG.appenv.storage.scp.user,
                 password: CONFIG.appenv.storage.scp.password
               }).then(() => {
-                let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d;
+                let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + "/dd";
                 return client_ssh_sftp.mkdir(remoteDir, true);
               }).then(() => {
                 let localFile = form.uploadDir + '/' + file_new_name;
