@@ -91,31 +91,26 @@ exports.image_upload = function(options){
               */
 
 
-
-
               client_ssh_sftp.connect({
                 host: CONFIG.appenv.storage.scp.ip,
                 port: 22,
                 username: CONFIG.appenv.storage.scp.user,
                 password: CONFIG.appenv.storage.scp.password
               }).then(() => {
-                return client_ssh_sftp.exists(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + "/dd");
+                return client_ssh_sftp.exists(CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d);
               }).then((data) => {
                 if(data == "d"){ // 表示該資料夾已存在
-                  console.log("here exist");
                   return Promise.resolve(1);
                 }else{
-                  console.log("here not exist");
-                  let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + "/dd";
+                  let remoteDir = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d;
                   return client_ssh_sftp.mkdir(remoteDir, true);
                 }
               }).then(() => {
-                console.log("here exist2");
                 let localFile = form.uploadDir + '/' + file_new_name;
                 let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + req.query.d + '/' + file_new_name;
                 return client_ssh_sftp.fastPut(localFile, remoteFile);
               }).then(() => {
-                console.log("執行到這end");
+                //console.log("執行到這end");
                 // 將原本機端的檔案刪除
                 fs.unlink(form.uploadDir + '/' + file_new_name, (err) => {
                   if (err) throw err
@@ -131,17 +126,6 @@ exports.image_upload = function(options){
                 console.log("error");
                 console.log(err);
               });
-
-
-
-
-
-
-
-
-
-
-
 
 
 
