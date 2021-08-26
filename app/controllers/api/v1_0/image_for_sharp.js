@@ -1316,42 +1316,11 @@ exports.image_crop = function(options){
                   scp_func_arr.push(function(callback){
 
 
-                    // client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-                    //   // 將原本機端的原檔案刪除
-                    //   fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
-                    //   callback(null);
-                    // })
-
-                    client_ssh_sftp.connect({
-                      host: CONFIG.appenv.storage.scp.ip,
-                      port: 22,
-                      username: CONFIG.appenv.storage.scp.user,
-                      password: CONFIG.appenv.storage.scp.password
-                    }).then(() => {
-                      console.log("here");
-                      let localFile = to_file_path + '/' + file_name_item + '.png';
-                      let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png';
-                      return client_ssh_sftp.fastPut(localFile, remoteFile);
-                    }).then(() => {
-                      console.log("執行到這end");
-                      fs.unlinkSync(to_file_path + '/' + file_name_item + '.png');
-                      return client_ssh_sftp.end();
-                    }, (err) => {
-                      console.log("這裡3err");
-                      console.log(err);
+                    client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
+                      // 將原本機端的原檔案刪除
+                      fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
                       callback(null);
-                    }).then(() => {
-                      console.log("done");
-                      callback(null);
-                    }, () => {
-                      console.log("done2");
-                      callback(null);
-                    }).catch(err => {
-                      console.log("這裡");
-                      console.log(err);
-                      console.log("這裡2");
-                      callback(null);
-                    });
+                    })
 
                   });
                 })
