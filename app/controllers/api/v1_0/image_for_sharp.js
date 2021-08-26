@@ -1343,6 +1343,9 @@ exports.image_crop = function(options){
                     }).then(() => {
                       console.log("done");
                       callback(null);
+                    }, () => {
+                      console.log("done2");
+                      callback(null);
                     }).catch(err => {
                       console.log("這裡");
                       console.log(err);
