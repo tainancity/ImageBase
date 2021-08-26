@@ -1328,6 +1328,7 @@ exports.image_crop = function(options){
                       username: CONFIG.appenv.storage.scp.user,
                       password: CONFIG.appenv.storage.scp.password
                     }).then(() => {
+                      console.log("here");
                       let localFile = to_file_path + '/' + file_name_item + '.png';
                       let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png';
                       return client_ssh_sftp.fastPut(localFile, remoteFile);
@@ -1336,6 +1337,9 @@ exports.image_crop = function(options){
                       fs.unlinkSync(to_file_path + '/' + file_name_item + '.png');
                       client_ssh_sftp.end();
                       callback(null);
+                    }, (err) => {
+                      console.log("這裡3");
+                      console.log(err);
                     }).catch(err => {
                       console.log("這裡");
                       console.log(err);
