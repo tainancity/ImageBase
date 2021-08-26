@@ -1335,11 +1335,14 @@ exports.image_crop = function(options){
                     }).then(() => {
                       console.log("執行到這end");
                       fs.unlinkSync(to_file_path + '/' + file_name_item + '.png');
-                      client_ssh_sftp.end();
-                      callback(null);
+                      return client_ssh_sftp.end();
                     }, (err) => {
-                      console.log("這裡3");
+                      console.log("這裡3err");
                       console.log(err);
+                      callback(null);
+                    }).then(() => {
+                      console.log("done");
+                      callback(null);
                     }).catch(err => {
                       console.log("這裡");
                       console.log(err);
