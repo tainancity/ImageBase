@@ -1300,6 +1300,7 @@ exports.image_crop = function(options){
                       console.log("err2");
                       console.log(err);
                     }).finally(() => {
+                      fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
                       callback(null);
                     });
 
