@@ -1144,7 +1144,6 @@ exports.image_hard_delete = function(options){
 
                           //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                           delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
-                          //client_scp2: here
                         })
 
                         client_ssh_sftp.connect({
@@ -1248,7 +1247,6 @@ exports.image_crop = function(options){
 
                 //var delete_file_path = CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name
                 delete_file_path_array.push(CONFIG.path.project + '/' + unlink_path + '/' + will_del_file_name)
-                //client_scp2: here
 
               }
             }else{
@@ -1296,11 +1294,39 @@ exports.image_crop = function(options){
                   scp_func_arr.push(function(callback){
 
 
-                    client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
-                      // 將原本機端的原檔案刪除
-                      fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
+                    // client_scp2.upload(to_file_path + '/' + file_name_item + '.png', CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png', function(){
+                    //   // 將原本機端的原檔案刪除
+                    //   fs.unlinkSync(to_file_path + '/' + file_name_item + '.png')
+                    //   callback(null);
+                    // })
+                    client_ssh_sftp.connect({
+                      host: CONFIG.appenv.storage.scp.ip,
+                      port: 22,
+                      username: CONFIG.appenv.storage.scp.user,
+                      password: CONFIG.appenv.storage.scp.password
+                    }).then(() => {
+                      //let localFile = CONFIG.path.project + "/for_test/DSC06106.jpg";
+                      //let remoteFile = CONFIG.path.project + "/for_test/abc/a/DSC06106.jpg";
+                      //return client_ssh_sftp.fastPut(localFile, remoteFile);
+                      console.log(`開始傳檔(裁切圖)第${file_name_index+1}張`);
+                      let localFile = to_file_path + '/' + file_name_item + '.png';
+                      let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + file_result[0].category_id + '/' + file_name_item + '.png';
+                      return client_ssh_sftp.fastPut(localFile, remoteFile);
+                    }).then(() => {
+                      //console.log("執行到這end");
+                      return client_ssh_sftp.end();
+                    }).then(() => {
+                      console.log(`傳檔(裁切圖)第${file_name_index+1}張完成`);
+                    }, (err) => {
+                      console.log("err1");
+                      console.log(err);
+                    }).catch(err => {
+                      console.log("err2");
+                      console.log(err);
+                    }).finally(() => {
                       callback(null);
-                    })
+                    });
+
 
                   });
                 })
