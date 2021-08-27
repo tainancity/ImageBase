@@ -1257,22 +1257,22 @@ exports.image_crop = function(options){
           })
 
           if(CONFIG.appenv.env == 'production'){
-            client_ssh_sftp.connect({
-                host: CONFIG.appenv.storage.scp.ip,
-                port: 22,
-                username: CONFIG.appenv.storage.scp.user,
-                password: CONFIG.appenv.storage.scp.password
-            }).then(() => {
-              delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
-                //console.log(file_item_path)
-                client_ssh_sftp.delete(delete_file_item_path)
-              })
-            }).then((data) => {
-              client_ssh_sftp.end()
-              //console.log(data, 'the data info');
-            }).catch((err) => {
-              console.log(err, 'catch error');
-            })
+            // client_ssh_sftp.connect({
+            //     host: CONFIG.appenv.storage.scp.ip,
+            //     port: 22,
+            //     username: CONFIG.appenv.storage.scp.user,
+            //     password: CONFIG.appenv.storage.scp.password
+            // }).then(() => {
+            //   delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
+            //     //console.log(file_item_path)
+            //     client_ssh_sftp.delete(delete_file_item_path)
+            //   })
+            // }).then((data) => {
+            //   client_ssh_sftp.end()
+            //   //console.log(data, 'the data info');
+            // }).catch((err) => {
+            //   console.log(err, 'catch error');
+            // })
           }
 
 
