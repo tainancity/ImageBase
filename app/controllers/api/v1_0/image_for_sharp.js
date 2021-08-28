@@ -450,7 +450,7 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
       fs.unlinkSync(form_uploadDir + '/' + generated_filename[2])
     }
 
-    console.log("13.5、傳完。關閉 sftp");
+    console.log("13_done、傳完。關閉 sftp");
     return client_ssh_sftp.end();
   }).then(() => {
     var unique_id = functions.generate_random_code(code_num)
