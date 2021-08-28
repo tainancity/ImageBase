@@ -403,16 +403,16 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
       return client_ssh_sftp.mkdir(remoteDir, true);
     }
   }).then(() => {
-    console.log("開始傳原圖");
+    console.log("13.1、開始傳原圖");
     let localFile = form_uploadDir + '/' + file_new_name;
     let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + file_new_name;
     return client_ssh_sftp.fastPut(localFile, remoteFile);
   }).then(() => {
-    console.log("傳原圖完成");
+    console.log("13.1、傳原圖完成");
     fs.unlinkSync(form_uploadDir + '/' + file_new_name)
 
     if(generated_filename[0] != undefined){
-      console.log(`開始傳第1張縮圖`);
+      console.log(`13.2、開始傳第1張縮圖`);
       let localFile = form_uploadDir + '/' + generated_filename[0];
       let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_filename[0];
       return client_ssh_sftp.fastPut(localFile, remoteFile);
@@ -421,11 +421,11 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
     }
 
   }).then(() => {
-    console.log(`傳第1張縮圖完成`);
+    console.log(`13.2、傳第1張縮圖完成`);
     fs.unlinkSync(form_uploadDir + '/' + generated_filename[0])
 
     if(generated_filename[1] != undefined){
-      console.log(`開始傳第2張縮圖`);
+      console.log(`13.3、開始傳第2張縮圖`);
       let localFile = form_uploadDir + '/' + generated_filename[1];
       let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_filename[1];
       return client_ssh_sftp.fastPut(localFile, remoteFile);
@@ -433,11 +433,11 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
       return Promise.resolve();
     }
   }).then(() => {
-    console.log(`傳第2張縮圖完成`);
+    console.log(`13.3、傳第2張縮圖完成`);
     fs.unlinkSync(form_uploadDir + '/' + generated_filename[1])
 
     if(generated_filename[2] != undefined){
-      console.log(`開始傳第3張縮圖`);
+      console.log(`13.4、開始傳第3張縮圖`);
       let localFile = form_uploadDir + '/' + generated_filename[2];
       let remoteFile = CONFIG.appenv.storage.storage_uploads_path + '/' + api_upload_dir + '/' + fields_category + '/' + generated_filename[2];
       return client_ssh_sftp.fastPut(localFile, remoteFile);
@@ -446,14 +446,13 @@ var scp_to_storage = function(form_uploadDir, fields_category, api_upload_dir, f
     }
   }).then(() => {
     if(generated_filename.length == 3){
-      console.log(`傳第3張縮圖完成`);
+      console.log(`13.4、傳第3張縮圖完成`);
       fs.unlinkSync(form_uploadDir + '/' + generated_filename[2])
     }
 
-    console.log("傳完。關閉 sftp");
+    console.log("13.5、傳完。關閉 sftp");
     return client_ssh_sftp.end();
   }).then(() => {
-    console.log("done");
     var unique_id = functions.generate_random_code(code_num)
     have_the_same_u_id(unique_id, data_for_have_the_same_u_id, function(){
       duplicate_func(data_for_have_the_same_u_id.req, data_for_have_the_same_u_id.res, data_for_have_the_same_u_id.fields, data_for_have_the_same_u_id.data_files, data_for_have_the_same_u_id.original_filename, unique_id, data_for_have_the_same_u_id.saved_obj)
