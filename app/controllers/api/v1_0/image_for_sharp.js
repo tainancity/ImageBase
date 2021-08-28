@@ -22,13 +22,13 @@ var fileTransferModel = require(CONFIG.path.models + '/file_transfer.js')
 var functions = require(CONFIG.path.helpers + '/functions.js')
 var static = require(CONFIG.path.helpers + '/static.js')
 
-var Client = require('scp2').Client
-var client_scp2 = new Client({
-  port: 22,
-  host: CONFIG.appenv.storage.scp.ip,
-  username: CONFIG.appenv.storage.scp.user,
-  password: CONFIG.appenv.storage.scp.password
-})
+// var Client = require('scp2').Client
+// var client_scp2 = new Client({
+//   port: 22,
+//   host: CONFIG.appenv.storage.scp.ip,
+//   username: CONFIG.appenv.storage.scp.user,
+//   password: CONFIG.appenv.storage.scp.password
+// })
 
 let client_ssh = require('ssh2-sftp-client')
 let client_ssh_sftp = new client_ssh()
@@ -1228,7 +1228,7 @@ exports.image_hard_delete = function(options){
                         }).then(() => {
                           delete_file_path_array.forEach(function(delete_file_item_path, file_item_index){
                             //console.log(file_item_path)
-                            client_ssh_sftp.delete(delete_file_item_path)
+                            client_ssh_sftp.delete(delete_file_item_path, true)
                           })
                         }).then((data) => {
                           // step 5: 刪除 資料表 files
