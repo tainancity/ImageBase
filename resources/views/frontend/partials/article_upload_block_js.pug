@@ -145,17 +145,17 @@ script.
           });
         },
         complete: function(xhr){
-          if(continue_upload){
+          //if(continue_upload){
             if(user_prepare_upload_files.length > (file_index+1)){
               file_index += 1;
               loop_file_each(user_prepare_upload_files[file_index]);
             }else{
               user_prepare_upload_files = [];
             }
-          }else{
-            alert("系統忙錄中，請稍候再試。");
-            location.reload();
-          }
+          //}else{
+            //alert("系統忙錄中，請稍候再試。");
+            //location.reload();
+          //}
           
         }
       });
