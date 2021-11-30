@@ -71,7 +71,11 @@ exports.item = function(options) {
           callback(null, null);
         }else{
           organizationModel.getOne("organ_id", file.organ_id, function(file_organ){
-            file.organization_name = file_organ[0].organ_name;
+            if(file_organ.length == 0){
+              file.organization_name = "";
+            }else{
+              file.organization_name = file_organ[0].organ_name;
+            }
             callback(null, file);
           });
         }

@@ -78,7 +78,10 @@ block append content
                     span.pageviews= file_obj.pageviews
                 li
                   span.icon_span: i.fas.fa-sitemap
-                  span.meta_item= '局處：' + file_obj.organization_name
+                  if (file_obj.organization_name == "")
+                    span.meta_item= '局處：(無資料)'
+                  else
+                    span.meta_item= '局處：' + file_obj.organization_name
                 li
                   span.icon_span: i.fas.fa-clock
                   span.meta_item= '上傳時間：' + time.get_time_from_timestamp('zh-tw', file_obj.created_at)
