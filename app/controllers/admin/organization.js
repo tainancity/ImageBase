@@ -79,7 +79,8 @@ exports.import_data_post = function(options) {
                   "organ_name_abbr": data.organ_name_abbr,
                   "level": data.level,
                   "parent_organ_id": data.parent_organ_id,
-                  "sort_index": 0
+                  "sort_index": 0,
+                  "show_index": 0
                 }
                 //console.log(insert_obj)
 
