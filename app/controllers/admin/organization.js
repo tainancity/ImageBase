@@ -35,7 +35,7 @@ exports.import_data_post = function(options) {
   return function(req, res) {
     var form = formidable.IncomingForm();
     form.parse(req, function(err, fields, files){
-      if(err) return res.redirect('/admin/organization/import_data')
+      if(err) return res.redirect('/admin/management/organization/import_data')
 
       //console.log('received fields:');
       //console.log(fields);
@@ -89,7 +89,7 @@ exports.import_data_post = function(options) {
             })
           }
         })
-      res.redirect('/admin/organization/import_data')
+      res.redirect('/admin/management/organization/import_data')
     });
 
 
