@@ -62,7 +62,7 @@
     "gulp-rev-delete-original": "^0.2.3",
     "gulp-sass": "^4.1.0",
     "mocha": "^4.1.0",
-    "rev-del": "^1.0.5",
+    "rev-del": "^2.0.0",
     "vinyl-source-stream": "^2.0.0",
     "zombie": "^5.0.7"
   }
